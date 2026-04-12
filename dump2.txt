@@ -1,0 +1,42 @@
+function buildVPMessages(user) {
+  const list = VP_MESSAGES.map(m=>`<div class="card" style="margin-bottom:12px;border:${m.unread?'1px solid var(--color-primary)':'1px solid var(--color-border)'};position:relative;padding-left:${m.unread?'30px':'24px'}">
+    ${m.unread?'<div style="position:absolute;left:12px;top:28px;width:8px;height:8px;border-radius:50%;background:var(--color-primary)"></div>':''}
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+      <strong style="color:var(--color-text)">${m.sender} <span style="font-size:10px;background:var(--color-surface-2);border:1px solid var(--color-border);padding:2px 6px;border-radius:4px;margin-left:6px">${m.sender.includes('Parent')?'Urgent Alert':m.sender.includes('Coord')?'Coordinator':'Staff'}</span></strong>
+      <span style="font-size:11px;color:var(--color-text-muted)">${m.time}</span>
+    </div>
+    <div style="font-weight:${m.unread?'700':'500'};margin-bottom:8px;font-size:15px;color:var(--color-text)">${m.subject}</div>
+    <p style="font-size:13px;color:var(--color-text-light);line-height:1.4">${m.content}</p>
+    <div style="margin-top:12px;display:flex;gap:10px">
+      <button style="padding:6px 14px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:12px;font-weight:600" onclick="simulateAction('Reply composer opened.')"><i class="fas fa-reply"></i> Reply</button>
+      <button style="padding:6px 14px;border-radius:6px;background:none;border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:12px;font-weight:600" onclick="simulateAction('Forwarded to coordinator.')"><i class="fas fa-share"></i> Forward</button>
+    </div>
+  </div>`).join('');
+  return `<div class="dash-section" id="section-vp_messages">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
+      <h3 style="color:var(--color-text)">✉️ Direct Communications Inbox</h3>
+      <div style="display:flex;gap:10px">
+        <button class="btn-primary" onclick="simulateAction('Broadcast sent to all staff members.')"><i class="fas fa-bullhorn"></i> Broadcast to Staff</button>
+        <button class="btn-primary" onclick="simulateAction('Message compose window opened.')"><i class="fas fa-pen"></i> New Message</button>
+      </div>
+    </div>
+    <div>${list}</div>
+  </div>`;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PARENT EXCLUSIVE MODULES
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+
+
+function buildAnnouncements(user) {
+  const catC={Events:'#5ca870',Academic:'#1976d2',Meeting:'#f57c00',Finance:'#d32f2f',Holiday:'#8b5cf6',CCA:'#00bcd4'};
+  const priC={high:'#d32f2f',medium:'#f57c00',low:'#5ca870'};
+  const cards=ANNOUNCEMENTS.map(a=>{const c=catC[a.category]||'#5ca870';const p=priC[a.priority];return `<div class="card" style="padding:0;overflow:hidden"><div style="height:5px;background:${p}"></div><div style="padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;gap:6px"><span class="badge" style="background:${c};font-size:10px;padding:4px 10px">${a.category}</span> ${user.role==='vice_principal'?`<span class="badge" style="background:var(--color-surface-2);color:var(--color-text);font-size:10px;border:1px solid var(--color-border)">Target: All</span>`:''}</div><span style="font-size:10px;font-weight:800;color:${p};text-transform:uppercase;letter-spacing:1px">${a.priority}</span></div><h4 style="font-size:15px;font-weight:700;color:var(--color-text);margin-bottom:10px;line-height:1.4">${a.title}</h4><div style="font-size:12px;color:var(--color-text-muted);display:flex;gap:12px;margin-bottom:12px"><span>📅 Pub: ${a.date}</span><span>👤 ${a.author}</span></div>${user.role==='vice_principal'?`<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-active" style="flex:1;text-align:center;font-size:11px">Published</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #1976d2;color:#1976d2;cursor:pointer" onclick="simulateAction('Notice edit mode opened.')"><i class="fas fa-edit"></i></button><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #999;color:#999;cursor:pointer" onclick="simulateAction('Notice archived successfully.')"><i class="fas fa-archive"></i></button></div>`:''}</div></div>`;}).join('');
+  return `<div class="dash-section" id="section-announcements">
+    ${user.role==='vice_principal'?`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap"><h3>📢 Broadcasting & Notices</h3><button class="btn-primary" style="padding:8px 16px" onclick="simulateAction('Notice creation form opened.')"><i class="fas fa-plus"></i> Create Notice</button></div>`:''}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px">${cards}</div>
+  </div>`;
+}
+
