@@ -209,8 +209,77 @@ const TEACHERS = [
   { id: "T008", name: "Suresh Naidu",    subject: "Physical Education",classes: "All",         exp: "11 years", phone: "+91 87654 88888", status: "Active" },
 ];
 
+// ─── Class Schedule ──────────────────────────────────────────
+const SCHEDULE = [
+  { time: "8:00 – 8:45",  subject: "Mathematics",       class: "10-A", teacher: "Prasana Reddy", room: "Room 101", color: "#5ca870" },
+  { time: "8:50 – 9:35",  subject: "Physics",           class: "10-A", teacher: "Ramesh Sharma",  room: "Physics Lab", color: "#1976d2" },
+  { time: "9:40 – 10:25", subject: "English Literature", class: "8-B",  teacher: "Anita Pillai",  room: "Room 204", color: "#8b5cf6" },
+  { time: "10:30 – 10:45",subject: "☕ Break",           class: "—",    teacher: "—",             room: "—", color: "#999" },
+  { time: "10:45 – 11:30",subject: "Chemistry",         class: "10-C", teacher: "Mohan Das",      room: "Chem Lab", color: "#f57c00" },
+  { time: "11:35 – 12:20",subject: "History",           class: "7-A",  teacher: "Sunita Verma",   room: "Room 305", color: "#e53935" },
+  { time: "12:25 – 13:10",subject: "🍱 Lunch Break",    class: "—",    teacher: "—",             room: "Cafeteria", color: "#999" },
+  { time: "13:15 – 14:00",subject: "Computer Science",  class: "9-C",  teacher: "Venkat Iyer",    room: "Comp Lab", color: "#00bcd4" },
+  { time: "14:05 – 14:50",subject: "Biology",           class: "8-E", teacher: "Pooja Mehta",    room: "Bio Lab", color: "#4caf50" },
+  { time: "14:55 – 15:40",subject: "Physical Education",class: "All",  teacher: "Suresh Naidu",   room: "Ground", color: "#ff5722" },
+];
 
-// --- GLOBAL DATA COLLECTIONS ---
+// ─── Announcements ───────────────────────────────────────────
+const ANNOUNCEMENTS = [
+  { id: 1, title: "Annual Sports Day – April 12, 2026",        date: "28 Mar 2026", author: "Vice Principal", category: "Events",   priority: "high" },
+  { id: 2, title: "Mid-Term Examination Schedule Released",     date: "26 Mar 2026", author: "Coordinator",    category: "Academic", priority: "high" },
+  { id: 3, title: "Parent-Teacher Meeting – April 5",          date: "24 Mar 2026", author: "Vice Principal", category: "Meeting",  priority: "medium" },
+  { id: 4, title: "Fee Payment Deadline – March 31",           date: "22 Mar 2026", author: "Accounts Dept",  category: "Finance",  priority: "high" },
+  { id: 5, title: "Library Hours Extended for Board Students",  date: "20 Mar 2026", author: "Librarian",      category: "Academic", priority: "low" },
+  { id: 6, title: "School Closed on April 14 (Ambedkar Jayanti)", date: "19 Mar 2026", author: "Admin",       category: "Holiday",  priority: "low" },
+  { id: 7, title: "Science Exhibition Registration Open",      date: "18 Mar 2026", author: "Coordinator",    category: "CCA",      priority: "medium" },
+];
+
+// ─── Homework / Assignments ──────────────────────────────────
+const HOMEWORK = [
+  { id: 1, title: "Quadratic Equations – Practice Set A",  subject: "Mathematics", class: "10-A", teacher: "Prasana Reddy", due: "31 Mar 2026", submitted: 28, total: 35, status: "Active" },
+  { id: 2, title: "Newton's Laws – Lab Report",            subject: "Physics",     class: "10-A", teacher: "Ramesh Sharma",  due: "2 Apr 2026",  submitted: 20, total: 35, status: "Active" },
+  { id: 3, title: "The Tempest – Character Analysis Essay", subject: "English",     class: "8-B",  teacher: "Anita Pillai",  due: "5 Apr 2026",  submitted: 18, total: 32, status: "Active" },
+  { id: 4, title: "Periodic Table Quiz",                   subject: "Chemistry",   class: "10-C", teacher: "Mohan Das",      due: "28 Mar 2026", submitted: 33, total: 33, status: "Completed" },
+  { id: 5, title: "World War II Summary",                  subject: "History",     class: "7-A",  teacher: "Sunita Verma",   due: "7 Apr 2026",  submitted: 5,  total: 28, status: "Active" },
+  { id: 6, title: "Python Basics – Program Set 1",          subject: "Comp. Sci",   class: "9-C",  teacher: "Venkat Iyer",    due: "10 Apr 2026", submitted: 0,  total: 32, status: "Active" },
+];
+
+// ─── Exam Results / Marks ────────────────────────────────────
+const MARKS = [
+  { subject: "Mathematics",       marks: 87, max: 100, grade: "A" },
+  { subject: "Physics",           marks: 79, max: 100, grade: "B+" },
+  { subject: "English",           marks: 92, max: 100, grade: "A+" },
+  { subject: "Chemistry",         marks: 74, max: 100, grade: "B" },
+  { subject: "History",           marks: 83, max: 100, grade: "A-" },
+  { subject: "Computer Science",  marks: 96, max: 100, grade: "A+" },
+  { subject: "Physical Education",marks: 90, max: 100, grade: "A+" },
+];
+
+// ─── Fee Summary ─────────────────────────────────────────────
+const FEE_DATA = {
+  total_due: 45000,
+  paid: 35000,
+  pending: 10000,
+  last_paid: "15 Mar 2026",
+  next_due: "5 Apr 2026",
+  breakdown: [
+    { label: "Tuition Fee",     amount: 30000, status: "Paid" },
+    { label: "Lab Fee",         amount: 5000,  status: "Paid" },
+    { label: "Library Fee",     amount: 2000,  status: "Pending" },
+    { label: "Sports Fee",      amount: 3000,  status: "Pending" },
+    { label: "Transport Fee",   amount: 5000,  status: "Paid" },
+  ]
+};
+
+// ─── Events ──────────────────────────────────────────────────
+const EVENTS = [
+  { title: "Annual Sports Day",          date: "Apr 12, 2026", desc: "Inter-class athletics, team sports, and prize ceremony.", color: "#5ca870" },
+  { title: "Science Exhibition",         date: "Apr 18, 2026", desc: "Students showcase innovative science projects and experiments.", color: "#1976d2" },
+  { title: "Parent-Teacher Meeting",     date: "Apr 5, 2026",  desc: "Quarterly academic progress discussion with parents.", color: "#f57c00" },
+  { title: "Cultural Fest – Utsav 2026", date: "May 3, 2026",  desc: "Annual cultural event featuring music, dance & drama.", color: "#8b5cf6" },
+  { title: "Career Guidance Workshop",   date: "May 10, 2026", desc: "Expert guidance for Class 9 & 10 on career choices.", color: "#00bcd4" },
+  { title: "Summer Vacation Begins",     date: "May 20, 2026", desc: "School closes for summer break 2026.", color: "#e53935" },
+];
 
 // ─── Attendance Data ─────────────────────────────────────────
 const ATTENDANCE_SUMMARY = {
@@ -483,9 +552,13 @@ ROLE_HOME.super_admin = ROLE_HOME.apaaas;
 ROLE_HOME.superadmin = ROLE_HOME.apaaas;
 
 // ─── Vice Principal Specific Mock Data ───────────────────────
-
-// --- REMOVED OLD VP_APPROVALS ---
-
+const VP_APPROVALS = [
+  { id: "AP01", type: "Leave Request",   desc: "Medical leave for 3 days - Anita Pillai", date: "Today", status: "Pending" },
+  { id: "AP02", type: "Timetable Swap",  desc: "Swap P3 with Prasana Reddy for Class 10-A", date: "Today", status: "Pending" },
+  { id: "AP03", type: "Event Fund",      desc: "₹15,000 for Science Exhibition materials", date: "Yesterday", status: "Pending" },
+  { id: "AP04", type: "Result Release",  desc: "Release Mid-Term results for Class 8-B", date: "Yesterday", status: "Approved" },
+  { id: "AP05", type: "Notice Draft",    desc: "Summer Vacation Schedule Review", date: "2 Days Ago", status: "Pending" },
+];
 
 const VP_MESSAGES = [
   { sender: "Anitha (Coord)", subject: "Class 9-B timetable clash resolved", time: "10:30 AM", unread: true, content: "The clash for period 3 science has been handled by swapping with Venkat Iyer." },
@@ -500,9 +573,17 @@ const DISCIPLINE_CASES = [
   { student: "G MANASWINI", class: "9-C", issue: "Using mobile phone in classroom", reporter: "Ramesh Sharma", status: "Resolved", urgency: "Low" },
 ];
 
-
-// --- REMOVED OLD CLASS_PERFORMANCE ---
-
+const CLASS_PERFORMANCE = [
+  { class: "10-A", teacher: "Prasana Reddy", avgAtt: 95, avgGPA: 8.9, topper: "PRANEETH BHUKYA", weak: 1, issues: 1 },
+  { class: "10-B", teacher: "Ramesh Sharma", avgAtt: 92, avgGPA: 8.2, topper: "Karan Johar", weak: 3, issues: 0 },
+  { class: "10-C", teacher: "Mohan Das", avgAtt: 88, avgGPA: 7.6, topper: "Rahul G.", weak: 5, issues: 2 },
+  { class: "9-A", teacher: "Anita Pillai", avgAtt: 91, avgGPA: 8.4, topper: "Sneha P.", weak: 2, issues: 0 },
+  { class: "9-B", teacher: "Venkat Iyer", avgAtt: 81, avgGPA: 7.1, topper: "KASULA ASHWATH", weak: 7, issues: 3 },
+  { class: "8-A", teacher: "Sunita Verma", avgAtt: 93, avgGPA: 8.0, topper: "SNITHIK VENGALA", weak: 2, issues: 1 },
+  { class: "8-B", teacher: "Pooja Mehta", avgAtt: 85, avgGPA: 7.4, topper: "G MANASWINI", weak: 4, issues: 2 },
+  { class: "7-A", teacher: "Suresh Naidu", avgAtt: 96, avgGPA: 9.1, topper: "BHUKYA PRANAVI", weak: 0, issues: 0 },
+  { class: "6-A", teacher: "Prasana Reddy", avgAtt: 92, avgGPA: 8.5, topper: "Ravi K.", weak: 1, issues: 0 },
+];
 
 // ─── Parent Specific Mock Data ───────────────────────────────
 const PARENT_CHILD = {
@@ -585,9 +666,13 @@ const PARENT_MESSAGES = [
   { sender: "Accounts Dept", subject: "Fee reminder – April installment", time: "3 days ago", unread: false, content: "A reminder that ₹10,000 is due by 5th April 2026. Ignore if already paid." },
 ];
 
-
-// --- REMOVED OLD PARENT_FEE_HISTORY ---
-
+const PARENT_FEE_HISTORY = [
+  { date: "15 Mar 2026", desc: "Tuition Fee (Q3)",     amount: 30000, mode: "Online", status: "Paid" },
+  { date: "15 Mar 2026", desc: "Lab Fee",              amount: 5000,  mode: "Online", status: "Paid" },
+  { date: "15 Mar 2026", desc: "Transport Fee (Q3)",   amount: 5000,  mode: "Online", status: "Paid" },
+  { date: "Pending",     desc: "Library Fee",           amount: 2000,  mode: "—",      status: "Due" },
+  { date: "Pending",     desc: "Tuition Fee (Q4)",     amount: 8000,  mode: "—",      status: "Due" },
+];
 
 // ─── Teacher Specific Mock Data ───────────────────────────────
 
