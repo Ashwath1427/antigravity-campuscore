@@ -22,10 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── Login Form ──────────────────────────────────────────────
 function setupLoginForm() {
-  const form     = document.getElementById('login-form');
-  const pwInput  = document.getElementById('login-password');
+  const form = document.getElementById('login-form');
+  const pwInput = document.getElementById('login-password');
   const toggleBtn = document.getElementById('toggle-pw');
-  const pwIcon   = document.getElementById('pw-icon');
+  const pwIcon = document.getElementById('pw-icon');
 
   // Show/hide password
   toggleBtn.addEventListener('click', () => {
@@ -55,7 +55,7 @@ function setupLoginForm() {
 async function handleLogin() {
   const username = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value;
-  const btn      = document.getElementById('btn-login');
+  const btn = document.getElementById('btn-login');
 
   // Clear previous errors
   clearFieldError('fg-username', 'username-error');
@@ -100,16 +100,27 @@ async function handleLogin() {
 
     await delay(1000);
 
-    const finalUser = typeof getPostLoginUser === 'function'
-      ? await getPostLoginUser(result.user)
-      : result.user;
-    if (!finalUser) {
-      btn.style.background = '';
-      btn.innerHTML = '<span class="btn-text">Sign In</span><i class="fas fa-arrow-right btn-arrow"></i>';
-      return;
+    let finalUser = result.user;
+    try {
+      if (typeof getPostLoginUser === 'function') {
+        const selectedUser = await getPostLoginUser(result.user);
+        if (!selectedUser) {
+          // User cancelled or went back
+          btn.style.background = '';
+          btn.innerHTML = '<span class="btn-text">Sign In</span><i class="fas fa-arrow-right btn-arrow"></i>';
+          return;
+        }
+        finalUser = selectedUser;
+      }
+    } catch (err) {
+      console.error("Post-login hook failed:", err);
+      // Fallback to initial user if hook crashes
     }
+
     currentUser = finalUser;
-    try { sessionStorage.setItem('cc_user', JSON.stringify(finalUser)); } catch(e) {}
+    window.currentUser = finalUser; // Ensure global availability
+    try { sessionStorage.setItem('cc_user', JSON.stringify(finalUser)); } catch (e) { }
+
     initDashboard(finalUser);
     showPage('dashboard');
 
@@ -127,17 +138,17 @@ async function handleLogin() {
 
 // ─── Init Dashboard ──────────────────────────────────────────
 function initDashboard(user) {
-  if(typeof loadTheme === 'function') loadTheme(user.id);
+  if (typeof loadTheme === 'function') loadTheme(user.id);
   buildSidebar(user);
   renderNotifications(user);
   buildDashboard(user);
-  
-  if (user.role === 'apaaas' || user.role === 'superadmin' || user.role === 'super_admin' || String(user.username||'').toUpperCase() === 'APAAAS') {
+
+  if (user.role === 'apaaas' || user.role === 'superadmin' || user.role === 'super_admin' || String(user.username || '').toUpperCase() === 'APAAAS') {
     navigateTo('master_dashboard');
   } else {
     navigateTo('home');
   }
-  
+
   updateDateTime();
 }
 

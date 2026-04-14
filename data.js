@@ -257,6 +257,12 @@ const MARKS = [
 
 // ─── Fee Summary ─────────────────────────────────────────────
 const FEE_DATA = {
+  student: {
+    name: "KASULA ASHWATH",
+    admNo: "2026/DPS/012",
+    class: "9-C",
+    academicYear: "2025-26"
+  },
   total_due: 45000,
   paid: 35000,
   pending: 10000,
@@ -265,9 +271,13 @@ const FEE_DATA = {
   breakdown: [
     { label: "Tuition Fee",     amount: 30000, status: "Paid" },
     { label: "Lab Fee",         amount: 5000,  status: "Paid" },
+    { label: "Transport Fee",   amount: 5000,  status: "Paid" },
     { label: "Library Fee",     amount: 2000,  status: "Pending" },
     { label: "Sports Fee",      amount: 3000,  status: "Pending" },
-    { label: "Transport Fee",   amount: 5000,  status: "Paid" },
+  ],
+  history: [
+    { id: "PAY-101", date: "15 Mar 2026", method: "UPI", amount: 15000, status: "Success", receipt: "RCPT-092" },
+    { id: "PAY-092", date: "10 Jan 2026", method: "Card", amount: 20000, status: "Success", receipt: "RCPT-041" }
   ]
 };
 

@@ -36,33 +36,33 @@
 
   function initializeMasterStudentRegistry() {
     const STUDENTS_REG = [
-      { sno: 1,  id: '3160136', name: 'PRANEETH BHUKYA',              class: '9', section: 'C', roll: 1  },
-      { sno: 2,  id: '3160417', name: 'SATHWIK REDDY GANTA',          class: '9', section: 'C', roll: 2  },
-      { sno: 3,  id: '3160662', name: 'KOTHA ASHVIK',                 class: '9', section: 'C', roll: 3  },
-      { sno: 4,  id: '3170292', name: 'BOPPARAJU ABHIRAM',            class: '9', section: 'C', roll: 4  },
-      { sno: 5,  id: '3170355', name: 'BOYINI VIVEKANANDA MUDIRAJ',   class: '9', section: 'C', roll: 5  },
-      { sno: 6,  id: '3170390', name: 'LOLLA ABHIRAM',                class: '9', section: 'C', roll: 6  },
-      { sno: 7,  id: '3180076', name: 'KASULA ASHWATH',               class: '9', section: 'C', roll: 7  },
-      { sno: 8,  id: '3180133', name: 'SNITHIK VENGALA',              class: '9', section: 'C', roll: 8  },
-      { sno: 9,  id: '3180183', name: 'NIDHISH DUMALA',               class: '9', section: 'C', roll: 9  },
-      { sno: 10, id: '3180184', name: 'YAMMANURU HARITEJA',           class: '9', section: 'C', roll: 10 },
-      { sno: 11, id: '3180286', name: 'CHARAN BATTU',                 class: '9', section: 'C', roll: 11 },
-      { sno: 12, id: '3190472', name: 'ATHUL M',                      class: '9', section: 'C', roll: 12 },
-      { sno: 13, id: '3200320', name: 'SIDDHARTH REDDY SADIVILLA',    class: '9', section: 'C', roll: 13 },
-      { sno: 14, id: '3200437', name: 'SIDDALA RAMCHARAN',            class: '9', section: 'C', roll: 14 },
-      { sno: 15, id: '3210447', name: 'SAPAVATH JAHNAVI',             class: '9', section: 'C', roll: 15 },
-      { sno: 16, id: '3210590', name: 'K MOKSHA',                     class: '9', section: 'C', roll: 16 },
-      { sno: 17, id: '3230302', name: 'BOJJA HARIKESH REDDY',         class: '9', section: 'C', roll: 17 },
-      { sno: 18, id: '3230706', name: 'EKADANTHA YADAV',              class: '9', section: 'C', roll: 18 },
-      { sno: 19, id: '3240214', name: 'NIMMAKAYALA PRATEEK REDDY',    class: '9', section: 'C', roll: 19 },
-      { sno: 20, id: '3240504', name: 'CHEEKOORI SAI CHARAN',         class: '9', section: 'C', roll: 20 },
-      { sno: 21, id: '3240693', name: 'VALLETI SAI HARSHITH',         class: '9', section: 'C', roll: 21 },
-      { sno: 22, id: '3250112', name: 'P SATHWIK REDDY',              class: '9', section: 'C', roll: 22 },
-      { sno: 23, id: '3260066', name: 'DEPA AARYAN REDDY',            class: '9', section: 'C', roll: 23 },
-      { sno: 24, id: '3230719', name: 'G MANASWINI',                  class: '9', section: 'C', roll: 24 },
-      { sno: 25, id: '3170068', name: 'SHERI RITHIK REDDY',           class: '9', section: 'C', roll: 25 },
-      { sno: 26, id: '3220915', name: 'BHUKYA PRANAVI',               class: '9', section: 'C', roll: 26 },
-      { sno: 27, id: '3190133', name: 'TANABUDDI SRI BHAVESH REDDY',  class: '9', section: 'C', roll: 27 }
+      { sno: 1, id: '3160136', name: 'PRANEETH BHUKYA', class: '9', section: 'C', roll: 1 },
+      { sno: 2, id: '3160417', name: 'SATHWIK REDDY GANTA', class: '9', section: 'C', roll: 2 },
+      { sno: 3, id: '3160662', name: 'KOTHA ASHVIK', class: '9', section: 'C', roll: 3 },
+      { sno: 4, id: '3170292', name: 'BOPPARAJU ABHIRAM', class: '9', section: 'C', roll: 4 },
+      { sno: 5, id: '3170355', name: 'BOYINI VIVEKANANDA MUDIRAJ', class: '9', section: 'C', roll: 5 },
+      { sno: 6, id: '3170390', name: 'LOLLA ABHIRAM', class: '9', section: 'C', roll: 6 },
+      { sno: 7, id: '3180076', name: 'KASULA ASHWATH', class: '9', section: 'C', roll: 7 },
+      { sno: 8, id: '3180133', name: 'SNITHIK VENGALA', class: '9', section: 'C', roll: 8 },
+      { sno: 9, id: '3180183', name: 'NIDHISH DUMALA', class: '9', section: 'C', roll: 9 },
+      { sno: 10, id: '3180184', name: 'YAMMANURU HARITEJA', class: '9', section: 'C', roll: 10 },
+      { sno: 11, id: '3180286', name: 'CHARAN BATTU', class: '9', section: 'C', roll: 11 },
+      { sno: 12, id: '3190472', name: 'ATHUL M', class: '9', section: 'C', roll: 12 },
+      { sno: 13, id: '3200320', name: 'SIDDHARTH REDDY SADIVILLA', class: '9', section: 'C', roll: 13 },
+      { sno: 14, id: '3200437', name: 'SIDDALA RAMCHARAN', class: '9', section: 'C', roll: 14 },
+      { sno: 15, id: '3210447', name: 'SAPAVATH JAHNAVI', class: '9', section: 'C', roll: 15 },
+      { sno: 16, id: '3210590', name: 'K MOKSHA', class: '9', section: 'C', roll: 16 },
+      { sno: 17, id: '3230302', name: 'BOJJA HARIKESH REDDY', class: '9', section: 'C', roll: 17 },
+      { sno: 18, id: '3230706', name: 'EKADANTHA YADAV', class: '9', section: 'C', roll: 18 },
+      { sno: 19, id: '3240214', name: 'NIMMAKAYALA PRATEEK REDDY', class: '9', section: 'C', roll: 19 },
+      { sno: 20, id: '3240504', name: 'CHEEKOORI SAI CHARAN', class: '9', section: 'C', roll: 20 },
+      { sno: 21, id: '3240693', name: 'VALLETI SAI HARSHITH', class: '9', section: 'C', roll: 21 },
+      { sno: 22, id: '3250112', name: 'P SATHWIK REDDY', class: '9', section: 'C', roll: 22 },
+      { sno: 23, id: '3260066', name: 'DEPA AARYAN REDDY', class: '9', section: 'C', roll: 23 },
+      { sno: 24, id: '3230719', name: 'G MANASWINI', class: '9', section: 'C', roll: 24 },
+      { sno: 25, id: '3170068', name: 'SHERI RITHIK REDDY', class: '9', section: 'C', roll: 25 },
+      { sno: 26, id: '3220915', name: 'BHUKYA PRANAVI', class: '9', section: 'C', roll: 26 },
+      { sno: 27, id: '3190133', name: 'TANABUDDI SRI BHAVESH REDDY', class: '9', section: 'C', roll: 27 }
     ];
 
     STUDENTS_REG.forEach(student => {
@@ -324,7 +324,7 @@
     const sid = ctx.sid || '3180076';
     const profile = ctx.profile || getStudentProfile(sid);
     const shared = ctx.shared || getStudentSharedData(sid) || {};
-    
+
     const homework = Array.isArray(shared.homework) ? shared.homework : seedHomework(sid);
     const messages = Array.isArray(shared.messages) ? shared.messages : seedMessages(sid, profile.name);
     const notices = getNotices() || [];
@@ -355,6 +355,10 @@
     const u = { ...user };
     const sid = sidFromUser(u);
     if (!sid || !bySid(sid)) return Promise.resolve(u);
+
+    // Safety: If role is already student/parent, don't show select overlay
+    if (u.role === "student" || u.role === "parent") return Promise.resolve(u);
+
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
       overlay.id = "role-select-overlay";
@@ -439,21 +443,27 @@
   if (window.ROLE_NAV) {
     ROLE_NAV.student = [
       { label: "DASHBOARD", items: [{ id: "home", icon: "fa-home", label: "Overview" }, { id: "profile", icon: "fa-user-circle", label: "My Profile" }] },
-      { label: "ACADEMICS", items: [
-          { id: "student_attendance", icon: "fa-clipboard-check", label: "Attendance" }, 
+      {
+        label: "ACADEMICS", items: [
+          { id: "student_attendance", icon: "fa-clipboard-check", label: "Attendance" },
           { id: "student_homework", icon: "fa-book-open", label: "Homework" },
-          { id: "student_timetable", icon: "fa-calendar-alt", label: "Timetable" }, 
-          { id: "student_exams", icon: "fa-file-signature", label: "Exam Schedule" }, 
+          { id: "student_timetable", icon: "fa-calendar-alt", label: "Timetable" },
+          { id: "student_exams", icon: "fa-file-signature", label: "Exam Schedule" },
           { id: "student_results", icon: "fa-chart-bar", label: "Results & Marks" }
-      ]},
-      { label: "COMMUNICATION", items: [
-          { id: "student_notices", icon: "fa-bullhorn", label: "Notices" }, 
+        ]
+      },
+      {
+        label: "COMMUNICATION", items: [
+          { id: "student_notices", icon: "fa-bullhorn", label: "Notices" },
           { id: "student_messages", icon: "fa-envelope", label: "Messages" }
-      ]},
-      { label: "SYSTEM", items: [
-          { id: "student_settings", icon: "fa-cog", label: "Settings" }, 
+        ]
+      },
+      {
+        label: "SYSTEM", items: [
+          { id: "student_settings", icon: "fa-cog", label: "Settings" },
           { id: "logout", icon: "fa-sign-out-alt", label: "Logout" }
-      ]},
+        ]
+      },
     ];
   }
 
@@ -850,11 +860,11 @@
   window.studentDownloadMyData = function studentDownloadMyData() {
     const sid = sidFromUser(currentUser);
     const data = {
-        profile: getStudentProfile(sid),
-        attendance: getSubjectAttendance(sid),
-        homework: getStudentSharedData(sid).homework || [],
-        exams: getStudentSharedData(sid).exams || [],
-        results: generateResults(sid)
+      profile: getStudentProfile(sid),
+      attendance: getSubjectAttendance(sid),
+      homework: getStudentSharedData(sid).homework || [],
+      exams: getStudentSharedData(sid).exams || [],
+      results: generateResults(sid)
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
@@ -871,7 +881,7 @@
 
   // --- NEW STUDENT BUILDERS ---
 
-  window.buildStudentIdCard = function(userOrD) {
+  window.buildStudentIdCard = function (userOrD) {
     const d = (userOrD && userOrD.role) ? studentContext(userOrD) : userOrD;
     const p = d.profile;
     const shared = getStudentSharedData(d.sid);
@@ -915,7 +925,7 @@
     </div>`;
   }
 
-  window.buildStudentAlmanac = function(userOrD) {
+  window.buildStudentAlmanac = function (userOrD) {
     const d = (userOrD && userOrD.role) ? studentContext(userOrD) : userOrD;
     const events = [
       { date: '2026-04-10', title: 'New Academic Session Starts', category: 'Academic' },
@@ -927,27 +937,27 @@
     ];
 
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     const rows = events.map(ev => {
-        const evDate = new Date(ev.date);
-        const diffDays = Math.ceil((evDate - today) / (1000 * 60 * 60 * 24));
-        
-        let color = '#757575'; // Past
-        let status = 'Past';
-        
-        if (diffDays === 0) { color = '#4caf50'; status = 'Today'; }
-        else if (diffDays > 0 && diffDays <= 7) { color = '#ff9800'; status = 'Upcoming'; }
-        else if (diffDays > 7) { color = '#2196f3'; status = 'Future'; }
+      const evDate = new Date(ev.date);
+      const diffDays = Math.ceil((evDate - today) / (1000 * 60 * 60 * 24));
 
-        return `<tr>
+      let color = '#757575'; // Past
+      let status = 'Past';
+
+      if (diffDays === 0) { color = '#4caf50'; status = 'Today'; }
+      else if (diffDays > 0 && diffDays <= 7) { color = '#ff9800'; status = 'Upcoming'; }
+      else if (diffDays > 7) { color = '#2196f3'; status = 'Future'; }
+
+      return `<tr>
           <td>${ev.date}</td>
           <td><strong style="color:var(--color-text)">${ev.title}</strong></td>
           <td><span class="badge badge-info">${ev.category}</span></td>
           <td style="color:${color};font-weight:700">${diffDays < 0 ? '—' : diffDays + ' Days'}</td>
           <td><span style="color:${color}">${status}</span></td>
         </tr>`;
-    }).sort((a,b) => new Date(a.date) - new Date(b.date)).join('');
+    }).sort((a, b) => new Date(a.date) - new Date(b.date)).join('');
 
     return `<div class="dash-section" id="section-student_almanac">
       <div class="card">
@@ -958,20 +968,20 @@
     </div>`;
   }
 
-  window.buildStudentRequests = function(userOrD) {
+  window.buildStudentRequests = function (userOrD) {
     const d = (userOrD && userOrD.role) ? studentContext(userOrD) : userOrD;
     const reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]').filter(r => r.studentId === d.sid);
     const rows = reqs.map(r => `
       <div class="card" style="margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px">
           <strong>${r.type}: ${r.title}</strong>
-          <span class="badge ${r.status==='Approved'?'badge-active':r.status==='Rejected'?'badge-danger':'badge-warning'}">${r.status}</span>
+          <span class="badge ${r.status === 'Approved' ? 'badge-active' : r.status === 'Rejected' ? 'badge-danger' : 'badge-warning'}">${r.status}</span>
         </div>
         <div style="font-size:12px;color:var(--color-text-muted)">Stage: ${r.stage} | Submitted: ${r.date}</div>
       </div>
     `).join('');
 
-    return `<div class="dash-section" id="${d.user.role==='parent'?'section-parent_requests':'section-student_requests'}">
+    return `<div class="dash-section" id="${d.user.role === 'parent' ? 'section-parent_requests' : 'section-student_requests'}">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
           <h3>📄 Request Center</h3>
@@ -982,12 +992,12 @@
     </div>`;
   }
 
-  window.buildStudentHelpdesk = function(userOrD) {
+  window.buildStudentHelpdesk = function (userOrD) {
     const d = (userOrD && userOrD.role) ? studentContext(userOrD) : userOrD;
     const tickets = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]').filter(t => t.studentName === d.profile.fullName);
     const rows = tickets.map(t => `<tr><td>${t.id}</td><td>${t.subject}</td><td><span class="badge badge-info">${t.status}</span></td><td>${t.lastUpdate}</td></tr>`).join('');
-    
-    return `<div class="dash-section" id="${d.user.role==='parent'?'section-helpdesk':'section-helpdesk'}">
+
+    return `<div class="dash-section" id="${d.user.role === 'parent' ? 'section-helpdesk' : 'section-helpdesk'}">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
           <h3>🎧 Helpdesk Support</h3>
@@ -998,7 +1008,7 @@
     </div>`;
   }
 
-  window.openNewRequestModal = function() {
+  window.openNewRequestModal = function () {
     const m = `<div class="modal-overlay" id="request-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
       <div class="modal" style="max-width:450px">
         <h3>New School Request</h3>
@@ -1021,26 +1031,26 @@
     document.body.insertAdjacentHTML('beforeend', m);
   }
 
-  window.submitStudentRequest = function() {
+  window.submitStudentRequest = function () {
     const type = document.getElementById('req-type').value;
     const title = document.getElementById('req-title').value;
-    if(!title) { simulateAction('Please provide a subject'); return; }
-    
+    if (!title) { simulateAction('Please provide a subject'); return; }
+
     const sid = sidFromUser(currentUser);
     const s = bySid(sid);
-    
+
     let reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]');
     reqs.unshift({
-        id: 'REQ-' + Math.floor(Math.random()*900+100),
-        title: title,
-        studentId: sid,
-        studentName: s.name,
-        type: type,
-        status: 'Pending',
-        stage: 'Teacher',
-        date: new Date().toISOString().split('T')[0]
+      id: 'REQ-' + Math.floor(Math.random() * 900 + 100),
+      title: title,
+      studentId: sid,
+      studentName: s.name,
+      type: type,
+      status: 'Pending',
+      stage: 'Teacher',
+      date: new Date().toISOString().split('T')[0]
     });
-    
+
     localStorage.setItem('campuscore_student_requests', JSON.stringify(reqs));
     document.getElementById('request-modal').remove();
     simulateAction('Request submitted successfully');

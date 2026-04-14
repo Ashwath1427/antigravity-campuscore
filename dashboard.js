@@ -19,7 +19,7 @@ function safeRender(name, builderFunc, user) {
     return html;
   } catch (e) {
     console.error(`[CampusCore] Render error in ${name}:`, e);
-    return `<div class="dash-section" id="section-${name.toLowerCase().replace(/\s+/g,'_')}">
+    return `<div class="dash-section" id="section-${name.toLowerCase().replace(/\s+/g, '_')}">
       <div class="card" style="border-left:4px solid var(--color-danger);padding:30px;text-align:center">
         <div style="font-size:40px;margin-bottom:15px;color:var(--color-danger)"><i class="fas fa-exclamation-triangle"></i></div>
         <h3 style="color:var(--color-danger);margin-bottom:10px">${name} Rendering Failed</h3>
@@ -37,6 +37,14 @@ function safeRender(name, builderFunc, user) {
   }
 }
 
+window.triggerLiveReRender = function () {
+  if (window.currentUser) {
+    buildDashboard(window.currentUser);
+    // If global-fixes.js navigation hook is active, it handles section retention.
+    // If not, we stay on 'home' or current.
+  }
+};
+
 /**
  * Borrows logic from another role context without mutating the primary user object.
  */
@@ -52,7 +60,7 @@ function renderWithRoleContext(user, role, builderFunc) {
 
 function buildDashboard(user) {
   const c = document.getElementById('content-area');
-  
+
   if (user.role === 'vice_principal') {
     c.innerHTML = [
       safeRender('Home', buildHome, user),
@@ -77,9 +85,9 @@ function buildDashboard(user) {
     c.innerHTML = safeRender('Parent Dashboard', window.buildParentDashboard || buildHome, user);
   } else if (user.role === 'coordinator') {
     c.innerHTML = [
-      buildCoordHome(user), buildCoordClasses(user), buildCoordIssues(user), 
+      buildCoordHome(user), buildCoordClasses(user), buildCoordIssues(user),
       buildStaffApprovals(user), buildDocumentUploadSection(user),
-      buildVPSchedule(user), buildAnnouncements(user), buildEvents(user), 
+      buildVPSchedule(user), buildAnnouncements(user), buildEvents(user),
       buildStaffHelpdesk(user), buildSettings(user)
     ].join('');
   } else if (user.role === 'teacher') {
@@ -92,7 +100,7 @@ function buildDashboard(user) {
         c.innerHTML = [
           buildTeacherHome(user), buildTeacherClasses(user), buildTeacherAttendance(user),
           buildTeacherHomework(user), buildTeacherSchedule(user), buildTeacherResults(user),
-          buildTeacherStudentPerf(user), buildDocumentUploadSection(user), 
+          buildTeacherStudentPerf(user), buildDocumentUploadSection(user),
           buildAnnouncements(user), buildEvents(user),
           buildTeacherMessages(user), buildStaffHelpdesk(user), buildSettings(user)
         ].join('');
@@ -101,7 +109,7 @@ function buildDashboard(user) {
       c.innerHTML = [
         buildTeacherHome(user), buildTeacherClasses(user), buildTeacherAttendance(user),
         buildTeacherHomework(user), buildTeacherSchedule(user), buildTeacherResults(user),
-        buildTeacherStudentPerf(user), buildDocumentUploadSection(user), 
+        buildTeacherStudentPerf(user), buildDocumentUploadSection(user),
         buildAnnouncements(user), buildEvents(user),
         buildTeacherMessages(user), buildStaffHelpdesk(user), buildSettings(user)
       ].join('');
@@ -124,55 +132,49 @@ function buildDashboard(user) {
       safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
       safeRender('Settings', buildSettings, user)
     ].join('');
-  } else if (user.role === 'apaaas' || String(user.username || '').toUpperCase() === 'APAAAS' || user.role === 'superadmin') {
+  } else if (user.role === 'apaaas' || String(user.username || '').toUpperCase() === 'APAAAS' || user.role === 'superadmin' || user.role === 'super_admin') {
     // Hardened SuperAdmin Render Logic
     c.innerHTML = [
-      renderWithRoleContext(user, 'principal', (u) => safeRender('Master Dashboard (Ghost Principal)', buildHome, u)).replace('id="section-home"', 'id="section-master_dashboard"'),
+      safeRender('Master Dashboard', buildHome, user),
       safeRender('Role Views', buildRoleViews, user),
       safeRender('All Issues', buildAllIssuesSuperAdmin, user),
       safeRender('All Accounts', buildAllAccounts, user),
       safeRender('Removed Bin', buildRemovedBin, user),
-      safeRender('All Notices', buildAnnouncements, user).replace('id="section-announcements"', 'id="section-all_notices"'),
-      safeRender('All Approvals', buildVPApprovals, user).replace('id="section-vp_approvals"', 'id="section-all_approvals"'),
+      safeRender('All Attendance', buildVPAttendance, user),
+      safeRender('All Results', buildVPClassPerf, user),
+      safeRender('All Approvals', buildVPApprovals, user),
       safeRender('Manage Documents', buildManageDocuments, user),
-      safeRender('All Attendance', buildVPAttendance, user).replace('id="section-vp_attendance"', 'id="section-all_attendance"'),
-      safeRender('All Results', buildVPExams, user).replace('id="section-vp_exams"', 'id="section-all_results"'),
-      safeRender('All Messages', buildVPMessages, user).replace('id="section-vp_messages"', 'id="section-all_messages"'),
-      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace('id="section-helpdesk_staff"', 'id="section-all_helpdesk"'),
       safeRender('Settings', buildSettings, user)
     ].join('');
-    setTimeout(translateSuperAdminUI, 0);
   } else {
+
     c.innerHTML = [
-      safeRender('Home', buildHome, user), 
-      safeRender('Profile', buildProfile, user), 
+      safeRender('Home', buildHome, user),
+      safeRender('Profile', buildProfile, user),
       safeRender('Students', buildStudents, user),
-      safeRender('Teachers', buildTeachers, user), 
-      safeRender('Schedule', buildSchedule, user), 
+      safeRender('Teachers', buildTeachers, user),
+      safeRender('Schedule', buildSchedule, user),
       safeRender('Attendance', buildAttendance, user),
-      safeRender('Homework', buildHomework, user), 
-      safeRender('Results', buildResults, user), 
+      safeRender('Homework', buildHomework, user),
+      safeRender('Results', buildResults, user),
       safeRender('Fees', buildFees, user),
-      safeRender('Announcements', buildAnnouncements, user), 
-      safeRender('Events', buildEvents, user), 
+      safeRender('Announcements', buildAnnouncements, user),
+      safeRender('Events', buildEvents, user),
       safeRender('Settings', buildSettings, user),
     ].join('');
   }
 }
 
 function renderWithRoleContext(user, targetRole, renderFn) {
-    const originalRole = user.role;
-    user.role = targetRole;
-    try {
-        return renderFn(user);
-    } finally {
-        user.role = originalRole;
-    }
+  const originalRole = user.role;
+  user.role = targetRole;
+  try {
+    return renderFn(user);
+  } finally {
+    user.role = originalRole;
+  }
 }
 
-function triggerLiveReRender() {
-  if (typeof buildDashboard === 'function') buildDashboard(currentUser);
-}
 
 function resetSystemLanguage() {
   localStorage.removeItem('cc_sys_lang');
@@ -184,12 +186,12 @@ function resetSystemLanguage() {
 
 /* ━━━━ HOME ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildHome(user) {
-  const cfg = ROLE_HOME[user.role] || ROLE_HOME[user.role.toLowerCase().replace(' ', '_')] || { 
-    greeting: `Welcome, ${user.name}!`, 
-    subtitle: "Dashboard summary", 
-    stats: [] 
+  const cfg = ROLE_HOME[user.role] || ROLE_HOME[user.role.toLowerCase().replace(' ', '_')] || {
+    greeting: `Welcome, ${user.name}!`,
+    subtitle: "Dashboard summary",
+    stats: []
   };
-  
+
   const greeting = getGreeting();
   const dateStr = getFormattedDate();
   const firstName = user.name.split(' ')[0];
@@ -198,7 +200,7 @@ function buildHome(user) {
   if (user.role === 'vice_principal') {
     const totalIssues = GLOBAL_ISSUES.filter(i => i.status !== 'Resolved' && i.status !== 'Closed').length;
     const escalated = GLOBAL_ISSUES.filter(i => i.stage === 'VP' && i.status !== 'Resolved' && i.status !== 'Closed').length;
-    
+
     calculatedStats = [
       { label: "Active Escalations", value: escalated.toString(), icon: "🚨" },
       { label: "Total Open Issues", value: totalIssues.toString(), icon: "📋" },
@@ -284,8 +286,8 @@ function buildHome(user) {
     ]
   };
   const quickActions = (qaMap[user.role] || []).map(qa => {
-    let target = qa.target || (qa.label.toLowerCase().includes('attend')?'attendance':qa.label.toLowerCase().includes('student')?'students':qa.label.toLowerCase().includes('homework')||qa.label.toLowerCase().includes('assign')?'homework':qa.label.toLowerCase().includes('result')||qa.label.toLowerCase().includes('mark')||qa.label.toLowerCase().includes('report')?'results':qa.label.toLowerCase().includes('fee')||qa.label.toLowerCase().includes('pay')?'fees':qa.label.toLowerCase().includes('notice')?'announcements':qa.label.toLowerCase().includes('timetable')?'schedule':'home');
-    if(target==='_promote') return `<button class="quick-action-btn" onclick="promoteStudents()">
+    let target = qa.target || (qa.label.toLowerCase().includes('attend') ? 'attendance' : qa.label.toLowerCase().includes('student') ? 'students' : qa.label.toLowerCase().includes('homework') || qa.label.toLowerCase().includes('assign') ? 'homework' : qa.label.toLowerCase().includes('result') || qa.label.toLowerCase().includes('mark') || qa.label.toLowerCase().includes('report') ? 'results' : qa.label.toLowerCase().includes('fee') || qa.label.toLowerCase().includes('pay') ? 'fees' : qa.label.toLowerCase().includes('notice') ? 'announcements' : qa.label.toLowerCase().includes('timetable') ? 'schedule' : 'home');
+    if (target === '_promote') return `<button class="quick-action-btn" onclick="promoteStudents()">
       <div class="qa-icon" style="background:${qa.color}"><i class="fas ${qa.icon}"></i></div>
       <span class="qa-label">${qa.label}</span>
     </button>`;
@@ -297,7 +299,7 @@ function buildHome(user) {
 
   // Notices
   const notices = ANNOUNCEMENTS.slice(0, 4).map(a => {
-    const catColors = { Events:'#5ca870', Academic:'#1976d2', Meeting:'#f57c00', Finance:'#d32f2f', Holiday:'#8b5cf6', CCA:'#00bcd4' };
+    const catColors = { Events: '#5ca870', Academic: '#1976d2', Meeting: '#f57c00', Finance: '#d32f2f', Holiday: '#8b5cf6', CCA: '#00bcd4' };
     const col = catColors[a.category] || '#5ca870';
     return `<li class="activity-item" style="cursor:pointer" onclick="navigateTo('announcements')">
       <div class="activity-dot" style="background:${col}"></div>
@@ -399,9 +401,9 @@ function buildProfile(user) {
       <div class="profile-info"><h2>${user.name}</h2><p>${user.email}</p><p>${user.department}</p><div class="profile-role-chip">${user.roleLabel}</div></div>
     </div>
     <div class="profile-grid">
-      <div class="card"><h3>👤 Personal Info</h3>${pRow('Full Name',user.name)}${pRow('User ID',user.username)}${pRow('Email',user.email)}${pRow('Phone',user.phone)}${pRow('Joined',user.joined)}</div>
-      <div class="card"><h3>🏫 School Info</h3>${pRow('Role',user.roleLabel)}${pRow('Department',user.department)}${pRow('Employee ID','DPS-'+String(user.id).padStart(4,'0'))}${pRow('Status','<span style="color:#5ca870;font-weight:700">● Active</span>')}</div>
-      <div class="card"><h3>🔒 Account Security</h3>${pRow('Password','••••••••')}${pRow('2-Factor Auth','<span style="color:var(--color-text-muted)">Not enabled</span>')}${pRow('Last Login','Just now')}${pRow('Session','<span style="color:#5ca870;font-weight:700">Active</span>')}</div>
+      <div class="card"><h3>👤 Personal Info</h3>${pRow('Full Name', user.name)}${pRow('User ID', user.username)}${pRow('Email', user.email)}${pRow('Phone', user.phone)}${pRow('Joined', user.joined)}</div>
+      <div class="card"><h3>🏫 School Info</h3>${pRow('Role', user.roleLabel)}${pRow('Department', user.department)}${pRow('Employee ID', 'DPS-' + String(user.id).padStart(4, '0'))}${pRow('Status', '<span style="color:#5ca870;font-weight:700">● Active</span>')}</div>
+      <div class="card"><h3>🔒 Account Security</h3>${pRow('Password', '••••••••')}${pRow('2-Factor Auth', '<span style="color:var(--color-text-muted)">Not enabled</span>')}${pRow('Last Login', 'Just now')}${pRow('Session', '<span style="color:#5ca870;font-weight:700">Active</span>')}</div>
     </div>
   </div>`;
 }
@@ -409,7 +411,7 @@ function buildProfile(user) {
 
 /* ━━━━ STUDENTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildStudents(user) {
-  const rows = STUDENTS.map((s,i)=>`<tr>
+  const rows = STUDENTS.map((s, i) => `<tr>
     <td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>Adm: ${s.admNo}</span></div></div></td>
     <td>${s.class}</td><td>${s.roll}</td><td>${s.gender}</td>
     <td><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar" style="flex:1;min-width:60px"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div><strong style="color:${attColor(s.attendance)};font-size:12px">${s.attendance}%</strong></div></td>
@@ -423,36 +425,36 @@ function buildStudents(user) {
     </div>
     <div style="overflow-x:auto;border-radius:14px"><table class="data-table" id="students-table"><thead><tr><th>Student</th><th>Class</th><th>Roll</th><th>Gender</th><th>Attendance</th><th>Behavior</th><th>Fee</th><th>GPA</th></tr></thead><tbody id="students-tbody">${rows}</tbody></table></div></div></div>`;
 }
-function filterStudents(q){const t=document.getElementById('students-tbody');if(!t)return;const s=q.toLowerCase();t.querySelectorAll('tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(s)?'':'none';});}
+function filterStudents(q) { const t = document.getElementById('students-tbody'); if (!t) return; const s = q.toLowerCase(); t.querySelectorAll('tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(s) ? '' : 'none'; }); }
 
 /* ━━━━ TEACHERS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildTeachers(user) {
-  const rows = TEACHERS.map((t,i)=>`<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i+3)}">${getInitials(t.name)}</div><div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div></div></td><td>${t.subject}</td><td>${t.classes}</td><td>${t.exp}</td><td>${t.phone}</td><td><span class="badge ${t.status==='Active'?'badge-active':'badge-warning'}">${t.status}</span></td></tr>`).join('');
-  return `<div class="dash-section" id="section-teachers"><div class="card"><h3>👨‍🏫 Teaching Staff</h3><p style="color:var(--color-text-muted);margin-bottom:16px">${TEACHERS.length} teachers · ${TEACHERS.filter(t=>t.status==='Active').length} active</p><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Teacher</th><th>Subject</th><th>Classes</th><th>Experience</th><th>Phone</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div></div>`;
+  const rows = TEACHERS.map((t, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i + 3)}">${getInitials(t.name)}</div><div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div></div></td><td>${t.subject}</td><td>${t.classes}</td><td>${t.exp}</td><td>${t.phone}</td><td><span class="badge ${t.status === 'Active' ? 'badge-active' : 'badge-warning'}">${t.status}</span></td></tr>`).join('');
+  return `<div class="dash-section" id="section-teachers"><div class="card"><h3>👨‍🏫 Teaching Staff</h3><p style="color:var(--color-text-muted);margin-bottom:16px">${TEACHERS.length} teachers · ${TEACHERS.filter(t => t.status === 'Active').length} active</p><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Teacher</th><th>Subject</th><th>Classes</th><th>Experience</th><th>Phone</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div></div>`;
 }
 
 /* ━━━━ SCHEDULE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildSchedule(user) {
-  const rows = SCHEDULE.map(s=>`<div class="schedule-item"><div class="schedule-time">${s.time}</div><div class="schedule-bar" style="background:${s.color}"></div><div class="schedule-info"><div class="schedule-subject">${s.subject}</div><div class="schedule-meta">${s.class} · ${s.teacher}</div></div><div class="schedule-room">${s.room}</div></div>`).join('');
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat'];
-  const btns=days.map((d,i)=>`<button onclick="setActiveDay(this)" style="padding:8px 16px;border:2px solid ${i===0?'var(--color-primary)':'var(--color-border)'};border-radius:10px;background:${i===0?'var(--color-primary)':'var(--color-surface)'};color:${i===0?'white':'var(--color-text-light)'};font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s">${d}</button>`).join('');
+  const rows = SCHEDULE.map(s => `<div class="schedule-item"><div class="schedule-time">${s.time}</div><div class="schedule-bar" style="background:${s.color}"></div><div class="schedule-info"><div class="schedule-subject">${s.subject}</div><div class="schedule-meta">${s.class} · ${s.teacher}</div></div><div class="schedule-room">${s.room}</div></div>`).join('');
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const btns = days.map((d, i) => `<button onclick="setActiveDay(this)" style="padding:8px 16px;border:2px solid ${i === 0 ? 'var(--color-primary)' : 'var(--color-border)'};border-radius:10px;background:${i === 0 ? 'var(--color-primary)' : 'var(--color-surface)'};color:${i === 0 ? 'white' : 'var(--color-text-light)'};font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s">${d}</button>`).join('');
   return `<div class="dash-section" id="section-schedule"><div class="card"><h3>📅 Class Timetable</h3><div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">${btns}</div><p style="color:var(--color-text-muted);font-size:13px;margin-bottom:16px">${getFormattedDate()} · ${SCHEDULE.length} periods</p>${rows}</div></div>`;
 }
-function setActiveDay(b){b.parentElement.querySelectorAll('button').forEach(x=>{x.style.background='var(--color-surface)';x.style.color='var(--color-text-light)';x.style.borderColor='var(--color-border)';});b.style.background='var(--color-primary)';b.style.color='white';b.style.borderColor='var(--color-primary)';}
+function setActiveDay(b) { b.parentElement.querySelectorAll('button').forEach(x => { x.style.background = 'var(--color-surface)'; x.style.color = 'var(--color-text-light)'; x.style.borderColor = 'var(--color-border)'; }); b.style.background = 'var(--color-primary)'; b.style.color = 'white'; b.style.borderColor = 'var(--color-primary)'; }
 
 /* ━━━━ ATTENDANCE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildAttendance(user) {
   const a = ATTENDANCE_SUMMARY;
   const f_class = localStorage.getItem('admin_att_f_class') || 'All';
   const f_sect = localStorage.getItem('admin_att_f_sect') || 'All';
-  
-  const classData = [['Class 10-A',95,'#5ca870'],['Class 9-B',88,'#1976d2'],['Class 8-B',84,'#f57c00'],['Class 7-A',91,'#8b5cf6'],['Class 6-B',76,'#d32f2f']];
-  
-  let filteredStudents = [...STUDENTS];
-  if (f_class !== 'All') filteredStudents = filteredStudents.filter(s => s.class.startsWith(f_class));
-  if (f_sect !== 'All') filteredStudents = filteredStudents.filter(s => s.class.endsWith(f_sect));
 
-  const studentRows = filteredStudents.length ? filteredStudents.map((s,i) => `
+  const classData = [['Class 10-A', 95, '#5ca870'], ['Class 9-B', 88, '#1976d2'], ['Class 8-B', 84, '#f57c00'], ['Class 7-A', 91, '#8b5cf6'], ['Class 6-B', 76, '#d32f2f']];
+
+  let filteredStudents = [...STUDENTS];
+  if (f_class !== 'All') filteredStudents = filteredStudents.filter(s => String(s.class || '').startsWith(f_class));
+  if (f_sect !== 'All') filteredStudents = filteredStudents.filter(s => String(s.class || '').endsWith(f_sect));
+
+  const studentRows = filteredStudents.length ? filteredStudents.map((s, i) => `
     <tr>
       <td>
         <div class="user-row">
@@ -466,23 +468,23 @@ function buildAttendance(user) {
           <strong style="color:${attColor(s.attendance)};font-size:12px">${s.attendance}%</strong>
         </div>
       </td>
-      <td><span class="badge ${s.attendance>=90?'badge-excellent':s.attendance>=80?'badge-good':'badge-danger'}">${s.attendance>=90?'Excellent':s.attendance>=80?'Good':'Low'}</span></td>
+      <td><span class="badge ${s.attendance >= 90 ? 'badge-excellent' : s.attendance >= 80 ? 'badge-good' : 'badge-danger'}">${s.attendance >= 90 ? 'Excellent' : s.attendance >= 80 ? 'Good' : 'Low'}</span></td>
     </tr>`).join('') : `<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--color-text-muted)">No matching records found</td></tr>`;
 
   return `<div class="dash-section" id="section-attendance">
     <div style="display:flex;gap:15px;margin-bottom:20px;background:var(--color-surface);padding:15px;border-radius:12px;border:1px solid var(--color-border);align-items:center">
       <div style="font-weight:700;color:var(--color-text-muted);font-size:13px"><i class="fas fa-filter"></i> FILTERS:</div>
       <select class="form-control" style="width:140px" onchange="localStorage.setItem('admin_att_f_class', this.value); triggerLiveReRender()">
-        <option value="All" ${f_class==='All'?'selected':''}>All Classes</option>
-        <option value="10" ${f_class==='10'?'selected':''}>Class 10</option>
-        <option value="9" ${f_class==='9'?'selected':''}>Class 9</option>
-        <option value="8" ${f_class==='8'?'selected':''}>Class 8</option>
+        <option value="All" ${f_class === 'All' ? 'selected' : ''}>All Classes</option>
+        <option value="10" ${f_class === '10' ? 'selected' : ''}>Class 10</option>
+        <option value="9" ${f_class === '9' ? 'selected' : ''}>Class 9</option>
+        <option value="8" ${f_class === '8' ? 'selected' : ''}>Class 8</option>
       </select>
       <select class="form-control" style="width:140px" onchange="localStorage.setItem('admin_att_f_sect', this.value); triggerLiveReRender()">
-        <option value="All" ${f_sect==='All'?'selected':''}>All Sections</option>
-        <option value="A" ${f_sect==='A'?'selected':''}>Section A</option>
-        <option value="B" ${f_sect==='B'?'selected':''}>Section B</option>
-        <option value="C" ${f_sect==='C'?'selected':''}>Section C</option>
+        <option value="All" ${f_sect === 'All' ? 'selected' : ''}>All Sections</option>
+        <option value="A" ${f_sect === 'A' ? 'selected' : ''}>Section A</option>
+        <option value="B" ${f_sect === 'B' ? 'selected' : ''}>Section B</option>
+        <option value="C" ${f_sect === 'C' ? 'selected' : ''}>Section C</option>
       </select>
     </div>
     <div class="attendance-grid">
@@ -492,8 +494,8 @@ function buildAttendance(user) {
       <div class="attendance-stat late"><div class="attendance-stat-number">${a.late_today}</div><div class="attendance-stat-label">Late</div></div>
     </div>
     <div class="content-grid-equal">
-      <div class="card"><h3>📊 Class-wise Attendance</h3>${classData.map(([c,p,col])=>`<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-weight:700;font-size:14px;color:var(--color-text)">${c}</span><span style="font-weight:800;color:${col}">${p}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${col}"></div></div></div>`).join('')}</div>
-      <div class="card"><h3>📈 Weekly Trend</h3><div style="display:flex;align-items:flex-end;gap:12px;height:180px;padding-top:20px">${a.weekly.map(d=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><span style="font-size:11px;font-weight:700;color:${attColor(d.present)}">${d.present}%</span><div style="width:100%;background:${attColor(d.present)};border-radius:8px 8px 0 0;height:${d.present}%;transition:height 0.8s"></div><span style="font-size:10px;color:var(--color-text-muted);font-weight:700">${d.day}</span></div>`).join('')}</div></div>
+      <div class="card"><h3>📊 Class-wise Attendance</h3>${classData.map(([c, p, col]) => `<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-weight:700;font-size:14px;color:var(--color-text)">${c}</span><span style="font-weight:800;color:${col}">${p}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${col}"></div></div></div>`).join('')}</div>
+      <div class="card"><h3>📈 Weekly Trend</h3><div style="display:flex;align-items:flex-end;gap:12px;height:180px;padding-top:20px">${a.weekly.map(d => `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><span style="font-size:11px;font-weight:700;color:${attColor(d.present)}">${d.present}%</span><div style="width:100%;background:${attColor(d.present)};border-radius:8px 8px 0 0;height:${d.present}%;transition:height 0.8s"></div><span style="font-size:10px;color:var(--color-text-muted);font-weight:700">${d.day}</span></div>`).join('')}</div></div>
     </div>
     <div class="card"><h3>📋 Student Records</h3><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Student</th><th>Attendance %</th><th>Status</th></tr></thead><tbody>${studentRows}</tbody></table></div></div>
   </div>`;
@@ -501,20 +503,22 @@ function buildAttendance(user) {
 
 /* ━━━━ HOMEWORK ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildHomework(user) {
-  const cards=HOMEWORK.map(h=>{const p=Math.round((h.submitted/h.total)*100);return `<div class="card" style="padding:24px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span class="badge badge-info" style="font-size:10px">${h.subject}</span><span class="badge ${h.status==='Completed'?'badge-active':'badge-pending'}" style="font-size:10px">${h.status}</span></div>
+  const cards = HOMEWORK.map(h => {
+    const p = Math.round((h.submitted / h.total) * 100); return `<div class="card" style="padding:24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span class="badge badge-info" style="font-size:10px">${h.subject}</span><span class="badge ${h.status === 'Completed' ? 'badge-active' : 'badge-pending'}" style="font-size:10px">${h.status}</span></div>
     <h4 style="color:var(--color-text);font-size:15px;font-weight:700;margin-bottom:10px;line-height:1.4">${h.title}</h4>
     <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:14px">👨‍🏫 ${h.teacher} · 🏫 ${h.class} · 📅 Due: ${h.due}</div>
     <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px"><span style="color:var(--color-text-muted)">Submissions</span><strong>${h.submitted}/${h.total}</strong></div>
     <div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div>
-    <div style="text-align:right;font-size:12px;font-weight:700;color:var(--color-primary);margin-top:6px">${p}%</div></div>`;}).join('');
-  return `<div class="dash-section" id="section-homework"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px"><span style="font-size:14px;color:var(--color-text-muted)">${HOMEWORK.length} assignments · ${HOMEWORK.filter(h=>h.status==='Active').length} active</span><button class="btn-primary" onclick="simulateAction('New Assignment modal opened. Select class, subject and due date.')"><i class="fas fa-plus"></i> New Assignment</button></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">${cards}</div></div>`;
+    <div style="text-align:right;font-size:12px;font-weight:700;color:var(--color-primary);margin-top:6px">${p}%</div></div>`;
+  }).join('');
+  return `<div class="dash-section" id="section-homework"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px"><span style="font-size:14px;color:var(--color-text-muted)">${HOMEWORK.length} assignments · ${HOMEWORK.filter(h => h.status === 'Active').length} active</span><button class="btn-primary" onclick="simulateAction('New Assignment modal opened. Select class, subject and due date.')"><i class="fas fa-plus"></i> New Assignment</button></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">${cards}</div></div>`;
 }
 
 /* ━━━━ RESULTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildResults(user) {
-  const total=MARKS.reduce((a,m)=>a+m.marks,0), maxT=MARKS.reduce((a,m)=>a+m.max,0), pct=Math.round((total/maxT)*100);
-  const rows=MARKS.map(m=>`<tr><td style="font-weight:700">${m.subject}</td><td><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${m.marks}%;background:${gradeColor(m.grade)}"></div></div><strong style="color:${gradeColor(m.grade)}">${m.marks}</strong>/${m.max}</div></td><td><span class="badge" style="background:${gradeColor(m.grade)};font-size:11px;padding:4px 12px">${m.grade}</span></td></tr>`).join('');
+  const total = MARKS.reduce((a, m) => a + m.marks, 0), maxT = MARKS.reduce((a, m) => a + m.max, 0), pct = Math.round((total / maxT) * 100);
+  const rows = MARKS.map(m => `<tr><td style="font-weight:700">${m.subject}</td><td><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${m.marks}%;background:${gradeColor(m.grade)}"></div></div><strong style="color:${gradeColor(m.grade)}">${m.marks}</strong>/${m.max}</div></td><td><span class="badge" style="background:${gradeColor(m.grade)};font-size:11px;padding:4px 12px">${m.grade}</span></td></tr>`).join('');
   return `<div class="dash-section" id="section-results"><div class="content-grid">
     <div class="card"><h3>📊 Subject-wise Marks</h3><p style="color:var(--color-text-muted);margin-bottom:16px">Mid-Term Exam 2026 · KASULA ASHWATH (Class 9-C)</p><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Subject</th><th>Marks</th><th>Grade</th></tr></thead><tbody>${rows}</tbody></table></div></div>
     <div><div class="card" style="text-align:center"><h3>🏆 Overall Score</h3><div style="font-size:60px;font-weight:900;background:linear-gradient(135deg,var(--color-primary),#1976d2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin:10px 0">${pct}%</div><div style="font-size:15px;color:var(--color-text-muted);margin-bottom:16px">${total}/${maxT}</div><div class="progress-bar" style="margin-bottom:16px"><div class="progress-fill" style="width:${pct}%"></div></div><div style="padding:14px;background:rgba(92,168,112,0.1);border-radius:12px;border:2px solid rgba(92,168,112,0.2)"><div style="font-size:20px;font-weight:900;color:var(--color-primary)">DISTINCTION</div><div style="font-size:13px;color:var(--color-text-muted)">Class Rank: 3/35</div></div></div></div>
@@ -523,22 +527,22 @@ function buildResults(user) {
 
 /* ━━━━ FEES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildFees(user) {
-  const pct=Math.round((FEE_DATA.paid/FEE_DATA.total_due)*100);
-  const rows=FEE_DATA.breakdown.map(f=>`<tr><td style="font-weight:600">${f.label}</td><td style="font-weight:700">₹${f.amount.toLocaleString('en-IN')}</td><td>${feeStatusBadge(f.status)}</td></tr>`).join('');
+  const pct = Math.round((FEE_DATA.paid / FEE_DATA.total_due) * 100);
+  const rows = FEE_DATA.breakdown.map(f => `<tr><td style="font-weight:600">${f.label}</td><td style="font-weight:700">₹${f.amount.toLocaleString('en-IN')}</td><td>${feeStatusBadge(f.status)}</td></tr>`).join('');
   return `<div class="dash-section" id="section-fees">
     <div class="attendance-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="attendance-stat present"><div class="attendance-stat-number">₹${(FEE_DATA.paid/1000).toFixed(0)}K</div><div class="attendance-stat-label">Paid</div></div>
-      <div class="attendance-stat late"><div class="attendance-stat-number">₹${(FEE_DATA.pending/1000).toFixed(0)}K</div><div class="attendance-stat-label">Pending</div></div>
-      <div class="attendance-stat total"><div class="attendance-stat-number">₹${(FEE_DATA.total_due/1000).toFixed(0)}K</div><div class="attendance-stat-label">Total Due</div></div>
+      <div class="attendance-stat present"><div class="attendance-stat-number">₹${(FEE_DATA.paid / 1000).toFixed(0)}K</div><div class="attendance-stat-label">Paid</div></div>
+      <div class="attendance-stat late"><div class="attendance-stat-number">₹${(FEE_DATA.pending / 1000).toFixed(0)}K</div><div class="attendance-stat-label">Pending</div></div>
+      <div class="attendance-stat total"><div class="attendance-stat-number">₹${(FEE_DATA.total_due / 1000).toFixed(0)}K</div><div class="attendance-stat-label">Total Due</div></div>
     </div>
     <div class="content-grid"><div class="card"><h3>💰 Fee Breakdown</h3><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Component</th><th>Amount</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div>
-    <div><div class="card" style="text-align:center"><h3>📊 Payment Progress</h3><div class="fee-donut" style="background:conic-gradient(var(--color-primary) ${pct*3.6}deg,var(--color-border) 0);box-shadow:inset 0 0 0 30px var(--color-surface)"><div><div style="font-size:28px;font-weight:900;color:var(--color-text)">${pct}%</div><div style="font-size:11px;color:var(--color-text-muted)">Paid</div></div></div><div style="font-size:13px;color:var(--color-text-muted);margin-bottom:16px">Next due: <strong>${FEE_DATA.next_due}</strong></div><button class="btn-primary" style="width:100%"><i class="fas fa-credit-card"></i> Pay Now</button></div></div></div></div>`;
+    <div><div class="card" style="text-align:center"><h3>📊 Payment Progress</h3><div class="fee-donut" style="background:conic-gradient(var(--color-primary) ${pct * 3.6}deg,var(--color-border) 0);box-shadow:inset 0 0 0 30px var(--color-surface)"><div><div style="font-size:28px;font-weight:900;color:var(--color-text)">${pct}%</div><div style="font-size:11px;color:var(--color-text-muted)">Paid</div></div></div><div style="font-size:13px;color:var(--color-text-muted);margin-bottom:16px">Next due: <strong>${FEE_DATA.next_due}</strong></div><button class="btn-primary" style="width:100%"><i class="fas fa-credit-card"></i> Pay Now</button></div></div></div></div>`;
 }
 
 /* ━━━━ ANNOUNCEMENTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildAnnouncements(user) {
-  const catC={Events:'#5ca870',Academic:'#1976d2',Meeting:'#f57c00',Finance:'#d32f2f',Holiday:'#8b5cf6',CCA:'#00bcd4'};
-  const priC={high:'#d32f2f',medium:'#f57c00',low:'#5ca870'};
+  const catC = { Events: '#5ca870', Academic: '#1976d2', Meeting: '#f57c00', Finance: '#d32f2f', Holiday: '#8b5cf6', CCA: '#00bcd4' };
+  const priC = { high: '#d32f2f', medium: '#f57c00', low: '#5ca870' };
   let liveAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
   let archivedAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
   const vpNoticeTab = localStorage.getItem('vp_notice_tab') || 'active';
@@ -546,15 +550,15 @@ function buildAnnouncements(user) {
   const parentShared = (parentSid && typeof getStudentSharedData === 'function') ? getStudentSharedData(parentSid) : null;
   const readSet = new Set((parentShared && parentShared.noticesRead) || []);
   const source = user.role === 'vice_principal' && vpNoticeTab === 'archived' ? archivedAnnouncements : liveAnnouncements;
-  const cards=source.map((a, index)=>{
-    const c=catC[a.category]||'#5ca870';
-    const p=priC[a.priority]||'#5ca870';
+  const cards = source.map((a, index) => {
+    const c = catC[a.category] || '#5ca870';
+    const p = priC[a.priority] || '#5ca870';
     const isUnread = user.role === 'parent' ? !readSet.has(String(a.id)) : false;
-    return `<div class="card" style="padding:0;overflow:hidden"><div style="height:5px;background:${p}"></div><div style="padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;gap:6px"><span class="badge" style="background:${c};font-size:10px;padding:4px 10px">${a.category}</span> ${user.role==='vice_principal'?`<span class="badge" style="background:var(--color-surface-2);color:var(--color-text);font-size:10px;border:1px solid var(--color-border)">Target: ${a.target || 'All'}</span>`:''} ${user.role==='parent' && isUnread?`<span class="badge badge-info" style="font-size:10px">Unread</span>`:''}</div><span style="font-size:10px;font-weight:800;color:${p};text-transform:uppercase;letter-spacing:1px">${a.priority}</span></div><h4 style="font-size:15px;font-weight:700;color:var(--color-text);margin-bottom:10px;line-height:1.4">${a.title}</h4><p style="font-size:13px;color:var(--color-text-light);margin-bottom:12px">${a.body || ''}</p><div style="font-size:12px;color:var(--color-text-muted);display:flex;gap:12px;margin-bottom:12px"><span>📅 Pub: ${a.date}</span><span>👤 ${a.author}</span></div>${user.role==='vice_principal' && vpNoticeTab==='active'?`<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-active" style="flex:1;text-align:center;font-size:11px">Published</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #1976d2;color:#1976d2;cursor:pointer" onclick="openNoticeModal(${index})"><i class="fas fa-edit"></i></button><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #999;color:#999;cursor:pointer" onclick="archiveNotice(${index})"><i class="fas fa-archive"></i></button></div>`:''}${user.role==='vice_principal' && vpNoticeTab==='archived'?`<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-warning" style="flex:1;text-align:center;font-size:11px">Archived</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid var(--color-primary);color:var(--color-primary);cursor:pointer" onclick="restoreNotice(${index})"><i class="fas fa-undo"></i></button></div>`:''}${user.role==='parent'?`<button class="btn-primary" style="width:100%" onclick="parentReadNotice('${a.id}')">Read More</button>`:''}</div></div>`;
+    return `<div class="card" style="padding:0;overflow:hidden"><div style="height:5px;background:${p}"></div><div style="padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;gap:6px"><span class="badge" style="background:${c};font-size:10px;padding:4px 10px">${a.category}</span> ${user.role === 'vice_principal' ? `<span class="badge" style="background:var(--color-surface-2);color:var(--color-text);font-size:10px;border:1px solid var(--color-border)">Target: ${a.target || 'All'}</span>` : ''} ${user.role === 'parent' && isUnread ? `<span class="badge badge-info" style="font-size:10px">Unread</span>` : ''}</div><span style="font-size:10px;font-weight:800;color:${p};text-transform:uppercase;letter-spacing:1px">${a.priority}</span></div><h4 style="font-size:15px;font-weight:700;color:var(--color-text);margin-bottom:10px;line-height:1.4">${a.title}</h4><p style="font-size:13px;color:var(--color-text-light);margin-bottom:12px">${a.body || ''}</p><div style="font-size:12px;color:var(--color-text-muted);display:flex;gap:12px;margin-bottom:12px"><span>📅 Pub: ${a.date}</span><span>👤 ${a.author}</span></div>${user.role === 'vice_principal' && vpNoticeTab === 'active' ? `<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-active" style="flex:1;text-align:center;font-size:11px">Published</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #1976d2;color:#1976d2;cursor:pointer" onclick="openNoticeModal(${index})"><i class="fas fa-edit"></i></button><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #999;color:#999;cursor:pointer" onclick="archiveNotice(${index})"><i class="fas fa-archive"></i></button></div>` : ''}${user.role === 'vice_principal' && vpNoticeTab === 'archived' ? `<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-warning" style="flex:1;text-align:center;font-size:11px">Archived</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid var(--color-primary);color:var(--color-primary);cursor:pointer" onclick="restoreNotice(${index})"><i class="fas fa-undo"></i></button></div>` : ''}${user.role === 'parent' ? `<button class="btn-primary" style="width:100%" onclick="parentReadNotice('${a.id}')">Read More</button>` : ''}</div></div>`;
   }).join('');
 
   return `<div class="dash-section" id="section-announcements">
-    ${user.role==='vice_principal'?`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap"><h3>📢 Broadcasting & Notices</h3><div style="display:flex;gap:8px"><button class="btn-primary" onclick="setVPNoticeTab('active')" style="${vpNoticeTab==='active'?'':'opacity:.75'}">Active</button><button class="btn-primary" onclick="setVPNoticeTab('archived')" style="${vpNoticeTab==='archived'?'':'opacity:.75'}">Archived</button><button class="btn-primary" style="padding:8px 16px" onclick="openNoticeModal(null)"><i class="fas fa-plus"></i> Create Notice</button></div></div>`:''}
+    ${user.role === 'vice_principal' ? `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap"><h3>📢 Broadcasting & Notices</h3><div style="display:flex;gap:8px"><button class="btn-primary" onclick="setVPNoticeTab('active')" style="${vpNoticeTab === 'active' ? '' : 'opacity:.75'}">Active</button><button class="btn-primary" onclick="setVPNoticeTab('archived')" style="${vpNoticeTab === 'archived' ? '' : 'opacity:.75'}">Archived</button><button class="btn-primary" style="padding:8px 16px" onclick="openNoticeModal(null)"><i class="fas fa-plus"></i> Create Notice</button></div></div>` : ''}
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px">${cards || `<div class="card"><p style="color:var(--color-text-muted)">No notices in this tab.</p></div>`}</div>
   </div>`;
 }
@@ -573,43 +577,43 @@ function parentReadNotice(noticeId) {
 }
 
 function buildEvents(user) {
-  const cards=EVENTS.map(e=>`<div class="event-card"><div class="event-bar" style="background:${e.color}"></div><div class="event-body"><div class="event-date" style="color:${e.color}"><i class="fas fa-calendar-alt"></i> ${e.date}</div><div class="event-title">${e.title}</div><div class="event-desc">${e.desc}</div>${user.role==='vice_principal'?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--color-border);font-size:12px;color:var(--color-text-muted)"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>👤 In-charge: A. Sharma</span> <span class="badge ${e.title.includes('Sports')?'badge-warning':'badge-active'}" style="font-size:10px">${e.title.includes('Sports')?'Stage 2/4':'Approved'}</span></div><div>👩‍🎓 Classes: 6A - 10L</div><div style="margin-top:8px;color:var(--color-primary);font-weight:600"><i class="fas fa-tasks"></i> Readiness: 80%</div></div>`:''}<button style="margin-top:12px;width:100%;padding:8px 18px;background:${e.color}15;color:${e.color};border:2px solid ${e.color}30;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" onmouseover="this.style.background='${e.color}';this.style.color='white'" onmouseout="this.style.background='${e.color}15';this.style.color='${e.color}'" onclick="simulateAction('Event master plan opened with full schedule.')" onclick="simulateAction('Event master plan opened with full schedule.')">View Event Master Plan</button></div></div>`).join('');
+  const cards = EVENTS.map(e => `<div class="event-card"><div class="event-bar" style="background:${e.color}"></div><div class="event-body"><div class="event-date" style="color:${e.color}"><i class="fas fa-calendar-alt"></i> ${e.date}</div><div class="event-title">${e.title}</div><div class="event-desc">${e.desc}</div>${user.role === 'vice_principal' ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--color-border);font-size:12px;color:var(--color-text-muted)"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>👤 In-charge: A. Sharma</span> <span class="badge ${e.title.includes('Sports') ? 'badge-warning' : 'badge-active'}" style="font-size:10px">${e.title.includes('Sports') ? 'Stage 2/4' : 'Approved'}</span></div><div>👩‍🎓 Classes: 6A - 10L</div><div style="margin-top:8px;color:var(--color-primary);font-weight:600"><i class="fas fa-tasks"></i> Readiness: 80%</div></div>` : ''}<button style="margin-top:12px;width:100%;padding:8px 18px;background:${e.color}15;color:${e.color};border:2px solid ${e.color}30;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" onmouseover="this.style.background='${e.color}';this.style.color='white'" onmouseout="this.style.background='${e.color}15';this.style.color='${e.color}'" onclick="simulateAction('Event master plan opened with full schedule.')" onclick="simulateAction('Event master plan opened with full schedule.')">View Event Master Plan</button></div></div>`).join('');
   return `<div class="dash-section" id="section-events"><div class="events-grid">${cards}</div></div>`;
 }
 
 /* ━━━━ SETTINGS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 function buildSettings(user) {
-  const pCard = user.role==='vice_principal'?`<div class="card" style="grid-column: 1 / -1; display:flex; gap: 20px; align-items:center; background:linear-gradient(135deg,rgba(25,118,210,0.1),transparent)">
+  const pCard = user.role === 'vice_principal' ? `<div class="card" style="grid-column: 1 / -1; display:flex; gap: 20px; align-items:center; background:linear-gradient(135deg,rgba(25,118,210,0.1),transparent)">
     <div class="avatar" style="width:80px;height:80px;font-size:32px;background:var(--color-primary)">${getInitials(user.name)}</div>
     <div>
       <h2 style="margin-bottom:6px;color:var(--color-text)">${user.name}</h2>
       <div style="font-size:14px;color:var(--color-text-muted);margin-bottom:6px"><strong>Role:</strong> ${user.roleLabel}</div>
       <div style="font-size:14px;color:var(--color-text-muted)"><strong>School:</strong> Delhi Public School, Nadergul</div>
     </div>
-  </div>`:'';
-  
+  </div>`: '';
+
   const set = getSettings(user.id);
-  
+
   return `<div class="dash-section" id="section-settings"><div class="settings-grid">
     ${pCard}
     <div class="card">
       <h3>🎨 Appearance</h3>
-      ${sToggle('Dark Mode','Switch between light and dark theme','s-dark', `handleSettingToggle('${user.id}', 'darkMode', this.checked); document.documentElement.setAttribute('data-theme', this.checked ? 'dark' : 'light');`, set.darkMode)}
-      ${sToggle('Compact Mode','Reduce spacing','compact', `handleSettingToggle('${user.id}', 'compactMode', this.checked); if(this.checked){document.documentElement.setAttribute('data-compact','true')}else{document.documentElement.removeAttribute('data-compact')}`, set.compactMode)}
+      ${sToggle('Dark Mode', 'Switch between light and dark theme', 's-dark', `handleSettingToggle('${user.id}', 'darkMode', this.checked); document.documentElement.setAttribute('data-theme', this.checked ? 'dark' : 'light');`, set.darkMode)}
+      ${sToggle('Compact Mode', 'Reduce spacing', 'compact', `handleSettingToggle('${user.id}', 'compactMode', this.checked); if(this.checked){document.documentElement.setAttribute('data-compact','true')}else{document.documentElement.removeAttribute('data-compact')}`, set.compactMode)}
     </div>
     <div class="card">
       <h3>🔔 Notifications</h3>
-      ${sToggle('Email Notifications','Receive updates via email','e-notif', `handleSettingToggle('${user.id}', 'emailNotif', this.checked)`, set.emailNotif)}
-      ${sToggle('Attendance Alerts','Alert on low attendance','att-a', `handleSettingToggle('${user.id}', 'attNotif', this.checked)`, set.attNotif)}
-      ${sToggle('Fee Reminders','Payment deadline alerts','fee-r', `handleSettingToggle('${user.id}', 'feeNotif', this.checked)`, set.feeNotif)}
-      ${sToggle('Homework Updates','New assignments','hw-u', `handleSettingToggle('${user.id}', 'hwNotif', this.checked)`, set.hwNotif)}
+      ${sToggle('Email Notifications', 'Receive updates via email', 'e-notif', `handleSettingToggle('${user.id}', 'emailNotif', this.checked)`, set.emailNotif)}
+      ${sToggle('Attendance Alerts', 'Alert on low attendance', 'att-a', `handleSettingToggle('${user.id}', 'attNotif', this.checked)`, set.attNotif)}
+      ${sToggle('Fee Reminders', 'Payment deadline alerts', 'fee-r', `handleSettingToggle('${user.id}', 'feeNotif', this.checked)`, set.feeNotif)}
+      ${sToggle('Homework Updates', 'New assignments', 'hw-u', `handleSettingToggle('${user.id}', 'hwNotif', this.checked)`, set.hwNotif)}
     </div>
     <div class="card">
       <h3>👤 Account</h3>
       <div style="display:flex;flex-direction:column;gap:10px">
-        ${sBtn('Change Password','fa-lock', `currentUser && (currentUser.role==='parent' || currentUser.role==='student') && typeof openUnifiedAccountPasswordModal==='function' ? openUnifiedAccountPasswordModal() : openGenericAccountPasswordModal()`)}
-        ${sBtn('Edit Profile','fa-user-edit', `currentUser && currentUser.role==='parent' ? openParentEditProfileModal() : openGenericProfileModal()`)}
+        ${sBtn('Change Password', 'fa-lock', `currentUser && (currentUser.role==='parent' || currentUser.role==='student') && typeof openUnifiedAccountPasswordModal==='function' ? openUnifiedAccountPasswordModal() : openGenericAccountPasswordModal()`)}
+        ${sBtn('Edit Profile', 'fa-user-edit', `currentUser && currentUser.role==='parent' ? openParentEditProfileModal() : openGenericProfileModal()`)}
         <div style="display:flex;gap:10px;margin-top:10px">
             <button class="btn-primary lang-btn" style="flex:1;font-size:12px;padding:10px" onclick="setSystemLanguage('English')">🇬🇧 English</button>
             <button class="btn-primary lang-btn" style="flex:1;font-size:12px;padding:10px" onclick="setSystemLanguage('Telugu')">🇮🇳 తెలుగు (Telugu)</button>
@@ -617,13 +621,13 @@ function buildSettings(user) {
         <button class="btn-primary" style="margin-top:10px; font-size:12px; padding:10px; background:var(--color-surface-3); border:1px dashed var(--color-border); color:var(--color-text)" onclick="resetSystemLanguage()">
             <i class="fas fa-undo"></i> Reset to English
         </button>
-        ${sBtn('Download My Data','fa-download', `currentUser && currentUser.role==='parent' ? downloadParentData() : downloadGenericUserData()`)}
+        ${sBtn('Download My Data', 'fa-download', `currentUser && currentUser.role==='parent' ? downloadParentData() : downloadGenericUserData()`)}
       </div>
     </div>
     <div class="card">
       <h3>🔒 Security</h3>
-      ${sToggle('Two-Factor Auth','Extra login security','2fa', `handleSettingToggle('${user.id}', 'twoFactor', this.checked); if(this.checked) simulateAction('2FA setup text sent to ' + currentUser.phone)`, set.twoFactor)}
-      ${user.role==='vice_principal' ? `<div class="settings-row"><div><div class="settings-label">Action PIN (Promote/Demote)</div><div class="settings-hint">Protect VP student actions with a PIN.</div></div><button class="btn-primary" style="padding:8px 14px" onclick="openChangeActionPinModal()">Change PIN</button></div>` : ''}
+      ${sToggle('Two-Factor Auth', 'Extra login security', '2fa', `handleSettingToggle('${user.id}', 'twoFactor', this.checked); if(this.checked) simulateAction('2FA setup text sent to ' + currentUser.phone)`, set.twoFactor)}
+      ${user.role === 'vice_principal' ? `<div class="settings-row"><div><div class="settings-label">Action PIN (Promote/Demote)</div><div class="settings-hint">Protect VP student actions with a PIN.</div></div><button class="btn-primary" style="padding:8px 14px" onclick="openChangeActionPinModal()">Change PIN</button></div>` : ''}
       <div style="margin-top:20px;padding:16px;background:rgba(211,47,47,0.06);border:2px solid rgba(211,47,47,0.15);border-radius:12px">
         <div style="font-size:14px;font-weight:700;color:var(--color-danger);margin-bottom:6px">⚠️ Session</div>
         <button class="btn-danger" style="margin-bottom:10px" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -641,29 +645,29 @@ function handleSettingToggle(userId, key, val) {
 function simulateAction(msg) {
   // Show a non-blocking toast instead of alert
   const existing = document.getElementById('sim-toast');
-  if(existing) existing.remove();
+  if (existing) existing.remove();
   const toast = document.createElement('div');
   toast.id = 'sim-toast';
   toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--color-primary);color:white;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:600;font-family:Inter,sans-serif;z-index:99999;box-shadow:0 8px 30px rgba(0,0,0,0.25);max-width:90vw;text-align:center;animation:fadeInUp 0.3s ease;pointer-events:none;';
   toast.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px"></i>' + msg;
   document.body.appendChild(toast);
-  setTimeout(() => { if(toast.parentNode) toast.remove(); }, 3500);
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3500);
 }
 
-function sToggle(l,h,id,oc,ch){
+function sToggle(l, h, id, oc, ch) {
   return `<div class="settings-row">
     <div>
       <div class="settings-label">${l}</div>
       <div class="settings-hint">${h}</div>
     </div>
     <label class="toggle-switch">
-      <input type="checkbox" id="${id}" ${ch?'checked':''} onchange="${oc.replace(/"/g, '&quot;')}"/>
+      <input type="checkbox" id="${id}" ${ch ? 'checked' : ''} onchange="${oc.replace(/"/g, '&quot;')}"/>
       <span class="toggle-slider"></span>
     </label>
   </div>`;
 }
 
-function sBtn(l,ic, oc=''){
+function sBtn(l, ic, oc = '') {
   return `<button onclick="${oc}" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface-2);border:2px solid var(--color-border);border-radius:10px;cursor:pointer;color:var(--color-text);font-size:13px;font-weight:600;font-family:Inter,sans-serif;transition:all 0.2s;text-align:left;width:100%" onmouseover="this.style.borderColor='var(--color-primary)'" onmouseout="this.style.borderColor='var(--color-border)'"><i class="fas ${ic}" style="color:var(--color-primary);width:18px"></i> ${l}<i class="fas fa-chevron-right" style="margin-left:auto;opacity:0.3;font-size:11px"></i></button>`;
 }
 /* ━━━━ VICE PRINCIPAL EXCLUSIVE MODULES ━━━━━━━━━━━━━━━━━━━ */
@@ -671,7 +675,7 @@ function sBtn(l,ic, oc=''){
 function buildVPAttendance(user) {
   const filterClass = localStorage.getItem('att_filter_class') || 'All';
   const filterSection = localStorage.getItem('att_filter_section') || 'All';
-  
+
   let filtered = STUDENTS;
   if (filterClass !== 'All') {
     filtered = filtered.filter(s => s.class.includes(filterClass));
@@ -680,19 +684,19 @@ function buildVPAttendance(user) {
     filtered = filtered.filter(s => s.class.includes(filterSection));
   }
 
-  const rows = filtered.map((s,i)=>`<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>${s.class}</span></div></div></td><td><div class="progress-bar"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div></td><td><strong style="color:${attColor(s.attendance)}">${s.attendance}%</strong></td><td>${s.attendance>=90?'Excellent':s.attendance>=80?'Good':'Low'}</td></tr>`).join('');
-  
+  const rows = filtered.map((s, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>${s.class}</span></div></div></td><td><div class="progress-bar"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div></td><td><strong style="color:${attColor(s.attendance)}">${s.attendance}%</strong></td><td>${s.attendance >= 90 ? 'Excellent' : s.attendance >= 80 ? 'Good' : 'Low'}</td></tr>`).join('');
+
   return `<div class="dash-section" id="section-vp_attendance">
     <div class="content-grid-equal" style="margin-bottom:20px">
       <div class="card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,rgba(92,168,112,0.1),transparent)">
         <h3 style="margin-bottom:10px">Overall Attendance</h3>
-        <div style="font-size:48px;font-weight:900;color:var(--color-primary)">${filtered.length ? (filtered.reduce((a,b)=>a+b.attendance,0)/filtered.length).toFixed(1) : 0}%</div>
+        <div style="font-size:48px;font-weight:900;color:var(--color-primary)">${filtered.length ? (filtered.reduce((a, b) => a + b.attendance, 0) / filtered.length).toFixed(1) : 0}%</div>
         <p style="color:var(--color-text-muted)">Tracking ${filtered.length} students in view</p>
       </div>
       <div class="card">
         <h3>🚨 Low Attendance Alerts</h3>
         <ul class="activity-list" style="margin-top:10px">
-          ${filtered.filter(s=>s.attendance < 85).slice(0,3).map(s=>`<li class="activity-item"><div class="activity-dot" style="background:var(--color-danger)"></div><div class="activity-text"><strong style="color:var(--color-text)">${s.name} (${s.class})</strong> - ${s.attendance}%</div></li>`).join('') || '<li class="activity-item"><div class="activity-text">No alerts for selected group</div></li>'}
+          ${filtered.filter(s => s.attendance < 85).slice(0, 3).map(s => `<li class="activity-item"><div class="activity-dot" style="background:var(--color-danger)"></div><div class="activity-text"><strong style="color:var(--color-text)">${s.name} (${s.class})</strong> - ${s.attendance}%</div></li>`).join('') || '<li class="activity-item"><div class="activity-text">No alerts for selected group</div></li>'}
         </ul>
       </div>
     </div>
@@ -701,18 +705,18 @@ function buildVPAttendance(user) {
         <h3>📈 Detailed Student Tracking</h3>
         <div style="display:flex;gap:10px">
           <select id="att-class-filter" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
-            <option value="All" ${filterClass==='All'?'selected':''}>All Classes</option>
-            <option value="10" ${filterClass==='10'?'selected':''}>Class 10</option>
-            <option value="9" ${filterClass==='9'?'selected':''}>Class 9</option>
-            <option value="8" ${filterClass==='8'?'selected':''}>Class 8</option>
-            <option value="7" ${filterClass==='7'?'selected':''}>Class 7</option>
-            <option value="6" ${filterClass==='6'?'selected':''}>Class 6</option>
+            <option value="All" ${filterClass === 'All' ? 'selected' : ''}>All Classes</option>
+            <option value="10" ${filterClass === '10' ? 'selected' : ''}>Class 10</option>
+            <option value="9" ${filterClass === '9' ? 'selected' : ''}>Class 9</option>
+            <option value="8" ${filterClass === '8' ? 'selected' : ''}>Class 8</option>
+            <option value="7" ${filterClass === '7' ? 'selected' : ''}>Class 7</option>
+            <option value="6" ${filterClass === '6' ? 'selected' : ''}>Class 6</option>
           </select>
           <select id="att-section-filter" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
-            <option value="All" ${filterSection==='All'?'selected':''}>All Sections</option>
-            <option value="A" ${filterSection==='A'?'selected':''}>Section A</option>
-            <option value="B" ${filterSection==='B'?'selected':''}>Section B</option>
-            <option value="C" ${filterSection==='C'?'selected':''}>Section C</option>
+            <option value="All" ${filterSection === 'All' ? 'selected' : ''}>All Sections</option>
+            <option value="A" ${filterSection === 'A' ? 'selected' : ''}>Section A</option>
+            <option value="B" ${filterSection === 'B' ? 'selected' : ''}>Section B</option>
+            <option value="C" ${filterSection === 'C' ? 'selected' : ''}>Section C</option>
           </select>
           <button class="btn-primary" style="padding:8px 16px" onclick="applyAttendanceFilter()"><i class="fas fa-filter"></i> Apply</button>
         </div>
@@ -731,13 +735,13 @@ function applyAttendanceFilter() {
 }
 
 function buildVPClassPerf(user) {
-  const rows = CLASS_PERFORMANCE.map(c=>`<tr onclick="openVPStudentAnalysis('${c.class}')" style="cursor:pointer">
+  const rows = CLASS_PERFORMANCE.map(c => `<tr onclick="openVPStudentAnalysis('${c.class}')" style="cursor:pointer">
     <td style="font-weight:700">${c.class}</td>
     <td>${c.teacher}</td>
     <td><strong style="color:${attColor(c.avgAtt)}">${c.avgAtt}%</strong></td>
     <td><strong style="color:var(--color-primary)">${c.avgGPA}</strong></td>
-    <td><span class="badge ${c.weak>3?'badge-danger':'badge-active'}">${c.weak}</span></td>
-    <td><span class="badge ${c.issues>1?'badge-warning':'badge-info'}">${c.issues}</span></td>
+    <td><span class="badge ${c.weak > 3 ? 'badge-danger' : 'badge-active'}">${c.weak}</span></td>
+    <td><span class="badge ${c.issues > 1 ? 'badge-warning' : 'badge-info'}">${c.issues}</span></td>
     <td>${c.topper}</td>
   </tr>`).join('');
   return `<div class="dash-section" id="section-vp_class_perf">
@@ -757,18 +761,18 @@ function buildVPClassPerf(user) {
   </div>`;
 }
 
-window.compareVPSections = function() {
-    simulateAction("Opening Cross-Section Comparison Matrix (Simulation Mode)");
+window.compareVPSections = function () {
+  simulateAction("Opening Cross-Section Comparison Matrix (Simulation Mode)");
 };
 
-window.exportVPReport = function() {
-    simulateAction("Generating PDF Performance Audit...");
-    setTimeout(() => simulateAction("Report downloaded: perf_audit_2026.pdf"), 1500);
+window.exportVPReport = function () {
+  simulateAction("Generating PDF Performance Audit...");
+  setTimeout(() => simulateAction("Report downloaded: perf_audit_2026.pdf"), 1500);
 };
 
-window.openVPStudentAnalysis = function(className) {
-    simulateAction(`Analyzing students for Class ${className}...`);
-    // Future: open a detailed modal with student analytics
+window.openVPStudentAnalysis = function (className) {
+  simulateAction(`Analyzing students for Class ${className}...`);
+  // Future: open a detailed modal with student analytics
 };
 
 function getActionPin() {
@@ -888,19 +892,19 @@ function buildVPStudents(user) {
   const students = window.CAMPUSCORE_REGISTRY
     ? window.CAMPUSCORE_REGISTRY.getAllStudents()
     : (STUDENTS || []).map(s => {
-        const shared = getVPStudentSharedData(s.admNo || s.id);
-        return {
-          id: s.admNo || s.id,
-          name: s.name,
-          currentClass: shared.currentClass || s.class || '9',
-          currentSection: shared.currentSection || s.section || 'C',
-          roll: s.roll || 0,
-          attendance: Number(shared.attendancePct || s.attendance || 0),
-          gpa: shared.results ? (shared.results.overall || 0) : (s.gpa || 0),
-          status: shared.status || 'Active',
-          sno: 0
-        };
-      });
+      const shared = getVPStudentSharedData(s.admNo || s.id);
+      return {
+        id: s.admNo || s.id,
+        name: s.name,
+        currentClass: shared.currentClass || s.class || '9',
+        currentSection: shared.currentSection || s.section || 'C',
+        roll: s.roll || 0,
+        attendance: Number(shared.attendancePct || s.attendance || 0),
+        gpa: shared.results ? (shared.results.overall || 0) : (s.gpa || 0),
+        status: shared.status || 'Active',
+        sno: 0
+      };
+    });
 
   let data = students.map((s, idx) => {
     const sid = String(s.id);
@@ -963,10 +967,10 @@ function buildVPStudents(user) {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap"><h3>🎓 Student Analysis</h3></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <select id="vp-filter-class" class="form-control" style="max-width:160px" onchange="onVPAnalysisClassChange(this.value)">
-          <option ${selectedClass==='All Classes'?'selected':''}>All Classes</option>
-          <option ${selectedClass==='6'?'selected':''}>6</option><option ${selectedClass==='7'?'selected':''}>7</option><option ${selectedClass==='8'?'selected':''}>8</option><option ${selectedClass==='9'?'selected':''}>9</option><option ${selectedClass==='10'?'selected':''}>10</option>
+          <option ${selectedClass === 'All Classes' ? 'selected' : ''}>All Classes</option>
+          <option ${selectedClass === '6' ? 'selected' : ''}>6</option><option ${selectedClass === '7' ? 'selected' : ''}>7</option><option ${selectedClass === '8' ? 'selected' : ''}>8</option><option ${selectedClass === '9' ? 'selected' : ''}>9</option><option ${selectedClass === '10' ? 'selected' : ''}>10</option>
         </select>
-        <select id="vp-filter-section" class="form-control" style="max-width:160px">${['All Sections', ...allSections].map(sec => `<option ${selectedSection===sec?'selected':''}>${sec}</option>`).join('')}</select>
+        <select id="vp-filter-section" class="form-control" style="max-width:160px">${['All Sections', ...allSections].map(sec => `<option ${selectedSection === sec ? 'selected' : ''}>${sec}</option>`).join('')}</select>
         <input id="vp-filter-query" class="form-control" style="min-width:220px;flex:1" placeholder="Search by student name or ID" value="${String(filter.q || '').replace(/"/g, '&quot;')}">
         <button class="btn-primary" onclick="applyVPStudentFilters()">Apply Filter</button>
         <button class="btn-primary" style="background:var(--color-surface-2);border-color:var(--color-border);color:var(--color-text)" onclick="clearVPStudentFilters()">Clear Filter</button>
@@ -1015,7 +1019,7 @@ function openVPStudentProfileModal(studentId) {
   const esc = getEscalationStore();
   const issueHistory = [...esc.teacherInbox, ...esc.coordinatorInbox, ...esc.vpEscalated, ...esc.resolvedIssues].filter(i => String(i.studentId) === sid);
   const marksRows = marks.length ? marks.map(m => `<tr><td>${m.subject || '-'}</td><td>${m.marks || m.score || 0}</td><td>${m.total || 100}</td><td>${m.percent || m.pct || 0}%</td></tr>`).join('') : `<tr><td colspan="4" style="text-align:center;color:var(--color-text-muted)">No marks data</td></tr>`;
-  const hwRows = hw.length ? hw.map(h => `<li>${h.subject || '-'} · ${h.title || '-'} <span class="badge ${h.status==='Submitted'?'badge-success':h.status==='Overdue'?'badge-danger':'badge-warning'}">${h.status || 'Pending'}</span></li>`).join('') : '<li style="color:var(--color-text-muted)">No homework data</li>';
+  const hwRows = hw.length ? hw.map(h => `<li>${h.subject || '-'} · ${h.title || '-'} <span class="badge ${h.status === 'Submitted' ? 'badge-success' : h.status === 'Overdue' ? 'badge-danger' : 'badge-warning'}">${h.status || 'Pending'}</span></li>`).join('') : '<li style="color:var(--color-text-muted)">No homework data</li>';
   const issueRows = issueHistory.length ? issueHistory.map(i => `<li>${i.id} · ${i.category || '-'} · ${i.status || '-'} <button class="btn-primary" style="padding:2px 8px;font-size:11px;margin-left:6px" onclick="openEscalationTimelineModal('${i.id}')">Timeline</button></li>`).join('') : '<li style="color:var(--color-text-muted)">No issue history</li>';
   const html = `<div class="modal-overlay" id="vp-student-profile-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:760px;width:100%"><h3 style="margin-top:0">${s.name} · ${sid}</h3><div class="content-grid"><div><p><strong>Class:</strong> ${grade}</p><p><strong>Section:</strong> ${section}</p><p><strong>Roll No:</strong> ${s.roll || '-'}</p><p><strong>Attendance:</strong> ${Number(shared.attendancePct || s.attendance || 0)}%</p><p><strong>Status:</strong> ${shared.status || 'Active'}</p></div><div><p><strong>House:</strong> ${shared.profile?.house || 'Red'}</p><p><strong>Blood Group:</strong> ${shared.profile?.bloodGroup || 'O+'}</p><p><strong>DOB:</strong> ${shared.profile?.dob || s.dob || '-'}</p></div></div><h4>Subject-wise Marks</h4><div style="overflow:auto;border:1px solid var(--color-border);border-radius:10px"><table class="data-table"><thead><tr><th>Subject</th><th>Marks</th><th>Total</th><th>%</th></tr></thead><tbody>${marksRows}</tbody></table></div><h4 style="margin-top:10px">Recent Homework</h4><ul>${hwRows}</ul><h4 style="margin-top:10px">Issue History</h4><ul>${issueRows}</ul><div style="margin-top:10px"><button class="btn-primary" onclick="document.getElementById('vp-student-profile-modal').remove()">Close</button></div></div></div>`;
   document.body.insertAdjacentHTML('beforeend', html);
@@ -1024,7 +1028,7 @@ function openVPStudentProfileModal(studentId) {
 function buildVPStudentIssues(user) {
   const tab = localStorage.getItem('vp_issue_tab') || 'main';
   const escStore = getEscalationStore();
-  const issues = (GLOBAL_ISSUES || []).slice().sort((a,b) => new Date(b.updated || b.created) - new Date(a.updated || a.created));
+  const issues = (GLOBAL_ISSUES || []).slice().sort((a, b) => new Date(b.updated || b.created) - new Date(a.updated || a.created));
   const mainIssues = issues.filter(i => i.stage === 'VP' && i.status !== 'Resolved' && i.status !== 'Closed' && i.status !== 'Escalated');
   const globalEsc = issues.filter(i => i.status === 'Escalated').map(i => ({ ...i, _source: 'main' }));
   const localVpEsc = (escStore.vpEscalated || []).map(i => ({ ...i, _source: 'coordinator' }));
@@ -1046,13 +1050,13 @@ function buildVPStudentIssues(user) {
       <h4 style="margin-bottom:6px;font-size:16px;color:var(--color-text)">${i.studentName || i.student || 'Student'}</h4>
       <p style="color:var(--color-text-muted);font-size:13px;margin-bottom:12px">${i.title || i.issue || '-'}</p>
       <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:6px"><i class="fas fa-user-shield"></i> Reported by: ${i.reporterName || i.reporter || i.escalatedByCoordinator || '-'}</div>
-      ${tab === 'escalated' ? `<div style="font-size:12px;color:var(--color-text-muted);margin-bottom:10px"><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${i._source==='coordinator'?'From Coordinator':'From Main Issues'}</span> ${i.escalationReason ? ` · Reason: ${i.escalationReason}` : ''} ${i.escalatedDate ? ` · ${i.escalatedDate}` : ''}</div>` : ''}
+      ${tab === 'escalated' ? `<div style="font-size:12px;color:var(--color-text-muted);margin-bottom:10px"><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${i._source === 'coordinator' ? 'From Coordinator' : 'From Main Issues'}</span> ${i.escalationReason ? ` · Reason: ${i.escalationReason}` : ''} ${i.escalatedDate ? ` · ${i.escalatedDate}` : ''}</div>` : ''}
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        ${tab !== 'resolved' ? `<button class="btn-primary" style="flex:1;min-width:100px;font-size:12px;padding:8px" onclick="${i._source==='coordinator'?'vpResolveEscalationIssue':'resolveVPIssue'}('${i.id}')">Resolve</button>` : ''}
-        <button style="flex:1;min-width:100px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-text);cursor:pointer" onclick="${i._source==='coordinator'?'openEscalationTimelineModal':'viewIssue'}('${i.id}')"><i class="fas fa-folder-open"></i> Open Case</button>
+        ${tab !== 'resolved' ? `<button class="btn-primary" style="flex:1;min-width:100px;font-size:12px;padding:8px" onclick="${i._source === 'coordinator' ? 'vpResolveEscalationIssue' : 'resolveVPIssue'}('${i.id}')">Resolve</button>` : ''}
+        <button style="flex:1;min-width:100px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-text);cursor:pointer" onclick="${i._source === 'coordinator' ? 'openEscalationTimelineModal' : 'viewIssue'}('${i.id}')"><i class="fas fa-folder-open"></i> Open Case</button>
         ${tab === 'main' ? `<button style="width:100%;margin-top:6px;background:var(--color-surface-2);border:1px solid var(--color-primary);border-radius:8px;font-weight:700;font-size:12px;color:var(--color-primary);cursor:pointer;padding:8px" onclick="openEscalateIssueModal('${i.id}')"><i class="fas fa-level-up-alt"></i> ↗ Escalate Up</button>` : ''}
         ${tab === 'main' ? `<button style="width:100%;background:none;border:1px dashed #1976d2;border-radius:8px;font-weight:600;font-size:12px;color:#1976d2;cursor:pointer;padding:8px" onclick="openForwardCoordModal('${i.id}','${(i.studentName || i.student || '').replace(/'/g, '&#39;')}','${(i.title || i.issue || '').replace(/'/g, '&#39;')}')"><i class="fas fa-share"></i> Forward to Coordinator</button>` : ''}
-        ${tab === 'escalated' ? `<button style="width:100%;background:none;border:1px dashed var(--color-primary);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-primary);cursor:pointer;padding:8px" onclick="${i._source==='coordinator'?'vpRestoreEscalationIssue':'vpRestoreIssue'}('${i.id}')"><i class="fas fa-undo"></i> Restore to Main</button>` : ''}
+        ${tab === 'escalated' ? `<button style="width:100%;background:none;border:1px dashed var(--color-primary);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-primary);cursor:pointer;padding:8px" onclick="${i._source === 'coordinator' ? 'vpRestoreEscalationIssue' : 'vpRestoreIssue'}('${i.id}')"><i class="fas fa-undo"></i> Restore to Main</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1062,9 +1066,9 @@ function buildVPStudentIssues(user) {
       <div style="display:flex;gap:10px;align-items:center">
         <span style="background:rgba(211,47,47,0.1);color:var(--color-danger);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700">${mainIssues.length} Cases Require Action</span>
         <div style="display:flex;gap:6px">
-          <button class="btn-primary" onclick="setVPIssueTab('main')" style="${tab==='main'?'':'opacity:.75'}">Main</button>
-          <button class="btn-primary" onclick="setVPIssueTab('escalated')" style="${tab==='escalated'?'':'opacity:.75'}">Escalated</button>
-          <button class="btn-primary" onclick="setVPIssueTab('resolved')" style="${tab==='resolved'?'':'opacity:.75'}">Resolved Bin</button>
+          <button class="btn-primary" onclick="setVPIssueTab('main')" style="${tab === 'main' ? '' : 'opacity:.75'}">Main</button>
+          <button class="btn-primary" onclick="setVPIssueTab('escalated')" style="${tab === 'escalated' ? '' : 'opacity:.75'}">Escalated</button>
+          <button class="btn-primary" onclick="setVPIssueTab('resolved')" style="${tab === 'resolved' ? '' : 'opacity:.75'}">Resolved Bin</button>
         </div>
       </div>
     </div>
@@ -1073,7 +1077,7 @@ function buildVPStudentIssues(user) {
 }
 
 function buildVPTeachers(user) {
-  const rows = TEACHERS.map((t,i)=>`<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i+3)}">${getInitials(t.name)}</div><div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div></div></td><td>${t.subject}</td><td>${t.classes}</td><td><div class="progress-bar" style="margin-bottom:4px"><div class="progress-fill" style="width:${Math.floor(Math.random()*20)+80}%;background:#5ca870"></div></div><span style="font-size:11px;color:var(--color-text-muted)">95% Attendance</span></td><td><div class="progress-bar" style="margin-bottom:4px"><div class="progress-fill" style="width:${Math.floor(Math.random()*40)+60}%;background:var(--color-primary)"></div></div><span style="font-size:11px;color:var(--color-text-muted)">Syllabus coverage</span></td><td><span class="badge ${t.status==='Active'?'badge-active':'badge-warning'}"><i class="fas fa-check"></i> Marks Uploaded</span></td><td><div style="display:flex;gap:6px"><button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:var(--color-text)" title="View Profile" onclick="navigateTo('profile')"><i class="fas fa-user"></i></button><button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:#f57c00" title="Send Reminder" onclick="simulateAction('Reminder sent to teacher.')"><i class="fas fa-bell"></i></button><button style="padding:6px;font-size:12px;border-radius:6px;background:none;border:1px solid var(--color-danger);cursor:pointer;color:var(--color-danger)" title="Flag Issue" onclick="simulateAction('Issue flagged for VP review.')"><i class="fas fa-flag"></i></button></div></td></tr>`).join('');
+  const rows = TEACHERS.map((t, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i + 3)}">${getInitials(t.name)}</div><div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div></div></td><td>${t.subject}</td><td>${t.classes}</td><td><div class="progress-bar" style="margin-bottom:4px"><div class="progress-fill" style="width:${Math.floor(Math.random() * 20) + 80}%;background:#5ca870"></div></div><span style="font-size:11px;color:var(--color-text-muted)">95% Attendance</span></td><td><div class="progress-bar" style="margin-bottom:4px"><div class="progress-fill" style="width:${Math.floor(Math.random() * 40) + 60}%;background:var(--color-primary)"></div></div><span style="font-size:11px;color:var(--color-text-muted)">Syllabus coverage</span></td><td><span class="badge ${t.status === 'Active' ? 'badge-active' : 'badge-warning'}"><i class="fas fa-check"></i> Marks Uploaded</span></td><td><div style="display:flex;gap:6px"><button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:var(--color-text)" title="View Profile" onclick="navigateTo('profile')"><i class="fas fa-user"></i></button><button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:#f57c00" title="Send Reminder" onclick="simulateAction('Reminder sent to teacher.')"><i class="fas fa-bell"></i></button><button style="padding:6px;font-size:12px;border-radius:6px;background:none;border:1px solid var(--color-danger);cursor:pointer;color:var(--color-danger)" title="Flag Issue" onclick="simulateAction('Issue flagged for VP review.')"><i class="fas fa-flag"></i></button></div></td></tr>`).join('');
   return `<div class="dash-section" id="section-vp_teachers">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
@@ -1091,14 +1095,14 @@ function buildVPTeachers(user) {
 function buildVPSchedule(user) {
   const view = localStorage.getItem('vp_schedule_view') || 'today';
   const shown = view === 'week' ? SCHEDULE : SCHEDULE.slice(0, Math.min(SCHEDULE.length, 5));
-  const rows = shown.map(s=>`<div class="schedule-item"><div class="schedule-time">${s.time}</div><div class="schedule-bar" style="background:${s.color}"></div><div class="schedule-info"><div class="schedule-subject">${s.subject} <span style="font-size:10px;background:var(--color-surface-2);padding:2px 6px;border-radius:4px;border:1px solid var(--color-border)">${s.class}</span></div><div class="schedule-meta">${s.teacher}</div></div><div class="schedule-room">${s.room}</div></div>`).join('');
+  const rows = shown.map(s => `<div class="schedule-item"><div class="schedule-time">${s.time}</div><div class="schedule-bar" style="background:${s.color}"></div><div class="schedule-info"><div class="schedule-subject">${s.subject} <span style="font-size:10px;background:var(--color-surface-2);padding:2px 6px;border-radius:4px;border:1px solid var(--color-border)">${s.class}</span></div><div class="schedule-meta">${s.teacher}</div></div><div class="schedule-room">${s.room}</div></div>`).join('');
   return `<div class="dash-section" id="section-vp_schedule">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
       <h3>📅 Institutional Timetable Review</h3>
       <div style="display:flex;gap:10px">
         <div style="display:flex;gap:6px">
-          <button class="btn-primary" onclick="setVPScheduleView('today')" style="${view==='today'?'':'opacity:.75'}">Today</button>
-          <button class="btn-primary" onclick="setVPScheduleView('week')" style="${view==='week'?'':'opacity:.75'}">Week</button>
+          <button class="btn-primary" onclick="setVPScheduleView('today')" style="${view === 'today' ? '' : 'opacity:.75'}">Today</button>
+          <button class="btn-primary" onclick="setVPScheduleView('week')" style="${view === 'week' ? '' : 'opacity:.75'}">Week</button>
         </div>
         <button class="btn-primary" style="padding:8px 16px" onclick="openEditTimetableMode()"><i class="fas fa-edit"></i> Edit Timetable</button>
       </div>
@@ -1127,10 +1131,10 @@ function buildVPSchedule(user) {
         </div>
       </div>
       <div>
-        <div class="card" style="margin-bottom:20px;border-left:4px solid ${localStorage.getItem('vp_sub_assigned')?'var(--color-success)':'var(--color-danger)'}">
+        <div class="card" style="margin-bottom:20px;border-left:4px solid ${localStorage.getItem('vp_sub_assigned') ? 'var(--color-success)' : 'var(--color-danger)'}">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <h4 style="color:${localStorage.getItem('vp_sub_assigned')?'var(--color-success)':'var(--color-danger)'}">${localStorage.getItem('vp_sub_assigned')?'✅ Resolved: Substitute Assigned':'⚠️ Missing Period Alert'}</h4>
-            <span class="badge ${localStorage.getItem('vp_sub_assigned')?'badge-success':'badge-danger'}">${localStorage.getItem('vp_sub_assigned')?'Resolved':'High'}</span>
+            <h4 style="color:${localStorage.getItem('vp_sub_assigned') ? 'var(--color-success)' : 'var(--color-danger)'}">${localStorage.getItem('vp_sub_assigned') ? '✅ Resolved: Substitute Assigned' : '⚠️ Missing Period Alert'}</h4>
+            <span class="badge ${localStorage.getItem('vp_sub_assigned') ? 'badge-success' : 'badge-danger'}">${localStorage.getItem('vp_sub_assigned') ? 'Resolved' : 'High'}</span>
           </div>
           <p style="font-size:13px;color:var(--color-text-muted)">Anita Pillai is on leave today. Period 3 English for 8-B needs a substitute.</p>
           <button class="btn-primary" style="margin-top:12px;width:100%;font-size:13px" onclick="openAssignSubModal('Anita Pillai', 'Period 3 English for 8-B')">Assign Substitute</button>
@@ -1157,7 +1161,7 @@ function buildVPExams(user) {
     <tr>
       <td><strong>${r.class}</strong></td>
       <td>${r.subject}</td>
-      <td><span class="badge ${r.status==='Published'?'badge-active':'badge-pending'}">${r.status}</span></td>
+      <td><span class="badge ${r.status === 'Published' ? 'badge-active' : 'badge-pending'}">${r.status}</span></td>
       <td>${r.date}</td>
       <td>
         <div style="display:flex;gap:6px">
@@ -1173,10 +1177,10 @@ function buildVPExams(user) {
       <h3>📝 Mid-Term Exam & Results Authority</h3>
       <div style="display:flex;gap:10px">
         <select id="res-class-filter" onchange="setResultsFilter(this.value)" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
-            <option value="All" ${filterClass==='All'?'selected':''}>All Classes</option>
-            <option value="10A" ${filterClass==='10A'?'selected':''}>10A</option>
-            <option value="9C" ${filterClass==='9C'?'selected':''}>9C</option>
-            <option value="8B" ${filterClass==='8B'?'selected':''}>8B</option>
+            <option value="All" ${filterClass === 'All' ? 'selected' : ''}>All Classes</option>
+            <option value="10A" ${filterClass === '10A' ? 'selected' : ''}>10A</option>
+            <option value="9C" ${filterClass === '9C' ? 'selected' : ''}>9C</option>
+            <option value="8B" ${filterClass === '8B' ? 'selected' : ''}>8B</option>
         </select>
         <button class="btn-primary" style="padding:8px 16px" onclick="openExamPlan('All')"><i class="fas fa-calendar-alt"></i> Global Exam Plan</button>
       </div>
@@ -1188,8 +1192,8 @@ function buildVPExams(user) {
 }
 
 function setResultsFilter(v) {
-    localStorage.setItem('results_filter_class', v);
-    triggerLiveReRender();
+  localStorage.setItem('results_filter_class', v);
+  triggerLiveReRender();
 }
 
 function buildVPReports(user) {
@@ -1229,18 +1233,21 @@ function buildVPReports(user) {
 }
 
 function buildVPApprovals(user) {
-  const rows = VP_APPROVALS.map(a=>`<tr>
+  const localComments = JSON.parse(localStorage.getItem('cc_approval_comments') || '{}');
+  const rows = VP_APPROVALS.map(a => {
+    const comment = localComments[a.id] || a.comment;
+    return `<tr>
     <td><span style="font-weight:700;color:var(--color-text)">${a.id}</span></td>
     <td><span class="badge badge-info">${a.type}</span></td>
     <td style="color:var(--color-text-muted);font-size:13px">${a.desc}</td>
     <td style="color:var(--color-text)">${a.date}</td>
-    <td><span class="badge ${a.status==='Pending'?'badge-pending':'badge-active'}">${a.status}</span></td>
-    <td>${a.status==='Pending'?`<div style="display:flex;gap:6px">
+    <td><span class="badge ${a.status === 'Pending' ? 'badge-pending' : 'badge-active'}">${a.status}</span></td>
+    <td>${a.status === 'Pending' && !comment ? `<div style="display:flex;gap:6px">
       <button class="btn-primary" style="padding:6px 12px;font-size:12px" onclick="approveApprovalItem('${a.id}')">Approve</button>
       <button style="padding:6px 12px;font-size:12px;background:none;border:1px solid var(--color-danger);color:var(--color-danger);border-radius:6px;cursor:pointer" onclick="rejectApprovalItem('${a.id}')">Reject</button>
       <button style="padding:6px 8px;font-size:12px;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:6px;cursor:pointer" title="Add Comment / Forward Upward" onclick="openApprovalCommentModal('${a.id}')"><i class="fas fa-comment-alt"></i></button>
-    </div>`:`<div style="font-size:11px;color:var(--color-text-muted)">${a.comment ? `Comment: ${a.comment}` : 'Resolved'}</div>`}</td>
-  </tr>`).join('');
+    </div>`: `<div style="font-size:11px;color:var(--color-text-muted)">${comment ? `Comment: ${comment}` : 'Resolved'}</div>`}</td>
+  </tr>`}).join('');
   return `<div class="dash-section" id="section-vp_approvals">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap">
@@ -1258,18 +1265,18 @@ function buildVPApprovals(user) {
 }
 
 function buildVPMessages(user) {
-  
+
   // Ensure we have a persistent message store
-  let activeMessages = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({...m, _id: i, replies: []}));
-  
-  const list = activeMessages.map((m, index)=>`
-  <div class="card" style="margin-bottom:12px;border:${m.unread?'1px solid var(--color-primary)':'1px solid var(--color-border)'};position:relative;padding-left:${m.unread?'30px':'24px'}">
-    ${m.unread?'<div style="position:absolute;left:12px;top:28px;width:8px;height:8px;border-radius:50%;background:var(--color-primary)"></div>':''}
+  let activeMessages = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
+
+  const list = activeMessages.map((m, index) => `
+  <div class="card" style="margin-bottom:12px;border:${m.unread ? '1px solid var(--color-primary)' : '1px solid var(--color-border)'};position:relative;padding-left:${m.unread ? '30px' : '24px'}">
+    ${m.unread ? '<div style="position:absolute;left:12px;top:28px;width:8px;height:8px;border-radius:50%;background:var(--color-primary)"></div>' : ''}
     <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-      <strong style="color:var(--color-text)">${m.sender} <span style="font-size:10px;background:var(--color-surface-2);border:1px solid var(--color-border);padding:2px 6px;border-radius:4px;margin-left:6px">${m.sender.includes('Parent')?'Urgent Alert':m.sender.includes('Coord')?'Coordinator':'Staff'}</span></strong>
+      <strong style="color:var(--color-text)">${m.sender} <span style="font-size:10px;background:var(--color-surface-2);border:1px solid var(--color-border);padding:2px 6px;border-radius:4px;margin-left:6px">${m.sender.includes('Parent') ? 'Urgent Alert' : m.sender.includes('Coord') ? 'Coordinator' : 'Staff'}</span></strong>
       <span style="font-size:11px;color:var(--color-text-muted)">${m.time}</span>
     </div>
-    <div style="font-weight:${m.unread?'700':'500'};margin-bottom:8px;font-size:15px;color:var(--color-text)">${m.subject}</div>
+    <div style="font-weight:${m.unread ? '700' : '500'};margin-bottom:8px;font-size:15px;color:var(--color-text)">${m.subject}</div>
     <p style="font-size:13px;color:var(--color-text-light);line-height:1.4">${m.content}</p>
     
     ${m.replies && m.replies.length > 0 ? `<div style="margin-top:10px;padding-left:15px;border-left:2px solid var(--color-primary)">` + m.replies.map(r => `<div style="font-size:12px;color:var(--color-text-muted)"><strong style="color:var(--color-text)">${r.sender} (${r.time})</strong>: ${r.content}</div>`).join('') + `</div>` : ''}
@@ -1326,12 +1333,12 @@ function openGenericAccountPasswordModal() {
   </div>`;
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
-function closeGenericAccountPasswordModal(){ const m=document.getElementById('generic-pass-modal'); if(m) m.remove(); }
+function closeGenericAccountPasswordModal() { const m = document.getElementById('generic-pass-modal'); if (m) m.remove(); }
 function saveGenericAccountPassword() {
   if (!currentUser) return;
-  const cur = (document.getElementById('gp-cur')||{}).value || '';
-  const n = (document.getElementById('gp-new')||{}).value || '';
-  const c = (document.getElementById('gp-con')||{}).value || '';
+  const cur = (document.getElementById('gp-cur') || {}).value || '';
+  const n = (document.getElementById('gp-new') || {}).value || '';
+  const c = (document.getElementById('gp-con') || {}).value || '';
   const expected = getEffectivePasswordForUser(currentUser);
   if (String(cur).toUpperCase() !== String(expected).toUpperCase()) return simulateAction('Current password is incorrect');
   if (!n || n.length < 4) return simulateAction('New password is too short');
@@ -1360,16 +1367,16 @@ function openGenericProfileModal() {
   </div>`;
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
-function closeGenericProfileModal(){ const m=document.getElementById('generic-profile-modal'); if(m) m.remove(); }
+function closeGenericProfileModal() { const m = document.getElementById('generic-profile-modal'); if (m) m.remove(); }
 function saveGenericProfile() {
   if (!currentUser) return;
-  currentUser.name = (document.getElementById('gprof-name')||{}).value || currentUser.name;
-  currentUser.email = (document.getElementById('gprof-email')||{}).value || currentUser.email;
-  currentUser.phone = (document.getElementById('gprof-phone')||{}).value || currentUser.phone;
-  currentUser.department = (document.getElementById('gprof-dept')||{}).value || currentUser.department;
+  currentUser.name = (document.getElementById('gprof-name') || {}).value || currentUser.name;
+  currentUser.email = (document.getElementById('gprof-email') || {}).value || currentUser.email;
+  currentUser.phone = (document.getElementById('gprof-phone') || {}).value || currentUser.phone;
+  currentUser.department = (document.getElementById('gprof-dept') || {}).value || currentUser.department;
   const idx = (DEMO_USERS || []).findIndex(u => String(u.username).toUpperCase() === String(currentUser.username).toUpperCase());
   if (idx >= 0) DEMO_USERS[idx] = { ...DEMO_USERS[idx], ...currentUser };
-  try { sessionStorage.setItem('cc_user', JSON.stringify(currentUser)); } catch(e) {}
+  try { sessionStorage.setItem('cc_user', JSON.stringify(currentUser)); } catch (e) { }
   closeGenericProfileModal();
   buildSidebar(currentUser);
   buildDashboard(currentUser);
@@ -1386,9 +1393,9 @@ function openGenericLanguageModal() {
       <div class="modal-header"><h3>Language Preference</h3><button class="modal-close" onclick="closeGenericLanguageModal()">×</button></div>
       <div class="modal-body">
         <select id="generic-lang-select" class="form-control">
-          <option ${set.language==='English'?'selected':''}>English</option>
-          <option ${set.language==='Hindi'?'selected':''}>Hindi</option>
-          <option ${set.language==='Telugu'?'selected':''}>Telugu</option>
+          <option ${set.language === 'English' ? 'selected' : ''}>English</option>
+          <option ${set.language === 'Hindi' ? 'selected' : ''}>Hindi</option>
+          <option ${set.language === 'Telugu' ? 'selected' : ''}>Telugu</option>
         </select>
         <button class="btn-primary" style="width:100%;margin-top:10px" onclick="saveGenericLanguage()">Save</button>
       </div>
@@ -1396,18 +1403,71 @@ function openGenericLanguageModal() {
   </div>`;
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
-function closeGenericLanguageModal(){ const m=document.getElementById('generic-lang-modal'); if(m) m.remove(); }
+function closeGenericLanguageModal() { const m = document.getElementById('generic-lang-modal'); if (m) m.remove(); }
 function saveGenericLanguage() {
   if (!currentUser) return;
+  const lang = (document.getElementById('generic-lang-select') || {}).value || 'English';
   const set = getSettings(currentUser.id);
-  set.language = (document.getElementById('generic-lang-select')||{}).value || 'English';
+  set.language = lang;
   saveSettings(currentUser.id, set);
-  document.documentElement.setAttribute('data-app-language', set.language);
+
+  // SYNC: Support workflow-manager.js translation engine
+  const langCode = lang === 'Telugu' ? 'te' : lang === 'Hindi' ? 'hi' : 'en';
+  localStorage.setItem('campuscore_lang', langCode);
+
+  document.documentElement.setAttribute('data-app-language', lang);
   closeGenericLanguageModal();
-  buildDashboard(currentUser);
-  navigateTo('settings');
-  simulateAction(`Language set to ${set.language}`);
+
+  simulateAction(`Language set to ${lang}. Applying system-wide translations...`);
+
+  setTimeout(() => {
+    if (typeof applyLanguage === 'function') applyLanguage();
+    triggerLiveReRender();
+  }, 500);
 }
+
+/* ━━━━ TEACHER EXCEL ACTIONS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function downloadMarksTemplate() {
+  simulateAction('Generating Excel Template...');
+  const headers = "Roll No,Student Name,Subject,Max Marks,Marks Obtained,Grade,Comments\n";
+  const demoRows = STUDENTS.slice(0, 10).map(s => `${s.roll},${s.name},Mathematics,100,,,`).join("\n");
+  const csvContent = "data:text/csv;charset=utf-8," + headers + demoRows;
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "marks_upload_template.csv");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+function openTeacherMarksUpload() {
+  const m = `<div class="modal-overlay" id="marks-upload-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+        <div class="modal" style="max-width:450px">
+            <h3>📤 Bulk Marks Upload</h3>
+            <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:20px">Upload your completed CSV/Excel template.</p>
+            <div style="border:2px dashed var(--color-border);padding:30px;text-align:center;border-radius:12px;cursor:pointer;margin-bottom:20px" onclick="simulateAction('File selection opened...')">
+                <i class="fas fa-file-excel" style="font-size:32px;color:#1d6f42;margin-bottom:12px"></i>
+                <div>Drop marks.csv here or click to browse</div>
+            </div>
+            <div style="display:flex;gap:10px">
+                <button class="btn-primary" style="flex:1" onclick="submitMarksUpload()">Process & Upload</button>
+                <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px" onclick="document.getElementById('marks-upload-modal').remove()">Cancel</button>
+            </div>
+        </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+}
+
+function submitMarksUpload() {
+  simulateAction('Parsing file... Validating student records...');
+  setTimeout(() => {
+    simulateAction('Success! Marks for Class 9-C updated.');
+    document.getElementById('marks-upload-modal').remove();
+    triggerLiveReRender();
+  }, 1500);
+}
+
 
 function downloadGenericUserData() {
   if (!currentUser) return;
@@ -1466,7 +1526,7 @@ function buildCoordClasses() {
 
 function buildCoordIssues() {
   const store = getEscalationStore();
-  const issues = store.coordinatorInbox.slice().sort((a,b) => new Date(b.escalatedDate || b.registeredDate || 0) - new Date(a.escalatedDate || a.registeredDate || 0));
+  const issues = store.coordinatorInbox.slice().sort((a, b) => new Date(b.escalatedDate || b.registeredDate || 0) - new Date(a.escalatedDate || a.registeredDate || 0));
   const cards = issues.map(i => `<div class="card" style="margin-bottom:10px">
     <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong>${i.id} · ${i.studentName}</strong><span class="badge badge-warning">${i.status}</span></div>
     <div style="font-size:12px;color:var(--color-text-muted)">${i.class} · ${i.category} · ${i.priority}</div>
@@ -1577,7 +1637,15 @@ function buildTeacherHome(user) {
     { icon: 'fa-pen', label: 'Upload Marks', color: '#f57c00', target: 'teacher_results' },
     { icon: 'fa-calendar-alt', label: 'Open Timetable', color: '#8b5cf6', target: 'teacher_schedule' },
   ];
-  const quickActions = qaItems.map(qa => `<button class="quick-action-btn" onclick="navigateTo('${qa.target}')"><div class="qa-icon" style="background:${qa.color}"><i class="fas ${qa.icon}"></i></div><span class="qa-label">${qa.label}</span></button>`).join('');
+  const quickActions = qaItems.map(qa => {
+    // FIX: Redirect shortcuts for SuperAdmin if they point to role-specific sections
+    let finalTarget = qa.target;
+    if (user.role === 'apaaas' || user.username === 'APAAAS') {
+      if (qa.target === 'announcements') finalTarget = 'all_notices';
+      if (qa.target === 'vp_approvals') finalTarget = 'all_approvals';
+    }
+    return `<button class="quick-action-btn" onclick="navigateTo('${finalTarget}')"><div class="qa-icon" style="background:${qa.color}"><i class="fas ${qa.icon}"></i></div><span class="qa-label">${qa.label}</span></button>`;
+  }).join('');
 
   const notices = ANNOUNCEMENTS.slice(0, 3).map(a => {
     const col = a.category === 'Academic' ? '#1976d2' : '#5ca870';
@@ -1617,13 +1685,15 @@ function buildTeacherHome(user) {
 }
 
 function buildTeacherClasses(user) {
-  const rows = TEACHER_MY_CLASSES.map(c => `<tr>
+  const teacherClasses = user.classes ? user.classes.split(',').map(c => c.trim()) : ['10-A', '9-B'];
+  const filteredClasses = TEACHER_MY_CLASSES.filter(c => teacherClasses.includes(c.class.replace('-', '')));
+  const rows = (filteredClasses.length ? filteredClasses : TEACHER_MY_CLASSES).map(c => `<tr>
     <td style="font-weight:700">Class ${c.class}</td>
     <td>${c.subject}</td>
     <td>${c.students}</td>
     <td><strong style="color:var(--color-primary)">${c.avgAtt}%</strong></td>
     <td><span class="badge badge-info">${c.avgPerf}</span></td>
-    <td><span class="badge ${c.role.includes('Class')?'badge-active':'badge-warning'}">${c.role}</span></td>
+    <td><span class="badge ${c.role.includes('Class') ? 'badge-active' : 'badge-warning'}">${c.role}</span></td>
   </tr>`).join('');
   return `<div class="dash-section" id="section-teacher_classes">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
@@ -1641,14 +1711,14 @@ function buildTeacherAttendance(user) {
       <td style="font-weight:600">${s.name}</td>
       <td>
         <div style="display:flex;gap:4px">
-          ${s.last5.map(d=>`<div style="width:10px;height:10px;border-radius:50%;background:${d==='Present'?'#5ca870':d==='Absent'?'var(--color-danger)':'#f57c00'}" title="${d}"></div>`).join('')}
+          ${s.last5.map(d => `<div style="width:10px;height:10px;border-radius:50%;background:${d === 'Present' ? '#5ca870' : d === 'Absent' ? 'var(--color-danger)' : '#f57c00'}" title="${d}"></div>`).join('')}
         </div>
       </td>
       <td>
-        <div style="display:flex;background:var(--color-surface-2);border-radius:8px;overflow:hidden;width:max-content;border:1px solid var(--color-border)">
-          <button style="padding:8px 16px;border:none;background:${isP?'var(--color-success)':'transparent'};color:${isP?'white':'var(--color-text)'};font-weight:600;cursor:pointer" onclick="this.style.background='var(--color-success)';this.style.color='white';this.nextElementSibling.style.background='transparent';this.nextElementSibling.style.color='var(--color-text)';this.nextElementSibling.nextElementSibling.style.background='transparent';this.nextElementSibling.nextElementSibling.style.color='var(--color-text)';">P</button>
-          <button style="padding:8px 16px;border:none;background:${s.status==='Absent'?'var(--color-danger)':'transparent'};color:${s.status==='Absent'?'white':'var(--color-text)'};font-weight:600;cursor:pointer" onclick="this.style.background='var(--color-danger)';this.style.color='white';this.previousElementSibling.style.background='transparent';this.previousElementSibling.style.color='var(--color-text)';this.nextElementSibling.style.background='transparent';this.nextElementSibling.style.color='var(--color-text)';">A</button>
-          <button style="padding:8px 16px;border:none;background:${s.status==='Late'?'#f57c00':'transparent'};color:${s.status==='Late'?'white':'var(--color-text)'};font-weight:600;cursor:pointer" onclick="this.style.background='#f57c00';this.style.color='white';this.previousElementSibling.style.background='transparent';this.previousElementSibling.style.color='var(--color-text)';this.previousElementSibling.previousElementSibling.style.background='transparent';this.previousElementSibling.previousElementSibling.style.color='var(--color-text)';">L</button>
+        <div class="attendance-btn-group" data-student-index="${s.roll}">
+          <button class="att-btn p ${isP ? 'active' : ''}" onclick="markTeacherAttendance('${s.roll}', 'Present', this)">P</button>
+          <button class="att-btn a ${s.status === 'Absent' ? 'active' : ''}" onclick="markTeacherAttendance('${s.roll}', 'Absent', this)">A</button>
+          <button class="att-btn l ${s.status === 'Late' ? 'active' : ''}" onclick="markTeacherAttendance('${s.roll}', 'Late', this)">L</button>
         </div>
       </td>
       <td><input type="text" placeholder="Add remark..." style="padding:6px;width:100%;border-radius:6px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)" /></td>
@@ -1676,11 +1746,11 @@ function buildTeacherHomework(user) {
     <td>${h.dueDate}</td>
     <td>
       <div style="display:flex;align-items:center;gap:8px">
-        <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${(h.submitted/(h.submitted+h.pending))*100}%"></div></div>
-        <span style="font-size:12px;color:var(--color-text-muted)">${h.submitted}/${h.submitted+h.pending}</span>
+        <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${(h.submitted / (h.submitted + h.pending)) * 100}%"></div></div>
+        <span style="font-size:12px;color:var(--color-text-muted)">${h.submitted}/${h.submitted + h.pending}</span>
       </div>
     </td>
-    <td><span class="badge ${h.status==='Graded'?'badge-active':h.status==='Grading'?'badge-warning':'badge-info'}">${h.status}</span></td>
+    <td><span class="badge ${h.status === 'Graded' ? 'badge-active' : h.status === 'Grading' ? 'badge-warning' : 'badge-info'}">${h.status}</span></td>
     <td><button style="padding:6px 12px;border-radius:6px;background:var(--color-primary);color:white;border:none;cursor:pointer;font-weight:600;font-size:11px" onclick="alert('Opening submissions...')">Review</button></td>
   </tr>`).join('');
   return `<div class="dash-section" id="section-teacher_homework">
@@ -1715,8 +1785,10 @@ function buildTeacherResults(user) {
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
       <h3>📝 Upload Marks & Results</h3>
       <div style="display:flex;gap:10px">
-        <select style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)"><option>Mid-Term Examination</option><option>Unit Test 3</option></select>
-        <select style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)"><option>10-A</option><option>9-B</option></select>
+        <select id="t-res-exam" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)"><option>Mid-Term Examination</option><option>Unit Test 3</option></select>
+        <select id="t-res-class" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)">
+            ${(user.classes ? user.classes.split(',') : ['10-A', '9-B']).map(c => `<option>${c.trim()}</option>`).join('')}
+        </select>
       </div>
     </div>
     <div class="card">
@@ -1741,7 +1813,7 @@ function buildTeacherStudentPerf(user) {
     <td><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${s.class}</span></td>
     <td><strong style="color:${attColor(s.att)}">${s.att}%</strong></td>
     <td><strong style="color:var(--color-primary)">${s.gpa}</strong></td>
-    <td><i class="fas fa-arrow-${s.trend}" style="color:${s.trend==='up'?'#5ca870':s.trend==='down'?'var(--color-danger)':'#f57c00'}"></i></td>
+    <td><i class="fas fa-arrow-${s.trend}" style="color:${s.trend === 'up' ? '#5ca870' : s.trend === 'down' ? 'var(--color-danger)' : '#f57c00'}"></i></td>
     <td style="color:var(--color-text-muted);font-size:13px">${s.remark}</td>
     <td><button style="padding:4px 10px;border-radius:6px;background:var(--color-surface-2);color:var(--color-text);border:1px solid var(--color-border);cursor:pointer;font-size:11px" onclick="simulateAction('Note added for student.')"><i class="fas fa-plus"></i> Note</button></td>
   </tr>`).join('');
@@ -1757,7 +1829,7 @@ function buildTeacherStudentPerf(user) {
 
 function buildTeacherMessages(user) {
   const store = getEscalationStore();
-  const teacherIssues = store.teacherInbox.slice().sort((a,b) => new Date(b.registeredDate || b.escalatedDate || 0) - new Date(a.registeredDate || a.escalatedDate || 0));
+  const teacherIssues = store.teacherInbox.slice().sort((a, b) => new Date(b.registeredDate || b.escalatedDate || 0) - new Date(a.registeredDate || a.escalatedDate || 0));
   const list = teacherIssues.map(m => `<div class="card" style="margin-bottom:12px;border:1px solid var(--color-border)">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
       <div>
@@ -1765,11 +1837,11 @@ function buildTeacherMessages(user) {
         <div style="font-size:13px;color:var(--color-text-muted)">${m.class} · ${m.category} · ${m.registeredDate || ''}</div>
       </div>
       <div style="display:flex;gap:6px;align-items:center">
-        <span class="badge" style="background:${m.priority==='High'?'var(--color-danger)':m.priority==='Medium'?'#f57c00':'#1976d2'}">${m.priority}</span>
+        <span class="badge" style="background:${m.priority === 'High' ? 'var(--color-danger)' : m.priority === 'Medium' ? '#f57c00' : '#1976d2'}">${m.priority}</span>
         <span class="badge badge-info">${m.status}</span>
       </div>
     </div>
-    <div style="font-size:13px;color:var(--color-text-light);margin-top:8px">${(m.description || '').slice(0, 120)}${(m.description || '').length>120?'...':''}</div>
+    <div style="font-size:13px;color:var(--color-text-light);margin-top:8px">${(m.description || '').slice(0, 120)}${(m.description || '').length > 120 ? '...' : ''}</div>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
       <button class="btn-primary" style="padding:6px 10px;font-size:12px;background:var(--color-success);border-color:var(--color-success)" onclick="viewIssue('${m.id}')">Resolve Locally</button>
       <button class="btn-primary" style="padding:6px 10px;font-size:12px;background:var(--color-danger);border-color:var(--color-danger)" onclick="viewIssue('${m.id}')">Escalate to Coordinator</button>
@@ -1793,7 +1865,7 @@ function openRegisterTeacherIssueModal() {
   const html = `<div class="modal-overlay" id="teacher-reg-issue-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:620px;width:100%"><h3 style="margin-top:0">Register Student Issue</h3>
     <label>Student Name</label><input id="tri-student-name" class="form-control" />
     <label style="margin-top:8px">Student ID</label><input id="tri-student-id" class="form-control" />
-    <label style="margin-top:8px">Class</label><select id="tri-class" class="form-control" onchange="document.getElementById('tri-section').value=this.value.slice(-1)">${classOpts.map(c=>`<option>${c}</option>`).join('')}</select>
+    <label style="margin-top:8px">Class</label><select id="tri-class" class="form-control" onchange="document.getElementById('tri-section').value=this.value.slice(-1)">${classOpts.map(c => `<option>${c}</option>`).join('')}</select>
     <label style="margin-top:8px">Section</label><input id="tri-section" class="form-control" readonly value="A" />
     <label style="margin-top:8px">Issue Category</label><select id="tri-category" class="form-control"><option>Discipline</option><option>Attendance</option><option>Academic</option><option>Behavior</option><option>Health</option><option>Other</option></select>
     <label style="margin-top:8px">Priority</label><select id="tri-priority" class="form-control"><option>High</option><option>Medium</option><option>Low</option></select>
@@ -2027,13 +2099,13 @@ function openVPStudentActionConfirm(studentId, action, issueId) {
       <div style="font-size:13px;color:var(--color-text-muted);margin-bottom:10px"><strong>${student.name}</strong></div>
       <label>Current class</label><input class="form-control" readonly value="${currentClass}">
       <label style="margin-top:10px">New class</label><input class="form-control" readonly value="${nextClass || '-'}">
-      ${action==='promote' ? `<label style="margin-top:10px">Academic Year</label><input class="form-control" readonly value="2025-26 → 2026-27">` : ''}
+      ${action === 'promote' ? `<label style="margin-top:10px">Academic Year</label><input class="form-control" readonly value="2025-26 → 2026-27">` : ''}
       ${error ? `<div style="margin-top:10px;color:var(--color-danger);font-size:13px">${error}</div>` : ''}
-      <label style="margin-top:10px">${action==='promote'?'Reason for promotion (optional)':'Reason for demotion'}</label>
+      <label style="margin-top:10px">${action === 'promote' ? 'Reason for promotion (optional)' : 'Reason for demotion'}</label>
       <textarea id="vp-student-action-reason" class="form-control" rows="3"></textarea>
-      ${action==='demote' ? `<div style="margin-top:10px;padding:10px;border-radius:8px;background:rgba(211,47,47,.12);border:1px solid rgba(211,47,47,.3);color:var(--color-danger);font-size:13px">This will move the student to a lower class. This action is recorded and cannot be automatically undone.</div>` : ''}
+      ${action === 'demote' ? `<div style="margin-top:10px;padding:10px;border-radius:8px;background:rgba(211,47,47,.12);border:1px solid rgba(211,47,47,.3);color:var(--color-danger);font-size:13px">This will move the student to a lower class. This action is recorded and cannot be automatically undone.</div>` : ''}
       <div style="display:flex;gap:10px;margin-top:14px">
-        <button class="btn-primary" ${error ? 'disabled' : ''} style="flex:1;background:${action==='promote'?'var(--color-success)':'var(--color-danger)'};border-color:${action==='promote'?'var(--color-success)':'var(--color-danger)'}" onclick="confirmVPStudentAction('${sid}','${action}','${nextClass || ''}','${currentClass}','${issueId || ''}')">${action==='promote'?'Confirm Promotion':'Confirm Demotion'}</button>
+        <button class="btn-primary" ${error ? 'disabled' : ''} style="flex:1;background:${action === 'promote' ? 'var(--color-success)' : 'var(--color-danger)'};border-color:${action === 'promote' ? 'var(--color-success)' : 'var(--color-danger)'}" onclick="confirmVPStudentAction('${sid}','${action}','${nextClass || ''}','${currentClass}','${issueId || ''}')">${action === 'promote' ? 'Confirm Promotion' : 'Confirm Demotion'}</button>
         <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px;cursor:pointer" onclick="closeVPActionModal()">Cancel</button>
       </div>`;
   } else {
@@ -2090,7 +2162,7 @@ function confirmVPStudentAction(studentId, action, newClass, oldClass, issueId) 
   if (action === 'promote') {
     shared.currentClass = newClass[0]; // Assuming newClass is like "10C"
     shared.currentSection = newClass.slice(1);
-    
+
     // Step 4 — Update shared registry
     if (window.CAMPUSCORE_REGISTRY) {
       window.CAMPUSCORE_REGISTRY.updateStudentClass(sid, shared.currentClass, shared.currentSection);
@@ -2249,67 +2321,67 @@ function submitConcern() {
   const cat = document.getElementById('issue-category').value;
   const desc = document.getElementById('issue-desc').value.trim();
   const fileInput = document.getElementById('issue-files');
-  
-  if(!title || !desc) {
-     simulateAction("Please fill all required fields");
-     return;
+
+  if (!title || !desc) {
+    simulateAction("Please fill all required fields");
+    return;
   }
 
   const child = getParentChildContext(currentUser);
-  
+
   const files = fileInput && fileInput.files ? Array.from(fileInput.files) : [];
   const readers = files.map(file => {
-      return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve({ name: file.name, type: file.type, size: file.size, data: e.target.result });
-          reader.readAsDataURL(file);
-      });
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve({ name: file.name, type: file.type, size: file.size, data: e.target.result });
+      reader.readAsDataURL(file);
+    });
   });
 
   Promise.all(readers).then(attachmentsArray => {
-      const newIssue = {
-        id: "ISS-" + Math.floor(1000 + Math.random() * 9000),
-        title, desc, status: "Open", stage: "Teacher",
-        studentId: child.id, studentName: child.name, class: child.class,
-        reporterId: currentUser.username, reporterName: currentUser.name, reporterRole: currentUser.roleLabel,
-        category: cat, priority: "Normal", severity: "Normal",
-        assignedTo: child.classTeacher + " (Teacher)",
-        attachments: attachmentsArray,
-        created: new Date().toISOString(),
-        updated: new Date().toISOString(),
-        timeline: [
-          { date: new Date().toISOString(), actor: currentUser.name, role: currentUser.roleLabel, note: `Created concern: ${desc}` }
-        ]
-      };
-      
-      const issues = GLOBAL_ISSUES;
-      issues.push(newIssue);
-      saveIssues(issues);
-      closeIssueModal();
-      simulateAction('Your concern has been submitted successfully.');
-      triggerLiveReRender();
+    const newIssue = {
+      id: "ISS-" + Math.floor(1000 + Math.random() * 9000),
+      title, desc, status: "Open", stage: "Teacher",
+      studentId: child.id, studentName: child.name, class: child.class,
+      reporterId: currentUser.username, reporterName: currentUser.name, reporterRole: currentUser.roleLabel,
+      category: cat, priority: "Normal", severity: "Normal",
+      assignedTo: child.classTeacher + " (Teacher)",
+      attachments: attachmentsArray,
+      created: new Date().toISOString(),
+      updated: new Date().toISOString(),
+      timeline: [
+        { date: new Date().toISOString(), actor: currentUser.name, role: currentUser.roleLabel, note: `Created concern: ${desc}` }
+      ]
+    };
+
+    const issues = GLOBAL_ISSUES;
+    issues.push(newIssue);
+    saveIssues(issues);
+    closeIssueModal();
+    simulateAction('Your concern has been submitted successfully.');
+    triggerLiveReRender();
   });
 }
 
 function viewIssue(issueId) {
   const issue = GLOBAL_ISSUES.find(i => i.id === issueId);
-  if(!issue) return;
-  
+  if (!issue) return;
+
   const isVP = currentUser.role === 'vice_principal';
   const isCoord = currentUser.role === 'coordinator';
   const isTeacher = currentUser.role === 'teacher';
   const isParent = currentUser.role === 'parent';
-  
+
   const canEscalate = (isTeacher && issue.stage === 'Teacher') || (isCoord && issue.stage === 'Coordinator');
   const canResolve = ((isTeacher && issue.stage === 'Teacher') || (isCoord && issue.stage === 'Coordinator') || (isVP && issue.stage === 'VP')) && issue.status !== 'Resolved' && issue.status !== 'Closed';
   const canReopen = (isVP || isCoord || isTeacher) && (issue.status === 'Resolved' || issue.status === 'Closed');
   const canReply = issue.status !== 'Resolved' && issue.status !== 'Closed';
 
   let actions = '';
-  if(canEscalate) actions += `<button class="btn-primary" style="background:#f57c00;border-color:#f57c00" onclick="updateIssueStatus('${issue.id}', 'escalate')"><i class="fas fa-level-up-alt"></i> Escalate</button>`;
-  if(canResolve) actions += `<button class="btn-primary" style="background:var(--color-primary)" onclick="updateIssueStatus('${issue.id}', 'resolve')"><i class="fas fa-check-circle"></i> Resolve</button>`;
-  if(canReopen) actions += `<button class="btn-primary" style="background:#8b5cf6;border-color:#8b5cf6" onclick="updateIssueStatus('${issue.id}', 'reopen')"><i class="fas fa-undo"></i> Reopen</button>`;
-  if(isVP && issue.studentId) actions += `<button class="btn-primary" style="background:var(--color-success);border-color:var(--color-success)" onclick="openVPStudentActionFlow('${issue.studentId}', 'promote', '${issue.id}')"><i class="fas fa-arrow-up"></i> Promote Student</button>`;
+  if (canEscalate) actions += `<button class="btn-primary" style="background:#f57c00;border-color:#f57c00" onclick="updateIssueStatus('${issue.id}', 'escalate')"><i class="fas fa-level-up-alt"></i> Escalate</button>`;
+  if (canResolve) actions += `<button class="btn-primary" style="background:var(--color-primary)" onclick="updateIssueStatus('${issue.id}', 'resolve')"><i class="fas fa-check-circle"></i> Resolve</button>`;
+  if (canReopen) actions += `<button class="btn-primary" style="background:#8b5cf6;border-color:#8b5cf6" onclick="updateIssueStatus('${issue.id}', 'reopen')"><i class="fas fa-undo"></i> Reopen</button>`;
+  if (isVP && issue.studentId) actions += `<button class="btn-primary" style="background:var(--color-success);border-color:var(--color-success)" onclick="openVPStudentActionFlow('${issue.studentId}', 'promote', '${issue.id}')"><i class="fas fa-arrow-up"></i> Promote Student</button>`;
 
   const timelineHTML = issue.timeline.map(t => `
     <div style="margin-bottom:12px;padding:12px;background:var(--color-surface);border-radius:8px;border:1px solid var(--color-border)">
@@ -2338,7 +2410,7 @@ function viewIssue(issueId) {
           <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
             <span class="badge badge-info">${issue.studentName} (${issue.class})</span>
             <span class="badge" style="background:var(--color-border);color:var(--color-text)">Stage: ${issue.stage}</span>
-            <span class="badge" style="background:${issue.status.includes('Resolv')?'var(--color-primary)': '#f57c00'}">Status: ${issue.status}</span>
+            <span class="badge" style="background:${issue.status.includes('Resolv') ? 'var(--color-primary)' : '#f57c00'}">Status: ${issue.status}</span>
           </div>
           <div style="margin-bottom:20px;color:var(--color-text);font-size:15px;line-height:1.5">
             <strong>Original Concern:</strong><br>
@@ -2360,17 +2432,17 @@ function viewIssue(issueId) {
 }
 
 function closeIssueModal(e) {
-  if(e && e.target.id !== 'issue-modal-overlay') return;
+  if (e && e.target.id !== 'issue-modal-overlay') return;
   const overlay = document.getElementById('issue-modal-overlay');
-  if(overlay) overlay.remove();
+  if (overlay) overlay.remove();
 }
 
 function submitReply(issueId) {
   const text = document.getElementById('issue-reply-text').value.trim();
-  if(!text) return;
+  if (!text) return;
   const issue = GLOBAL_ISSUES.find(i => i.id === issueId);
-  if(!issue) return;
-  
+  if (!issue) return;
+
   issue.timeline.push({
     date: new Date().toISOString(),
     actor: currentUser.name,
@@ -2389,21 +2461,21 @@ function submitReply(issueId) {
 
 function updateIssueStatus(issueId, action) {
   const issue = GLOBAL_ISSUES.find(i => i.id === issueId);
-  if(!issue) return;
-  
+  if (!issue) return;
+
   let note = '';
-  if(action === 'escalate') {
-    if(issue.stage === 'Teacher') { issue.stage = 'Coordinator'; issue.assignedTo = 'Coordinator'; note = 'Escalated from Teacher to Coordinator.'; }
-    else if(issue.stage === 'Coordinator') { issue.stage = 'VP'; issue.assignedTo = 'VP Suman'; note = 'Escalated from Coordinator to VP.'; }
+  if (action === 'escalate') {
+    if (issue.stage === 'Teacher') { issue.stage = 'Coordinator'; issue.assignedTo = 'Coordinator'; note = 'Escalated from Teacher to Coordinator.'; }
+    else if (issue.stage === 'Coordinator') { issue.stage = 'VP'; issue.assignedTo = 'VP Suman'; note = 'Escalated from Coordinator to VP.'; }
     issue.status = 'Escalated';
-  } else if(action === 'resolve') {
+  } else if (action === 'resolve') {
     issue.status = 'Resolved';
     note = 'Issue marked as resolved.';
-  } else if(action === 'reopen') {
+  } else if (action === 'reopen') {
     issue.status = 'Open';
     note = 'Issue reopened for further review.';
   }
-  
+
   issue.timeline.push({
     date: new Date().toISOString(), actor: currentUser.name, role: currentUser.roleLabel, note: note
   });
@@ -2420,7 +2492,7 @@ function updateIssueStatus(issueId, action) {
 
 /* ━━━━ TEACHER: NEW ASSIGNMENT MODAL ━━━━━━━━━━━━━━━━━━━━━━ */
 function openNewAssignmentModal() {
-  if(document.getElementById('assign-modal-overlay')) return;
+  if (document.getElementById('assign-modal-overlay')) return;
   const modalHTML = `
     <div id="assign-modal-overlay" class="modal-overlay" onclick="closeAssignModal(event)">
       <div class="modal-content" onclick="event.stopPropagation()">
@@ -2459,27 +2531,27 @@ function submitNewAssignment() {
   const subject = document.getElementById('assign-subject').value;
   const cls = document.getElementById('assign-class').value;
   const due = document.getElementById('assign-due').value;
-  if(!title || !due) { alert('Please fill in title and due date.'); return; }
+  if (!title || !due) { alert('Please fill in title and due date.'); return; }
   closeAssignModal();
   simulateAction('Assignment "' + title + '" published for ' + cls + ' — due ' + due + '.');
 }
 
 function closeAssignModal(e) {
-  if(e && e.target.id !== 'assign-modal-overlay') return;
+  if (e && e.target.id !== 'assign-modal-overlay') return;
   const el = document.getElementById('assign-modal-overlay');
-  if(el) el.remove();
+  if (el) el.remove();
 }
 
 function triggerLiveReRender() {
-   // Immediately rebuild the dashboard content without full page reload
-   console.log("Triggering live re-render to update state & badges.");
-   if(typeof currentUser !== 'undefined' && currentUser) {
-       buildDashboard(currentUser);
-       buildSidebar(currentUser); // re-calc sidebar badges too!
-       if (typeof currentSection !== 'undefined' && currentSection) {
-         navigateTo(currentSection);
-       }
-   }
+  // Immediately rebuild the dashboard content without full page reload
+  console.log("Triggering live re-render to update state & badges.");
+  if (typeof currentUser !== 'undefined' && currentUser) {
+    buildDashboard(currentUser);
+    buildSidebar(currentUser); // re-calc sidebar badges too!
+    if (typeof currentSection !== 'undefined' && currentSection) {
+      navigateTo(currentSection);
+    }
+  }
 }
 
 function setVPIssueTab(tab) {
@@ -2502,18 +2574,18 @@ function setVPNoticeTab(tab) {
 window.vpTempIssueStore = []; // To store the mock mapped issues if needed
 
 function resolveVPIssue(id) {
-    let issue = GLOBAL_ISSUES.find(i => i.id === id);
-    if(issue) {
-        issue.status = 'Resolved';
-        issue.updated = new Date().toISOString();
-        saveIssues(GLOBAL_ISSUES);
-    }
-    simulateAction('Issue Resolved');
-    triggerLiveReRender();
+  let issue = GLOBAL_ISSUES.find(i => i.id === id);
+  if (issue) {
+    issue.status = 'Resolved';
+    issue.updated = new Date().toISOString();
+    saveIssues(GLOBAL_ISSUES);
+  }
+  simulateAction('Issue Resolved');
+  triggerLiveReRender();
 }
 
 function openMeetParentModal(studentName) {
-    const modalHTML = `
+  const modalHTML = `
     <div class="modal-overlay" id="meet-parent-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
       <div class="modal" style="max-width:400px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
@@ -2544,35 +2616,35 @@ function openMeetParentModal(studentName) {
         </div>
       </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
 function openVPCaseModal(id) {
-    let issue = GLOBAL_ISSUES.find(i => i.id === id);
-    if(!issue) {
-       // Mock fallback
-       issue = {
-          id: id, title: 'Mock Case', desc: 'Mock details', status: 'Open', stage: 'VP',
-          studentName: 'Student', class: '9-C', category: 'Discipline', priority: 'High',
-          reporterName: 'System', created: new Date().toISOString(), updated: new Date().toISOString(),
-          timeline: []
-       };
+  let issue = GLOBAL_ISSUES.find(i => i.id === id);
+  if (!issue) {
+    // Mock fallback
+    issue = {
+      id: id, title: 'Mock Case', desc: 'Mock details', status: 'Open', stage: 'VP',
+      studentName: 'Student', class: '9-C', category: 'Discipline', priority: 'High',
+      reporterName: 'System', created: new Date().toISOString(), updated: new Date().toISOString(),
+      timeline: []
+    };
+  }
+
+  // Check if viewIssue handles the exact full drawer functionality!
+  // The existing viewIssue(id) does EXACTLY what is requested (timeline, reply, resolve, escalate)
+  // BUT we will just use viewIssue directly or customize it here. Yes, viewIssue exists!
+  if (typeof viewIssue === 'function') {
+    // If it's a mock issue not in GLOBAL_ISSUES, push it first!
+    if (!GLOBAL_ISSUES.find(i => i.id === id)) {
+      GLOBAL_ISSUES.push(issue);
     }
-    
-    // Check if viewIssue handles the exact full drawer functionality!
-    // The existing viewIssue(id) does EXACTLY what is requested (timeline, reply, resolve, escalate)
-    // BUT we will just use viewIssue directly or customize it here. Yes, viewIssue exists!
-    if(typeof viewIssue === 'function') {
-        // If it's a mock issue not in GLOBAL_ISSUES, push it first!
-        if(!GLOBAL_ISSUES.find(i => i.id === id)) {
-            GLOBAL_ISSUES.push(issue);
-        }
-        viewIssue(id);
-    }
+    viewIssue(id);
+  }
 }
 
 function openForwardCoordModal(id, studentName, summary) {
-    const modalHTML = `
+  const modalHTML = `
     <div class="modal-overlay" id="forward-coord-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
       <div class="modal" style="max-width:400px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
@@ -2601,97 +2673,97 @@ function openForwardCoordModal(id, studentName, summary) {
         </div>
       </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
 function confirmForwardCoord(id) {
-    let issue = GLOBAL_ISSUES.find(i => i.id === id);
-    if(issue) {
-        issue.stage = 'Coordinator';
-        issue.status = 'Escalated';
-        const note = document.getElementById('fw-notes').value || 'No additional notes.';
-        issue.timeline.push({
-            date: new Date().toISOString(),
-            actor: currentUser.name || 'VP',
-            role: 'VP',
-            note: 'Forwarded to Coordinator. Notes: ' + note
-        });
-        issue.updated = new Date().toISOString();
-        saveIssues(GLOBAL_ISSUES);
-    }
-    document.getElementById('forward-coord-modal').remove();
-    localStorage.setItem('vp_issue_tab', 'escalated');
-    simulateAction('Issue forwarded to Coordinator successfully');
-    triggerLiveReRender();
+  let issue = GLOBAL_ISSUES.find(i => i.id === id);
+  if (issue) {
+    issue.stage = 'Coordinator';
+    issue.status = 'Escalated';
+    const note = document.getElementById('fw-notes').value || 'No additional notes.';
+    issue.timeline.push({
+      date: new Date().toISOString(),
+      actor: currentUser.name || 'VP',
+      role: 'VP',
+      note: 'Forwarded to Coordinator. Notes: ' + note
+    });
+    issue.updated = new Date().toISOString();
+    saveIssues(GLOBAL_ISSUES);
+  }
+  document.getElementById('forward-coord-modal').remove();
+  localStorage.setItem('vp_issue_tab', 'escalated');
+  simulateAction('Issue forwarded to Coordinator successfully');
+  triggerLiveReRender();
 }
 
 function vpRestoreIssue(id) {
-    let issue = GLOBAL_ISSUES.find(i => i.id === id);
-    if(issue) {
-        issue.stage = 'VP';
-        issue.status = 'Pending Action';
-        issue.updated = new Date().toISOString();
-        issue.timeline = issue.timeline || [];
-        issue.timeline.push({
-            date: new Date().toISOString(),
-            actor: currentUser.name || 'VP',
-            role: 'VP',
-            note: 'Restored to VP main queue.'
-        });
-        saveIssues(GLOBAL_ISSUES);
-    }
-    localStorage.setItem('vp_issue_tab', 'main');
-    simulateAction('Issue restored to main queue');
-    triggerLiveReRender();
+  let issue = GLOBAL_ISSUES.find(i => i.id === id);
+  if (issue) {
+    issue.stage = 'VP';
+    issue.status = 'Pending Action';
+    issue.updated = new Date().toISOString();
+    issue.timeline = issue.timeline || [];
+    issue.timeline.push({
+      date: new Date().toISOString(),
+      actor: currentUser.name || 'VP',
+      role: 'VP',
+      note: 'Restored to VP main queue.'
+    });
+    saveIssues(GLOBAL_ISSUES);
+  }
+  localStorage.setItem('vp_issue_tab', 'main');
+  simulateAction('Issue restored to main queue');
+  triggerLiveReRender();
 }
 
 function vpResolveEscalationIssue(id) {
-    const store = getEscalationStore();
-    const idx = store.vpEscalated.findIndex(i => String(i.id) === String(id));
-    if (idx < 0) return;
-    const issue = store.vpEscalated.splice(idx, 1)[0];
-    issue.status = 'Resolved';
-    issue.stage = 'resolved';
-    issue.timeline = issue.timeline || [];
-    issue.timeline.push({
-      action: 'Resolved by VP',
-      by: (currentUser && currentUser.name) || 'VP',
-      role: 'VP',
-      date: new Date().toLocaleString(),
-      note: 'Resolved from VP escalated queue'
-    });
-    store.resolvedIssues.unshift(issue);
-    saveEscalationStore(store);
-    simulateAction('Issue resolved');
-    triggerLiveReRender();
+  const store = getEscalationStore();
+  const idx = store.vpEscalated.findIndex(i => String(i.id) === String(id));
+  if (idx < 0) return;
+  const issue = store.vpEscalated.splice(idx, 1)[0];
+  issue.status = 'Resolved';
+  issue.stage = 'resolved';
+  issue.timeline = issue.timeline || [];
+  issue.timeline.push({
+    action: 'Resolved by VP',
+    by: (currentUser && currentUser.name) || 'VP',
+    role: 'VP',
+    date: new Date().toLocaleString(),
+    note: 'Resolved from VP escalated queue'
+  });
+  store.resolvedIssues.unshift(issue);
+  saveEscalationStore(store);
+  simulateAction('Issue resolved');
+  triggerLiveReRender();
 }
 
 function vpRestoreEscalationIssue(id) {
-    const store = getEscalationStore();
-    const idx = store.vpEscalated.findIndex(i => String(i.id) === String(id));
-    if (idx < 0) return;
-    const issue = store.vpEscalated.splice(idx, 1)[0];
-    issue.status = 'Pending Action';
-    issue.stage = 'teacher';
-    issue.timeline = issue.timeline || [];
-    issue.timeline.push({
-      action: 'Restored to Main',
-      by: (currentUser && currentUser.name) || 'VP',
-      role: 'VP',
-      date: new Date().toLocaleString(),
-      note: 'Restored from VP escalated queue'
-    });
-    store.teacherInbox.unshift(issue);
-    saveEscalationStore(store);
-    localStorage.setItem('vp_issue_tab', 'main');
-    simulateAction('Issue restored to main');
-    triggerLiveReRender();
+  const store = getEscalationStore();
+  const idx = store.vpEscalated.findIndex(i => String(i.id) === String(id));
+  if (idx < 0) return;
+  const issue = store.vpEscalated.splice(idx, 1)[0];
+  issue.status = 'Pending Action';
+  issue.stage = 'teacher';
+  issue.timeline = issue.timeline || [];
+  issue.timeline.push({
+    action: 'Restored to Main',
+    by: (currentUser && currentUser.name) || 'VP',
+    role: 'VP',
+    date: new Date().toLocaleString(),
+    note: 'Restored from VP escalated queue'
+  });
+  store.teacherInbox.unshift(issue);
+  saveEscalationStore(store);
+  localStorage.setItem('vp_issue_tab', 'main');
+  simulateAction('Issue restored to main');
+  triggerLiveReRender();
 }
 
 
 // --- FIX 2: TIMETABLE REVIEW MODALS ---
 function openAssignSubModal(teacher, periodInfo) {
-    const modalHTML = `
+  const modalHTML = `
     <div class="modal-overlay" id="assign-sub-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
       <div class="modal" style="max-width:400px">
         <h3 style="margin-top:0">Assign Substitute Teacher</h3>
@@ -2716,11 +2788,11 @@ function openAssignSubModal(teacher, periodInfo) {
         </div>
       </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
 function openAdjAllocModal() {
-    const modalHTML = `
+  const modalHTML = `
     <div class="modal-overlay" id="adj-alloc-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
       <div class="modal" style="max-width:400px">
         <h3 style="margin-top:0">Adjust Period Allocation</h3>
@@ -2736,16 +2808,16 @@ function openAdjAllocModal() {
         </div>
       </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
 function openEditTimetableMode() {
-    // Close any existing modal
-    const old = document.getElementById('edit-tt-modal');
-    if(old) old.remove();
+  // Close any existing modal
+  const old = document.getElementById('edit-tt-modal');
+  if (old) old.remove();
 
-    const shown = SCHEDULE.slice(0, 5); // Default to today's set
-    const modalHTML = `
+  const shown = SCHEDULE.slice(0, 5); // Default to today's set
+  const modalHTML = `
     <div class="modal-overlay" id="edit-tt-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
       <div class="modal" style="max-width:800px;width:100%">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
@@ -2786,11 +2858,11 @@ function openEditTimetableMode() {
         </div>
       </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
 function buildAllIssuesSuperAdmin(user) {
-    const list = GLOBAL_ISSUES.map(i => `
+  const list = GLOBAL_ISSUES.map(i => `
         <tr onclick="viewIssue('${i.id}')" style="cursor:pointer">
             <td><strong>${i.id}</strong></td>
             <td>${i.studentName}</td>
@@ -2801,7 +2873,7 @@ function buildAllIssuesSuperAdmin(user) {
         </tr>
     `).join('');
 
-    return `<div class="dash-section" id="section-all_issues">
+  return `<div class="dash-section" id="section-all_issues">
         <div class="card">
             <h3>📑 System-wide Issue Log</h3>
             <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">Complete audit of all student and institutional concerns.</p>
@@ -2813,77 +2885,77 @@ function buildAllIssuesSuperAdmin(user) {
 
 // --- FIX 3: MESSAGES ---
 function sendMsgReply(index) {
-    let activeMessages = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({...m, _id: i, replies: []}));
-    let content = document.getElementById('reply-text-' + index).value.trim();
-    if(!content) return;
-    if(!activeMessages[index].replies) activeMessages[index].replies = [];
-    activeMessages[index].replies.push({sender: currentUser.name, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), content});
-    localStorage.setItem('campuscore_vp_msgs', JSON.stringify(activeMessages));
-    simulateAction('Reply sent');
-    triggerLiveReRender();
+  let activeMessages = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
+  let content = document.getElementById('reply-text-' + index).value.trim();
+  if (!content) return;
+  if (!activeMessages[index].replies) activeMessages[index].replies = [];
+  activeMessages[index].replies.push({ sender: currentUser.name, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), content });
+  localStorage.setItem('campuscore_vp_msgs', JSON.stringify(activeMessages));
+  simulateAction('Reply sent');
+  triggerLiveReRender();
 }
 function openMsgForwardModal(sub, sender) {
-    const m = `<div class="modal-overlay" id="fwd-msg-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">Forward Message</h3>
+  const m = `<div class="modal-overlay" id="fwd-msg-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">Forward Message</h3>
     <div class="form-group"><label>Forward To</label><select class="form-control"><option>Coordinator</option><option>Teacher</option><option>Admin</option></select><label style="margin-top:10px">Add forwarding note (optional)</label><textarea class="form-control" rows="3"></textarea>
     <div style="display:flex;gap:10px;margin-top:15px"><button class="btn-primary" style="flex:1" onclick="document.getElementById('fwd-msg-modal').remove(); simulateAction('Message forwarded');">Forward</button><button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('fwd-msg-modal').remove()">Cancel</button></div></div></div></div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 function openBroadcastModal() {
-    const m = `<div class="modal-overlay" id="bc-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">Broadcast Message</h3>
+  const m = `<div class="modal-overlay" id="bc-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">Broadcast Message</h3>
     <div class="form-group"><label>Target Audience</label><select class="form-control"><option>All Staff</option><option>Teachers Only</option><option>Coordinators Only</option></select><label style="margin-top:10px">Message</label><textarea class="form-control" rows="4"></textarea>
     <div style="display:flex;gap:10px;margin-top:15px"><button class="btn-primary" style="flex:1" onclick="document.getElementById('bc-modal').remove(); simulateAction('Broadcast sent to staff members');">Send Broadcast</button><button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('bc-modal').remove()">Cancel</button></div></div></div></div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 function openNewMessageModal() {
-    const m = `<div class="modal-overlay" id="nm-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">New Message</h3>
+  const m = `<div class="modal-overlay" id="nm-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">New Message</h3>
     <div class="form-group"><label>To</label><select class="form-control"><option>Anitha (Coordinator)</option><option>Venkat (Teacher)</option></select><label style="margin-top:10px">Subject</label><input type="text" class="form-control"><label style="margin-top:10px">Message</label><textarea class="form-control" rows="4"></textarea>
     <div style="display:flex;gap:10px;margin-top:15px"><button class="btn-primary" style="flex:1" onclick="document.getElementById('nm-modal').remove(); simulateAction('Message sent');">Send</button><button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('nm-modal').remove()">Cancel</button></div></div></div></div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 
 
 // --- FIX 4: NOTICES ---
 function archiveNotice(index) {
-    let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
-    let archived = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
-    const picked = live[index];
-    if(!picked) return;
-    archived.unshift(picked);
-    live.splice(index, 1);
-    localStorage.setItem('campuscore_notices', JSON.stringify(live));
-    localStorage.setItem('campuscore_notices_archived', JSON.stringify(archived));
-    localStorage.setItem('vp_notice_tab', 'archived');
-    simulateAction('Notice archived');
-    triggerLiveReRender();
+  let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
+  let archived = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
+  const picked = live[index];
+  if (!picked) return;
+  archived.unshift(picked);
+  live.splice(index, 1);
+  localStorage.setItem('campuscore_notices', JSON.stringify(live));
+  localStorage.setItem('campuscore_notices_archived', JSON.stringify(archived));
+  localStorage.setItem('vp_notice_tab', 'archived');
+  simulateAction('Notice archived');
+  triggerLiveReRender();
 }
 
 function restoreNotice(index) {
-    let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
-    let archived = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
-    const picked = archived[index];
-    if(!picked) return;
-    live.unshift(picked);
-    archived.splice(index, 1);
-    localStorage.setItem('campuscore_notices', JSON.stringify(live));
-    localStorage.setItem('campuscore_notices_archived', JSON.stringify(archived));
-    localStorage.setItem('vp_notice_tab', 'active');
-    simulateAction('Notice restored');
-    triggerLiveReRender();
+  let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
+  let archived = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
+  const picked = archived[index];
+  if (!picked) return;
+  live.unshift(picked);
+  archived.splice(index, 1);
+  localStorage.setItem('campuscore_notices', JSON.stringify(live));
+  localStorage.setItem('campuscore_notices_archived', JSON.stringify(archived));
+  localStorage.setItem('vp_notice_tab', 'active');
+  simulateAction('Notice restored');
+  triggerLiveReRender();
 }
 function openNoticeModal(editIndex = null) {
-    let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
-    let n = editIndex !== null ? live[editIndex] : {title:'', body:'', category:'Events', target:'All', priority:'High'};
-    
-    const m = `<div class="modal-overlay" id="notice-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:500px;width:100%"><h3 style="margin-top:0">${editIndex !== null ? 'Edit Notice' : 'Create New Notice'}</h3>
+  let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
+  let n = editIndex !== null ? live[editIndex] : { title: '', body: '', category: 'Events', target: 'All', priority: 'High' };
+
+  const m = `<div class="modal-overlay" id="notice-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:500px;width:100%"><h3 style="margin-top:0">${editIndex !== null ? 'Edit Notice' : 'Create New Notice'}</h3>
     <div class="form-group">
       <label>Notice Title</label><input type="text" id="n-title" class="form-control" value="${n.title}">
       <label style="margin-top:10px">Notice Body / Description</label><textarea id="n-body" class="form-control" rows="4">${n.body || ''}</textarea>
       
       <div style="display:flex;gap:10px;margin-top:10px">
-          <div style="flex:1"><label>Category</label><select id="n-cat" class="form-control"><option ${n.category==='Events'?'selected':''}>Events</option><option ${n.category==='Academic'?'selected':''}>Academic</option><option ${n.category==='Meeting'?'selected':''}>Meeting</option><option ${n.category==='Finance'?'selected':''}>Finance</option><option ${n.category==='Holiday'?'selected':''}>Holiday</option><option ${n.category==='General'?'selected':''}>General</option></select></div>
-          <div style="flex:1"><label>Target</label><select id="n-tar" class="form-control"><option ${n.target==='All'?'selected':''}>All</option><option ${n.target==='Teachers'?'selected':''}>Teachers</option><option ${n.target==='Parents'?'selected':''}>Parents</option><option ${n.target==='Students'?'selected':''}>Students</option><option ${n.target==='Coordinators'?'selected':''}>Coordinators</option></select></div>
+          <div style="flex:1"><label>Category</label><select id="n-cat" class="form-control"><option ${n.category === 'Events' ? 'selected' : ''}>Events</option><option ${n.category === 'Academic' ? 'selected' : ''}>Academic</option><option ${n.category === 'Meeting' ? 'selected' : ''}>Meeting</option><option ${n.category === 'Finance' ? 'selected' : ''}>Finance</option><option ${n.category === 'Holiday' ? 'selected' : ''}>Holiday</option><option ${n.category === 'General' ? 'selected' : ''}>General</option></select></div>
+          <div style="flex:1"><label>Target</label><select id="n-tar" class="form-control"><option ${n.target === 'All' ? 'selected' : ''}>All</option><option ${n.target === 'Teachers' ? 'selected' : ''}>Teachers</option><option ${n.target === 'Parents' ? 'selected' : ''}>Parents</option><option ${n.target === 'Students' ? 'selected' : ''}>Students</option><option ${n.target === 'Coordinators' ? 'selected' : ''}>Coordinators</option></select></div>
       </div>
-      <label style="margin-top:10px">Priority</label><select id="n-pri" class="form-control"><option ${n.priority==='High'?'selected':''}>high</option><option ${n.priority==='Medium'?'selected':''}>medium</option><option ${n.priority==='Low'?'selected':''}>low</option></select>
+      <label style="margin-top:10px">Priority</label><select id="n-pri" class="form-control"><option ${n.priority === 'High' ? 'selected' : ''}>high</option><option ${n.priority === 'Medium' ? 'selected' : ''}>medium</option><option ${n.priority === 'Low' ? 'selected' : ''}>low</option></select>
       
       <div style="display:flex;gap:10px;margin-top:20px">
           <button class="btn-primary" style="flex:2" onclick="saveNotice(${editIndex})">${editIndex !== null ? 'Update Notice' : 'Publish'}</button>
@@ -2891,29 +2963,29 @@ function openNoticeModal(editIndex = null) {
           <button style="flex:1;background:none;border:none;color:var(--color-text-muted);cursor:pointer;border-radius:8px" onclick="document.getElementById('notice-modal').remove()">Cancel</button>
       </div>
     </div></div></div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 function saveNotice(editIndex) {
-    let t = document.getElementById('n-title').value.trim();
-    let b = document.getElementById('n-body').value.trim();
-    if(!t || !b) { simulateAction('Please fill all fields'); return; }
-    
-    let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
-    let n = {
-        title: t, body: b, 
-        category: document.getElementById('n-cat').value,
-        target: document.getElementById('n-tar').value,
-        priority: document.getElementById('n-pri').value,
-        author: currentUser.name, date: new Date().toLocaleDateString('en-GB')
-    };
-    
-    if(editIndex !== null) live[editIndex] = n;
-    else live.unshift(n);
-    
-    localStorage.setItem('campuscore_notices', JSON.stringify(live));
-    document.getElementById('notice-modal').remove();
-    simulateAction(editIndex !== null ? 'Notice updated' : 'Notice published successfully');
-    triggerLiveReRender();
+  let t = document.getElementById('n-title').value.trim();
+  let b = document.getElementById('n-body').value.trim();
+  if (!t || !b) { simulateAction('Please fill all fields'); return; }
+
+  let live = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
+  let n = {
+    title: t, body: b,
+    category: document.getElementById('n-cat').value,
+    target: document.getElementById('n-tar').value,
+    priority: document.getElementById('n-pri').value,
+    author: currentUser.name, date: new Date().toLocaleDateString('en-GB')
+  };
+
+  if (editIndex !== null) live[editIndex] = n;
+  else live.unshift(n);
+
+  localStorage.setItem('campuscore_notices', JSON.stringify(live));
+  document.getElementById('notice-modal').remove();
+  simulateAction(editIndex !== null ? 'Notice updated' : 'Notice published successfully');
+  triggerLiveReRender();
 }
 
 // ==========================================
@@ -2921,10 +2993,10 @@ function saveNotice(editIndex) {
 // ==========================================
 
 function buildDocumentUploadSection(user) {
-    const docs = JSON.parse(localStorage.getItem('campuscore_documents') || '[]');
-    const myDocs = docs.filter(d => d.author === user.name || user.role === 'principal' || user.role === 'vice_principal');
-    
-    const rows = myDocs.map(d => `
+  const docs = JSON.parse(localStorage.getItem('campuscore_documents') || '[]');
+  const myDocs = docs.filter(d => d.author === user.name || user.role === 'principal' || user.role === 'vice_principal');
+
+  const rows = myDocs.map(d => `
         <tr>
             <td>${d.title}</td>
             <td><span class="badge badge-info">${d.type}</span></td>
@@ -2935,7 +3007,7 @@ function buildDocumentUploadSection(user) {
         </tr>
     `).join('');
 
-    return `<div class="dash-section" id="section-document_upload">
+  return `<div class="dash-section" id="section-document_upload">
         <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
                 <h3>📤 Document Repository</h3>
@@ -2948,8 +3020,8 @@ function buildDocumentUploadSection(user) {
 }
 
 function buildManageDocuments(user) {
-    const docs = JSON.parse(localStorage.getItem('campuscore_documents') || '[]');
-    const rows = docs.map(d => `
+  const docs = JSON.parse(localStorage.getItem('campuscore_documents') || '[]');
+  const rows = docs.map(d => `
         <tr>
             <td>${d.id}</td>
             <td><strong>${d.title}</strong></td>
@@ -2961,7 +3033,7 @@ function buildManageDocuments(user) {
         </tr>
     `).join('');
 
-    return `<div class="dash-section" id="section-manage_documents">
+  return `<div class="dash-section" id="section-manage_documents">
         <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
                 <h3>📂 Master Document Management</h3>
@@ -2976,7 +3048,7 @@ function buildManageDocuments(user) {
 }
 
 function openUploadDocModal() {
-    const m = `<div class="modal-overlay" id="upload-doc-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+  const m = `<div class="modal-overlay" id="upload-doc-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:500px">
             <h3>Upload Document</h3>
             <div class="form-group">
@@ -2992,52 +3064,43 @@ function openUploadDocModal() {
                 </select>
                 <label>File (Simulation)</label>
                 <div style="border:2px dashed var(--color-border);padding:20px;text-align:center;border-radius:8px;cursor:pointer" onclick="simulateAction('File explorer opened...')">
-                    <i class="fas fa-file-upload" style="font-size:24px;color:var(--color-primary)"></i>
-                    <p style="font-size:12px;margin-top:8px">Click to select file (PDF, DOCX, JPG)</p>
+                    📥 Click to Browse or Drag Files
                 </div>
-                <div style="display:flex;gap:10px;margin-top:20px">
-                    <button class="btn-primary" style="flex:1" onclick="submitUploadDoc()">Upload Now</button>
-                    <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px" onclick="document.getElementById('upload-doc-modal').remove()">Cancel</button>
-                </div>
+            </div>
+            <div style="margin-top:20px;display:flex;gap:10px">
+                <button class="btn-primary" style="flex:1" onclick="saveDocument()">Save Document</button>
+                <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px" onclick="document.getElementById('upload-doc-modal').remove()">Cancel</button>
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
-
-function submitUploadDoc() {
-    const title = document.getElementById('doc-title').value;
-    const cls = document.getElementById('doc-class').value;
-    const subj = document.getElementById('doc-subj').value;
-    const type = document.getElementById('doc-type').value;
-    
-    if(!title || !subj) { simulateAction('Please fill all required fields'); return; }
-    
-    let docs = JSON.parse(localStorage.getItem('campuscore_documents') || '[]');
-    const newDoc = {
-        id: 'DOC-' + Math.floor(Math.random()*900+100),
-        title: title,
-        class: cls,
-        subject: subj,
-        type: type,
-        date: new Date().toISOString().split('T')[0],
-        author: currentUser.name
-    };
-    
-    docs.unshift(newDoc);
-    localStorage.setItem('campuscore_documents', JSON.stringify(docs));
-    document.getElementById('upload-doc-modal').remove();
-    simulateAction('Document uploaded successfully');
-    triggerLiveReRender();
+function saveDocument() {
+  const title = document.getElementById('doc-title').value.trim();
+  if (!title) { alert('Please enter a title'); return; }
+  const newDoc = {
+    id: 'DOC' + Date.now().toString().slice(-4),
+    title,
+    author: currentUser.name,
+    type: document.getElementById('doc-type').value,
+    class: document.getElementById('doc-class').value,
+    date: new Date().toLocaleDateString()
+  };
+  let docs = JSON.parse(localStorage.getItem('campuscore_documents') || '[]');
+  docs.unshift(newDoc);
+  localStorage.setItem('campuscore_documents', JSON.stringify(docs));
+  simulateAction('Document uploaded successfully!');
+  document.getElementById('upload-doc-modal').remove();
+  triggerLiveReRender();
 }
-
 function deleteDocument(id) {
-    if(!confirm('Are you sure you want to delete this document?')) return;
+  if (confirm('Delete document ' + id + '?')) {
     let docs = JSON.parse(localStorage.getItem('campuscore_documents') || '[]');
     docs = docs.filter(d => d.id !== id);
     localStorage.setItem('campuscore_documents', JSON.stringify(docs));
     simulateAction('Document deleted');
     triggerLiveReRender();
+  }
 }
 
 // ==========================================
@@ -3045,17 +3108,17 @@ function deleteDocument(id) {
 // ==========================================
 
 function buildStaffApprovals(user) {
-    const reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]');
-    // Filter based on role stage
-    
-    let targetStage = 'Teacher';
-    if(user.role === 'coordinator') targetStage = 'Coordinator';
-    if(user.role === 'vice_principal') targetStage = 'VP';
-    if(user.role === 'principal') targetStage = 'Principal';
-    
-    const myStageReqs = reqs.filter(r => r.stage === targetStage && r.status === 'Pending');
-    
-    const rows = myStageReqs.map(r => `
+  const reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]');
+  // Filter based on role stage
+
+  let targetStage = 'Teacher';
+  if (user.role === 'coordinator') targetStage = 'Coordinator';
+  if (user.role === 'vice_principal') targetStage = 'VP';
+  if (user.role === 'principal') targetStage = 'Principal';
+
+  const myStageReqs = reqs.filter(r => r.stage === targetStage && r.status === 'Pending');
+
+  const rows = myStageReqs.map(r => `
         <tr>
             <td>${r.id}</td>
             <td><strong>${r.studentName}</strong></td>
@@ -3069,7 +3132,7 @@ function buildStaffApprovals(user) {
         </tr>
     `).join('');
 
-    return `<div class="dash-section" id="section-approvals">
+  return `<div class="dash-section" id="section-approvals">
         <div class="card">
             <h3>⏳ Pending Approvals (${targetStage} Level)</h3>
             <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">Review and process student/parent requests.</p>
@@ -3079,37 +3142,37 @@ function buildStaffApprovals(user) {
 }
 
 function approveRequest(id) {
-    let reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]');
-    const idx = reqs.findIndex(r => r.id === id);
-    if(idx === -1) return;
-    
-    const r = reqs[idx];
-    const stages = ['Teacher', 'Coordinator', 'VP', 'Principal', 'Completed'];
-    const currentIdx = stages.indexOf(r.stage);
-    
-    if(currentIdx < stages.length - 2) {
-        r.stage = stages[currentIdx + 1];
-        simulateAction('Request approved and forwarded to ' + r.stage);
-    } else {
-        r.stage = 'Completed';
-        r.status = 'Approved';
-        simulateAction('Request fully approved!');
-    }
-    
-    localStorage.setItem('campuscore_student_requests', JSON.stringify(reqs));
-    triggerLiveReRender();
+  let reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]');
+  const idx = reqs.findIndex(r => r.id === id);
+  if (idx === -1) return;
+
+  const r = reqs[idx];
+  const stages = ['Teacher', 'Coordinator', 'VP', 'Principal', 'Completed'];
+  const currentIdx = stages.indexOf(r.stage);
+
+  if (currentIdx < stages.length - 2) {
+    r.stage = stages[currentIdx + 1];
+    simulateAction('Request approved and forwarded to ' + r.stage);
+  } else {
+    r.stage = 'Completed';
+    r.status = 'Approved';
+    simulateAction('Request fully approved!');
+  }
+
+  localStorage.setItem('campuscore_student_requests', JSON.stringify(reqs));
+  triggerLiveReRender();
 }
 
 function rejectRequest(id) {
-    if(!confirm('Reject this request?')) return;
-    let reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]');
-    const idx = reqs.findIndex(r => r.id === id);
-    if(idx === -1) return;
-    
-    reqs[idx].status = 'Rejected';
-    localStorage.setItem('campuscore_student_requests', JSON.stringify(reqs));
-    simulateAction('Request rejected');
-    triggerLiveReRender();
+  if (!confirm('Reject this request?')) return;
+  let reqs = JSON.parse(localStorage.getItem('campuscore_student_requests') || '[]');
+  const idx = reqs.findIndex(r => r.id === id);
+  if (idx === -1) return;
+
+  reqs[idx].status = 'Rejected';
+  localStorage.setItem('campuscore_student_requests', JSON.stringify(reqs));
+  simulateAction('Request rejected');
+  triggerLiveReRender();
 }
 
 // ==========================================
@@ -3117,38 +3180,42 @@ function rejectRequest(id) {
 // ==========================================
 
 function buildStaffHelpdesk(user) {
-    const filter = localStorage.getItem('helpdesk_filter') || 'All';
-    const raw = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
-    const tickets = filter === 'All' ? raw : raw.filter(t => t.status === filter);
-    
-    const rows = tickets.map(t => `
+  const filter = localStorage.getItem('helpdesk_filter') || 'All';
+  const raw = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
+  const tickets = filter === 'All' ? raw : raw.filter(t => t.status === filter);
+
+  const rows = tickets.map(t => `
         <tr>
             <td>${t.id}</td>
             <td><strong>${t.studentName}</strong></td>
             <td><div style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.subject}</div></td>
-            <td><span class="badge ${t.priority==='High'?'badge-danger':t.priority==='Medium'?'badge-warning':'badge-active'}">${t.priority}</span></td>
-            <td><span class="badge ${t.status==='Open'?'badge-pending':t.status==='Resolved'?'badge-active':'badge-info'}">${t.status}</span></td>
+            <td><span class="badge ${t.priority === 'High' ? 'badge-danger' : t.priority === 'Medium' ? 'badge-warning' : 'badge-active'}">${t.priority}</span></td>
+            <td><span class="badge ${t.status === 'Open' ? 'badge-pending' : t.status === 'Resolved' ? 'badge-active' : 'badge-info'}">${t.status}</span></td>
             <td>
                 <div style="display:flex;gap:6px">
                     <button class="btn-primary" style="padding:4px 8px;font-size:11px" onclick="viewTicketDetails('${t.id}')">View</button>
                     ${(user.role === 'super_admin' || user.role === 'apaaas' || user.role === 'principal' || user.role === 'vice_principal') && t.status === 'Open' ? `
-                        <button style="padding:4px 8px;font-size:11px;background:var(--color-success);color:white;border:none;border-radius:4px;cursor:pointer" onclick="resolveTicket('${t.id}')">Resolve Ticket</button>
+                        <div style="display:flex;gap:5px">
+                           <button style="padding:4px 8px;font-size:11px;background:var(--color-success);color:white;border:none;border-radius:4px;cursor:pointer" onclick="resolveTicket('${t.id}')">Resolve</button>
+                           <button style="padding:4px 8px;font-size:11px;background:var(--color-primary);color:white;border:none;border-radius:4px;cursor:pointer" onclick="helpParent('${t.id}', '${t.studentName}')">Help Parent</button>
+                           <button style="padding:4px 8px;font-size:11px;background:var(--color-surface-2);color:var(--color-text);border:1px solid var(--color-border);border-radius:4px;cursor:pointer" onclick="replyTicket('${t.id}')">Reply</button>
+                        </div>
                     ` : ''}
                 </div>
             </td>
         </tr>
     `).join('');
 
-    return `<div class="dash-section" id="section-helpdesk_staff">
+  return `<div class="dash-section" id="section-helpdesk_staff">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px">
              <div>
                 <h3>🎧 Support Helpdesk</h3>
                 <p style="color:var(--color-text-muted);font-size:13px">Managing institutional support requests.</p>
             </div>
             <div style="display:flex;gap:6px">
-                <button class="btn-primary" style="padding:8px 12px;font-size:12px;${filter==='All'?'':'opacity:0.6'}" onclick="setHelpdeskFilter('All')">All</button>
-                <button class="btn-primary" style="padding:8px 12px;font-size:12px;${filter==='Open'?'':'opacity:0.6'}" onclick="setHelpdeskFilter('Open')">Open</button>
-                <button class="btn-primary" style="padding:8px 12px;font-size:12px;${filter==='Resolved'?'':'opacity:0.6'}" onclick="setHelpdeskFilter('Resolved')">Resolved</button>
+                <button class="btn-primary" style="padding:8px 12px;font-size:12px;${filter === 'All' ? '' : 'opacity:0.6'}" onclick="setHelpdeskFilter('All')">All</button>
+                <button class="btn-primary" style="padding:8px 12px;font-size:12px;${filter === 'Open' ? '' : 'opacity:0.6'}" onclick="setHelpdeskFilter('Open')">Open</button>
+                <button class="btn-primary" style="padding:8px 12px;font-size:12px;${filter === 'Resolved' ? '' : 'opacity:0.6'}" onclick="setHelpdeskFilter('Resolved')">Resolved</button>
             </div>
         </div>
         <div class="card">
@@ -3157,50 +3224,88 @@ function buildStaffHelpdesk(user) {
     </div>`;
 }
 
-// ==========================================
-// FEATURE EXPANSION: SUPERADMIN SHARED LOGIC
-// ==========================================
+function setHelpdeskFilter(f) {
+  localStorage.setItem('helpdesk_filter', f);
+  triggerLiveReRender();
+}
+function viewTicketDetails(id) {
+  const raw = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
+  const t = raw.find(x => x.id === id);
+  if (!t) return;
+  const m = `
+    <div class="modal-overlay" id="ticket-view-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+        <div class="modal" style="max-width:500px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+                <h3 style="margin:0">Ticket #${t.id}</h3>
+                <button class="modal-close" onclick="document.getElementById('ticket-view-modal').remove()">×</button>
+            </div>
+            <div style="margin-bottom:15px"><strong>Subject:</strong> ${t.subject}</div>
+            <div style="margin-bottom:15px;background:var(--color-surface-2);padding:12px;border-radius:8px;font-size:14px;white-space:pre-wrap">${t.content || 'No description provided.'}</div>
+            <div style="font-size:12px;color:var(--color-text-muted)">Raised by ${t.studentName} · Priority: ${t.priority}</div>
+            ${t.resolution ? `<div style="margin-top:20px;padding:12px;background:rgba(92,168,112,0.1);border-left:4px solid var(--color-success);border-radius:4px">
+                <div style="font-weight:700;color:var(--color-success);margin-bottom:4px">Resolution:</div>
+                <div style="font-size:14px">${t.resolution}</div>
+            </div>` : ''}
+        </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+}
+function replyTicket(id) {
+  const r = prompt('Type your reply/internal note for this ticket:');
+  if (r) {
+    let t = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
+    const idx = t.findIndex(x => x.id === id);
+    if (idx !== -1) {
+      if (!t[idx].notes) t[idx].notes = [];
+      t[idx].notes.push({ sender: currentUser.name, time: new Date().toLocaleString(), text: r });
+      localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify(t));
+      simulateAction('Reply added to ticket ' + id);
+      triggerLiveReRender();
+    }
+  }
+}
 
-window.setRoleView = function(role) {
-    localStorage.setItem('role_view_active', role);
-    simulateAction('Sifting system perspective to ' + role + '...');
-    triggerLiveReRender();
+
+window.setRoleView = function (role) {
+  localStorage.setItem('role_view_active', role);
+  simulateAction('Sifting system perspective to ' + role + '...');
+  triggerLiveReRender();
 };
 
 function buildRoleViews(user) {
-    const activeRole = localStorage.getItem('role_view_active') || 'none';
-    
-    const roles = [
-        { id: 'principal', icon: 'fa-user-shield', label: 'Principal', desc: 'Institutional oversight' },
-        { id: 'vice_principal', icon: 'fa-user-tie', label: 'VP', desc: 'Academic operations' },
-        { id: 'teacher', icon: 'fa-chalkboard-teacher', label: 'Teacher', desc: 'Classroom & Results' },
-        { id: 'coordinator', icon: 'fa-sitemap', label: 'Coordinator', desc: 'Dept. Head view' },
-        { id: 'parent', icon: 'fa-user-friends', label: 'Parent', desc: 'Child progress' },
-        { id: 'student', icon: 'fa-user-graduate', label: 'Student', desc: 'Learning & Profile' }
-    ];
+  const activeRole = localStorage.getItem('role_view_active') || 'none';
 
-    const cards = roles.map(r => `
+  const roles = [
+    { id: 'principal', icon: 'fa-user-shield', label: 'Principal', desc: 'Institutional oversight' },
+    { id: 'vice_principal', icon: 'fa-user-tie', label: 'VP', desc: 'Academic operations' },
+    { id: 'teacher', icon: 'fa-chalkboard-teacher', label: 'Teacher', desc: 'Classroom & Results' },
+    { id: 'coordinator', icon: 'fa-sitemap', label: 'Coordinator', desc: 'Dept. Head view' },
+    { id: 'parent', icon: 'fa-user-friends', label: 'Parent', desc: 'Child progress' },
+    { id: 'student', icon: 'fa-user-graduate', label: 'Student', desc: 'Learning & Profile' }
+  ];
+
+  const cards = roles.map(r => `
         <div class="card" onclick="setRoleView('${r.id}')" style="cursor:pointer;border:${activeRole === r.id ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'};transition:all 0.2s;background:${activeRole === r.id ? 'rgba(25,118,210,0.05)' : 'var(--color-surface)'}">
             <div style="font-size:32px;margin-bottom:12px;color:var(--color-primary)"><i class="fas ${r.icon}"></i></div>
             <h4 style="margin:0">${r.label}</h4>
             <p style="font-size:11px;color:var(--color-text-muted);margin-top:4px">${r.desc}</p>
         </div>
     `).join('');
-    
-    let previewContent = `
+
+  let previewContent = `
         <div style="height:400px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:var(--color-text-muted);border:2px dashed var(--color-border);border-radius:12px;background:var(--color-surface-2);margin-top:20px">
             <i class="fas fa-ghost" style="font-size:48px;margin-bottom:16px;opacity:0.3"></i>
             <p>Select a role card above to enter Ghost-Preview mode.</p>
         </div>
     `;
 
-    if (activeRole !== 'none') {
-        const dummyUser = { ...user, role: activeRole, name: "AUDIT PREVIEW (" + activeRole.toUpperCase() + ")" };
-        // Resolve correctly for student/parent who might have special IDs in preview
-        if (activeRole === 'student') dummyUser.id = '3180076';
-        if (activeRole === 'parent') { dummyUser.id = '50'; dummyUser.childId = '3180076'; }
+  if (activeRole !== 'none') {
+    const dummyUser = { ...user, role: activeRole, name: "AUDIT PREVIEW (" + activeRole.toUpperCase() + ")" };
+    // Resolve correctly for student/parent who might have special IDs in preview
+    if (activeRole === 'student') dummyUser.id = '3180076';
+    if (activeRole === 'parent') { dummyUser.id = '50'; dummyUser.childId = '3180076'; }
 
-        previewContent = `
+    previewContent = `
             <div style="margin-top:20px;position:relative;border:1px solid var(--color-border);border-radius:12px;overflow:hidden">
                 <div style="background:var(--color-primary);padding:12px 20px;color:white;display:flex;justify-content:space-between;align-items:center">
                    <div style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px">
@@ -3209,13 +3314,13 @@ function buildRoleViews(user) {
                    <button class="btn-primary" style="padding:6px 12px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid white;color:white" onclick="setRoleView('none')">Exit Preview</button>
                 </div>
                 <div style="padding:24px;background:var(--color-background);max-height:600px;overflow-y:auto">
-                    ${safeRender(activeRole + ' Dashboard', (activeRole === 'student' ? (window.buildStudentDashboard || buildHome) : (activeRole === 'parent' ? buildParentHome : buildHome)), dummyUser)}
+                    ${safeRender(activeRole + ' Dashboard', (activeRole === 'student' ? (window.buildStudentDashboard || buildHome) : (activeRole === 'parent' ? (window.buildParentDashboard || buildHome) : buildHome)), dummyUser)}
                 </div>
             </div>
         `;
-    }
+  }
 
-    return `<div class="dash-section" id="section-role_views">
+  return `<div class="dash-section" id="section-role_views">
         <div style="margin-bottom:20px">
             <h3>🎭 Role-View Master Console</h3>
             <p style="color:var(--color-text-muted);font-size:13px">Sift institutional perspective to verify data visibility and UI consistency.</p>
@@ -3228,8 +3333,8 @@ function buildRoleViews(user) {
 }
 
 // --- TIMETABLE MASTER ---
-window.openEditTimetableMode = function() {
-    const m = `<div class="modal-overlay" id="tt-edit-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+window.openEditTimetableMode = function () {
+  const m = `<div class="modal-overlay" id="tt-edit-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:600px">
             <h3>Timetable Master Management</h3>
             <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:20px">Modify period assignments for the entire school schedule.</p>
@@ -3253,21 +3358,21 @@ window.openEditTimetableMode = function() {
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 };
 
-window.saveTimetableChanges = function() {
-    simulateAction('Validating teacher availability matrix...');
-    setTimeout(() => {
-        simulateAction('Conflict check passed. Saving school timetable...');
-        document.getElementById('tt-edit-modal').remove();
-        triggerLiveReRender();
-        simulateAction('New timetable published to all Student dashboards.');
-    }, 1200);
+window.saveTimetableChanges = function () {
+  simulateAction('Validating teacher availability matrix...');
+  setTimeout(() => {
+    simulateAction('Conflict check passed. Saving school timetable...');
+    document.getElementById('tt-edit-modal').remove();
+    triggerLiveReRender();
+    simulateAction('New timetable published to all Student dashboards.');
+  }, 1200);
 };
 
-window.openAssignSubModal = function(teacher, detail) {
-    const m = `<div class="modal-overlay" id="sub-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+window.openAssignSubModal = function (teacher, detail) {
+  const m = `<div class="modal-overlay" id="sub-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:450px">
             <h3>Assign Manual Substitute</h3>
             <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">For: ${detail}</p>
@@ -3284,31 +3389,35 @@ window.openAssignSubModal = function(teacher, detail) {
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 };
 
-window.submitSubAssignment = function() {
-    const sub = document.getElementById('sub-teacher-select').value;
-    simulateAction('Assigning ' + sub + ' as proxy...');
-    localStorage.setItem('vp_sub_assigned', 'true');
-    document.getElementById('sub-modal').remove();
-    setTimeout(() => {
-        simulateAction('Substitute assignment confirmed in system.');
-        triggerLiveReRender();
-    }, 800);
+window.submitSubAssignment = function () {
+  const sub = document.getElementById('sub-teacher-select').value;
+  simulateAction('Assigning ' + sub + ' as proxy...');
+  localStorage.setItem('vp_sub_assigned', 'true');
+  document.getElementById('sub-modal').remove();
+  setTimeout(() => {
+    simulateAction('Substitute assignment confirmed in system.');
+    triggerLiveReRender();
+  }, 800);
 };
 
 
 function setRoleView(r) {
-    localStorage.setItem('role_view_active', r);
-    triggerLiveReRender();
+  localStorage.setItem('role_view_active', r);
+  triggerLiveReRender();
 }
 
 function buildAllAccounts(user) {
-    const list = DEMO_USERS.map(u => {
-        const isSuper = u.role === 'super_admin' || u.username === 'APAAAS';
-        const roleLabel = isSuper ? 'System Administrator' : u.roleLabel;
-        return `<tr>
+  const list = DEMO_USERS.filter(u => {
+    const isAdminLogged = currentUser.role === 'apaaas' || currentUser.role === 'super_admin' || String(currentUser.username || '').toUpperCase() === 'APAAAS';
+    const isTargetAdmin = u.role === 'super_admin' || u.username === 'APAAAS' || u.name === 'Admin';
+    return isAdminLogged || !isTargetAdmin;
+  }).map(u => {
+    const isSuper = u.role === 'super_admin' || u.username === 'APAAAS';
+    const roleLabel = isSuper ? 'System Administrator' : u.roleLabel;
+    return `<tr>
             <td><div class="user-row"><div class="avatar" style="background:${u.avatar_color || '#ccc'}">${getInitials(u.name)}</div><strong>${u.name}</strong></div></td>
             <td><code>${u.username}</code></td>
             <td><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${roleLabel}</span></td>
@@ -3320,9 +3429,9 @@ function buildAllAccounts(user) {
                 </div>
             </td>
         </tr>`;
-    }).join('');
+  }).join('');
 
-    return `<div class="dash-section" id="section-all_accounts">
+  return `<div class="dash-section" id="section-all_accounts">
         <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
                 <h3>👥 Institutional Account Control</h3>
@@ -3334,7 +3443,7 @@ function buildAllAccounts(user) {
 }
 
 function buildRemovedBin(user) {
-    return `<div class="dash-section" id="section-removed_bin">
+  return `<div class="dash-section" id="section-removed_bin">
         <div class="card" style="text-align:center;padding:60px 20px">
             <div style="width:100px;height:100px;background:var(--color-surface-2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px">
                 <i class="fas fa-trash-alt" style="font-size:40px;opacity:0.2"></i>
@@ -3350,9 +3459,9 @@ function buildRemovedBin(user) {
 
 // --- ESCALATION LOGIC ---
 function openEscalateIssueModal(id) {
-    const raw = (GLOBAL_ISSUES || []).find(i => i.id === id);
-    if(!raw) return;
-    const m = `<div class="modal-overlay" id="escalate-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+  const raw = (GLOBAL_ISSUES || []).find(i => i.id === id);
+  if (!raw) return;
+  const m = `<div class="modal-overlay" id="escalate-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:450px">
             <h3><i class="fas fa-level-up-alt" style="color:var(--color-primary)"></i> Escalate Issue</h3>
             <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:20px">Forwarding <strong>${raw.id}</strong> to the next authority level.</p>
@@ -3368,72 +3477,45 @@ function openEscalateIssueModal(id) {
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 
 function submitEscalation(id) {
-    const reason = document.getElementById('esc-reason').value;
-    const prio = document.getElementById('esc-prio').value;
-    if(!reason) { simulateAction('Please provide a reason'); return; }
+  const reason = document.getElementById('esc-reason').value;
+  const prio = document.getElementById('esc-prio').value;
+  if (!reason) { simulateAction('Please provide a reason'); return; }
 
-    const issues = JSON.parse(localStorage.getItem('campuscore_issues') || '[]');
-    const idx = issues.findIndex(i => i.id === id);
-    if(idx !== -1) {
-        const issue = issues[idx];
-        const stages = ['Teacher', 'Coordinator', 'VP', 'Principal', 'Board'];
-        const currentIdx = stages.indexOf(issue.stage || 'VP');
-        issue.stage = stages[Math.min(currentIdx + 1, stages.length - 1)];
-        issue.priority = prio;
-        if(!issue.timeline) issue.timeline = [];
-        issue.timeline.push({ date: new Date().toISOString(), action: 'Escalated to ' + issue.stage, by: currentUser.name, note: reason });
-        
-        localStorage.setItem('campuscore_issues', JSON.stringify(issues));
-        document.getElementById('escalate-modal').remove();
-        simulateAction('Successfully escalated to ' + issue.stage);
-        triggerLiveReRender();
-    }
-}
+  const issues = JSON.parse(localStorage.getItem('campuscore_issues') || '[]');
+  const idx = issues.findIndex(i => i.id === id);
+  if (idx !== -1) {
+    const issue = issues[idx];
+    const stages = ['Teacher', 'Coordinator', 'VP', 'Principal', 'Board'];
+    const currentIdx = stages.indexOf(issue.stage || 'VP');
+    issue.stage = stages[Math.min(currentIdx + 1, stages.length - 1)];
+    issue.priority = prio;
+    if (!issue.timeline) issue.timeline = [];
+    issue.timeline.push({ date: new Date().toISOString(), action: 'Escalated to ' + issue.stage, by: currentUser.name, note: reason });
 
-// --- APPROVAL COMMENTS ---
-function openApprovalCommentModal(id) {
-    const m = `<div class="modal-overlay" id="appr-comm-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
-        <div class="modal" style="max-width:400px">
-            <h3>Add Comment</h3>
-            <textarea id="appr-comment-text" class="form-control" rows="4" placeholder="Type clarification or note..."></textarea>
-            <div style="display:flex;gap:10px;margin-top:20px">
-                <button class="btn-primary" style="flex:1" onclick="submitApprovalComment('${id}')">Save & Close</button>
-                <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px" onclick="document.getElementById('appr-comm-modal').remove()">Cancel</button>
-            </div>
-        </div>
-    </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
-}
-
-function submitApprovalComment(id) {
-    const val = document.getElementById('appr-comment-text').value;
-    if(!val) return;
-    
-    const key = 'cc_approval_comments';
-    const comments = JSON.parse(localStorage.getItem(key) || '{}');
-    comments[id] = val;
-    localStorage.setItem(key, JSON.stringify(comments));
-    
-    simulateAction('Comment persisted for ' + id);
-    document.getElementById('appr-comm-modal').remove();
+    localStorage.setItem('campuscore_issues', JSON.stringify(issues));
+    document.getElementById('escalate-modal').remove();
+    simulateAction('Successfully escalated to ' + issue.stage);
     triggerLiveReRender();
+  }
 }
+
+// Consolidated in window.openApprovalCommentModal below
 
 function approveApprovalItem(id) {
-    simulateAction('Request ' + id + ' approved.');
-    triggerLiveReRender();
+  simulateAction('Request ' + id + ' approved.');
+  triggerLiveReRender();
 }
 function rejectApprovalItem(id) {
-    simulateAction('Request ' + id + ' rejected.');
-    triggerLiveReRender();
+  simulateAction('Request ' + id + ' rejected.');
+  triggerLiveReRender();
 }
 
 function buildAllAccounts(user) {
-    const list = DEMO_USERS.map(u => `
+  const list = DEMO_USERS.map(u => `
         <tr>
             <td><div class="user-row"><div class="avatar" style="background:${u.avatar_color || '#ccc'}">${getInitials(u.name)}</div><div class="user-row-info"><strong>${u.name}</strong><span>${u.username}</span></div></div></td>
             <td><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${u.roleLabel}</span></td>
@@ -3446,7 +3528,7 @@ function buildAllAccounts(user) {
         </tr>
     `).join('');
 
-    return `<div class="dash-section" id="section-all_accounts">
+  return `<div class="dash-section" id="section-all_accounts">
         <div class="card">
             <h3>👥 System Audit: All Accounts</h3>
             <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">Master list of all registered users in the CampusCore ecosystem.</p>
@@ -3457,7 +3539,7 @@ function buildAllAccounts(user) {
 
 
 function buildRemovedBin(user) {
-    return `<div class="dash-section" id="section-removed_bin">
+  return `<div class="dash-section" id="section-removed_bin">
         <div class="card" style="text-align:center;padding:40px">
             <div style="font-size:48px;color:var(--color-text-muted);margin-bottom:20px"><i class="fas fa-trash-alt"></i></div>
             <h3>🗑️ Removed Records Bin</h3>
@@ -3467,68 +3549,68 @@ function buildRemovedBin(user) {
 }
 
 function setGhostRoleContext(role) {
-    simulateAction('Entering ' + role + ' view context...');
+  simulateAction('Entering ' + role + ' view context...');
 }
 
 // --- HELPDESK MASTER ---
 function viewTicketDetails(id) {
-    simulateAction('Full history and logs for ' + id + ' opened.');
+  simulateAction('Full history and logs for ' + id + ' opened.');
 }
 function resolveTicket(id) {
-    const r = prompt('Resolution message for student:');
-    if(r) {
-        let t = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
-        const idx = t.findIndex(x => x.id === id);
-        if(idx !== -1) {
-            t[idx].status = 'Resolved';
-            t[idx].resolution = r;
-            localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify(t));
-            simulateAction('Ticket ' + id + ' marked as Resolved.');
-            triggerLiveReRender();
-        }
+  const r = prompt('Resolution message for student:');
+  if (r) {
+    let t = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
+    const idx = t.findIndex(x => x.id === id);
+    if (idx !== -1) {
+      t[idx].status = 'Resolved';
+      t[idx].resolution = r;
+      localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify(t));
+      simulateAction('Ticket ' + id + ' marked as Resolved.');
+      triggerLiveReRender();
     }
+  }
 }
 function closeTicket(id) {
-    if(confirm('Permanently close ticket ' + id + '?')) {
-        let t = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
-        const idx = t.findIndex(x => x.id === id);
-        if(idx !== -1) {
-            t[idx].status = 'Closed';
-            localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify(t));
-            simulateAction('Ticket ' + id + ' is now Closed.');
-            triggerLiveReRender();
-        }
+  if (confirm('Permanently close ticket ' + id + '?')) {
+    let t = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
+    const idx = t.findIndex(x => x.id === id);
+    if (idx !== -1) {
+      t[idx].status = 'Closed';
+      localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify(t));
+      simulateAction('Ticket ' + id + ' is now Closed.');
+      triggerLiveReRender();
     }
+  }
 }
 
 // --- LANGUAGE MASTER ---
 function setSystemLanguage(l) {
-    localStorage.setItem('cc_sys_lang', l);
-    simulateAction('Language switched to ' + l);
-    if(typeof applyLanguage === 'function') applyLanguage();
-    triggerLiveReRender();
+  localStorage.setItem('cc_sys_lang', l);
+  simulateAction('Language switched to ' + l);
+  if (typeof applyLanguage === 'function') applyLanguage();
+  triggerLiveReRender();
 }
 
 function translateSuperAdminUI() {
-    // We now use the global applyLanguage() from ui.js for common elements
-    if (typeof applyLanguage === 'function') {
-        applyLanguage();
-    }
+  // We now use the global applyLanguage() from ui.js for common elements
+  if (typeof applyLanguage === 'function') {
+    applyLanguage();
+  }
 }
 
 // --- ACCOUNTS LOGIC ---
 function viewAccount(uid) {
-    simulateAction('Detailed activity audit for ' + uid + ' generated.');
+  simulateAction('Detailed activity audit for ' + uid + ' generated.');
 }
 function deleteAccount(uid) {
-    if(confirm('DANGER: Delete institutional account ' + uid + '?')) {
-        simulateAction('Account ' + uid + ' moved to Removed Personnel Bin.');
-    }
+  if (confirm('DANGER: Delete institutional account ' + uid + '?')) {
+    simulateAction('Account ' + uid + ' moved to Removed Personnel Bin.');
+  }
 }
 
 // --- RESULTS Logic ---
-function openPerformanceReport(cls, subj) {
-    const m = `<div class="modal-overlay" id="perf-rpt-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+window.openPerformanceReport = function (cls, subj) {
+  const m = `<div class="modal-overlay" id="perf-rpt-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:800px;width:90%">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
                 <h3>📈 Performance Report: ${cls} - ${subj}</h3>
@@ -3538,8 +3620,8 @@ function openPerformanceReport(cls, subj) {
                 ${[65, 72, 68, 85, 92].map((v, i) => `
                     <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
                         <div style="font-size:11px;font-weight:700">${v}%</div>
-                        <div style="width:100%;background:var(--color-primary);height:${v}%;border-radius:6px 6px 0 0;opacity:${0.4 + (i*0.15)}"></div>
-                        <div style="font-size:10px;color:var(--color-text-muted)">Term ${i+1}</div>
+                        <div style="width:100%;background:var(--color-primary);height:${v}%;border-radius:6px 6px 0 0;opacity:${0.4 + (i * 0.15)}"></div>
+                        <div style="font-size:10px;color:var(--color-text-muted)">Term ${i + 1}</div>
                     </div>
                 `).join('')}
             </div>
@@ -3549,11 +3631,11 @@ function openPerformanceReport(cls, subj) {
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 
-function openExamPlan(cls) {
-    const m = `<div class="modal-overlay" id="exam-plan-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+window.openExamPlan = function (cls) {
+  const m = `<div class="modal-overlay" id="exam-plan-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:600px">
             <h3>📅 Exam Roadmap: ${cls}</h3>
             <div style="margin-top:20px;display:flex;flex-direction:column;gap:15px">
@@ -3575,50 +3657,50 @@ function openExamPlan(cls) {
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 
 // Initialize missing results data if it doesn't exist
-if(!localStorage.getItem('campuscore_results')) {
-    localStorage.setItem('campuscore_results', JSON.stringify([
-      { class: '10A', subject: 'Mathematics', status: 'Published', date: '2026-03-25' },
-      { class: '10A', subject: 'Science', status: 'Draft', date: '2026-04-05' },
-      { class: '9C', subject: 'English', status: 'Published', date: '2026-03-20' },
-      { class: '9C', subject: 'Telugu', status: 'Published', date: '2026-03-22' },
-      { class: '8B', subject: 'History', status: 'Draft', date: '2026-04-08' }
-    ]));
+if (!localStorage.getItem('campuscore_results')) {
+  localStorage.setItem('campuscore_results', JSON.stringify([
+    { class: '10A', subject: 'Mathematics', status: 'Published', date: '2026-03-25' },
+    { class: '10A', subject: 'Science', status: 'Draft', date: '2026-04-05' },
+    { class: '9C', subject: 'English', status: 'Published', date: '2026-03-20' },
+    { class: '9C', subject: 'Telugu', status: 'Published', date: '2026-03-22' },
+    { class: '8B', subject: 'History', status: 'Draft', date: '2026-04-08' }
+  ]));
 }
 
 // Ensure default helpdesk tickets for demonstration
-if(!localStorage.getItem('campuscore_helpdesk_tickets')) {
-    localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify([
-        { id: 'TKT-101', studentName: 'Praneeth Bhukya', subject: 'Unable to view results', priority: 'High', status: 'Open', date: '2026-04-08' },
-        { id: 'TKT-102', studentName: 'K. Moksha', subject: 'Bus route clarification', priority: 'Medium', status: 'Open', date: '2026-04-09' },
-        { id: 'TKT-103', studentName: 'Ashwath', subject: 'Password reset request', priority: 'Low', status: 'Resolved', date: '2026-04-05', resolution: 'Password reset link sent to registered email.' }
-    ]));
+if (!localStorage.getItem('campuscore_helpdesk_tickets')) {
+  localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify([
+    { id: 'TKT-101', studentName: 'Praneeth Bhukya', subject: 'Unable to view results', priority: 'High', status: 'Open', date: '2026-04-08' },
+    { id: 'TKT-102', studentName: 'K. Moksha', subject: 'Bus route clarification', priority: 'Medium', status: 'Open', date: '2026-04-09' },
+    { id: 'TKT-103', studentName: 'Ashwath', subject: 'Password reset request', priority: 'Low', status: 'Resolved', date: '2026-04-05', resolution: 'Password reset link sent to registered email.' }
+  ]));
 }
 
 // --- APPROVALS LOGIC ---
-window.approveApprovalItem = function(id) {
-    simulateAction('Approving request ' + id + '...');
-    setTimeout(() => {
-        simulateAction('Request ' + id + ' has been APPROVED.');
-        triggerLiveReRender();
-    }, 800);
+window.approveApprovalItem = function (id) {
+  simulateAction('Approving request ' + id + '...');
+  setTimeout(() => {
+    simulateAction('Request ' + id + ' has been APPROVED.');
+    triggerLiveReRender();
+  }, 800);
 }
 
-window.rejectApprovalItem = function(id) {
-    const reason = prompt('Reason for rejection:');
-    if(!reason) return;
-    simulateAction('Rejecting request ' + id + '...');
-    setTimeout(() => {
-        simulateAction('Request ' + id + ' has been REJECTED.');
-        triggerLiveReRender();
-    }, 800);
+window.rejectApprovalItem = function (id) {
+  const reason = prompt('Reason for rejection:');
+  if (!reason) return;
+  simulateAction('Rejecting request ' + id + '...');
+  setTimeout(() => {
+    simulateAction('Request ' + id + ' has been REJECTED.');
+    triggerLiveReRender();
+  }, 800);
 }
 
-window.openApprovalCommentModal = function(id) {
-    const m = `<div class="modal-overlay" id="approval-comment-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+window.openApprovalCommentModal = function (id) {
+  const m = `<div class="modal-overlay" id="approval-comment-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:450px">
             <h3>Add Comment / Forward</h3>
             <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">Request ID: ${id}</p>
@@ -3632,29 +3714,81 @@ window.openApprovalCommentModal = function(id) {
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 
-window.submitApprovalComment = function(id) {
-    const comment = document.getElementById('app-comment-text').value;
-    if(!comment) return;
-    simulateAction('Saving and forwarding comment for ' + id + '...');
-    
-    // Persistence simulation
-    let comments = JSON.parse(localStorage.getItem('campuscore_approval_comments') || '{}');
-    comments[id] = comment;
-    localStorage.setItem('campuscore_approval_comments', JSON.stringify(comments));
-    
+window.submitApprovalComment = function (id) {
+  const comment = document.getElementById('app-comment-text').value;
+  if (!comment) return;
+  simulateAction('Saving and forwarding comment for ' + id + '...');
+
+  const key = 'cc_approval_comments';
+  let comments = JSON.parse(localStorage.getItem(key) || '{}');
+  comments[id] = comment;
+  localStorage.setItem(key, JSON.stringify(comments));
+
+  setTimeout(() => {
     document.getElementById('approval-comment-modal').remove();
-    setTimeout(() => {
-        simulateAction('Comment published. Request status flagged for follow-up.');
-        triggerLiveReRender();
-    }, 500);
+    triggerLiveReRender();
+  }, 500);
 }
+
+window.markTeacherAttendance = function (roll, status, btn) {
+  let marking = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
+  marking[roll] = status;
+  localStorage.setItem('teacher_current_marking', JSON.stringify(marking));
+
+  // UI feedback
+  const group = btn.closest('.attendance-btn-group');
+  group.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  simulateAction('Marked Roll ' + roll + ' as ' + status);
+};
+
+window.resolveTicket = function (id) {
+  simulateAction('Resolving ticket ' + id + '...');
+  setTimeout(() => {
+    let tickets = JSON.parse(localStorage.getItem('campuscore_tickets') || '[]');
+    if (tickets.length === 0) tickets = HELPDESK_TICKETS;
+    const idx = tickets.findIndex(t => t.id === id);
+    if (idx > -1) {
+      tickets[idx].status = 'Resolved';
+      localStorage.setItem('campuscore_tickets', JSON.stringify(tickets));
+    }
+    simulateAction('Ticket ' + id + ' resolved.');
+    triggerLiveReRender();
+  }, 800);
+};
+
+window.replyTicket = function (id) {
+  const m = `<div class="modal-overlay" id="helpdesk-reply-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+        <div class="modal" style="max-width:450px">
+            <h3>Helpdesk Reply</h3>
+            <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">Ticket ID: ${id}</p>
+            <textarea id="help-reply-text" class="form-control" rows="4" placeholder="Type your reply to the parent..."></textarea>
+            <div style="display:flex;gap:10px;margin-top:20px">
+                <button class="btn-primary" style="flex:1" onclick="submitHelpReply('${id}')">Send Reply</button>
+                <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px" onclick="document.getElementById('helpdesk-reply-modal').remove()">Cancel</button>
+            </div>
+        </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+};
+
+window.submitHelpReply = function (id) {
+  const txt = document.getElementById('help-reply-text').value;
+  if (!txt) return;
+  simulateAction('Sending reply for ticket ' + id + '...');
+  setTimeout(() => {
+    document.getElementById('helpdesk-reply-modal').remove();
+    simulateAction('Reply sent to parent.');
+  }, 800);
+};
+
 
 // --- TEACHER MARKS UPLOAD ---
-window.openTeacherMarksUpload = function() {
-    const m = `<div class="modal-overlay" id="teacher-marks-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+window.openTeacherMarksUpload = function () {
+  const m = `<div class="modal-overlay" id="teacher-marks-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:500px">
             <h3>Excel Marks Upload</h3>
             <div style="padding:15px;background:rgba(25,118,210,0.05);border-radius:10px;margin-bottom:20px">
@@ -3673,26 +3807,26 @@ window.openTeacherMarksUpload = function() {
             <button class="btn-primary" style="margin-top:20px;width:100%" onclick="document.getElementById('teacher-marks-modal').remove()">Close</button>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 
-window.downloadMarksTemplate = function() {
-    simulateAction('Generating template for Current Class/Section...');
-    setTimeout(() => simulateAction('File downloaded: Marks_Template_Class9C.xlsx'), 1000);
+window.downloadMarksTemplate = function () {
+  simulateAction('Generating template for Current Class/Section...');
+  setTimeout(() => simulateAction('File downloaded: Marks_Template_Class9C.xlsx'), 1000);
 }
 
-window.importMarksFromExcel = function() {
-    simulateAction('Parsing Excel data (Student IDs 3160XXX - 3180XXX)...');
-    setTimeout(() => {
-        simulateAction('Success: 27 Student records imported/updated.');
-        document.getElementById('teacher-marks-modal').remove();
-        triggerLiveReRender();
-    }, 1500);
+window.importMarksFromExcel = function () {
+  simulateAction('Parsing Excel data (Student IDs 3160XXX - 3180XXX)...');
+  setTimeout(() => {
+    simulateAction('Success: 27 Student records imported/updated.');
+    document.getElementById('teacher-marks-modal').remove();
+    triggerLiveReRender();
+  }, 1500);
 }
 
 // --- EVENTS ---
-window.openVPEventModal = function() {
-    const m = `<div class="modal-overlay" id="event-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+window.openVPEventModal = function () {
+  const m = `<div class="modal-overlay" id="event-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:450px">
             <h3>Add New School Event</h3>
             <div class="form-group">
@@ -3707,16 +3841,131 @@ window.openVPEventModal = function() {
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', m);
+  document.body.insertAdjacentHTML('beforeend', m);
 }
 
-window.saveVPEvent = function() {
-    const name = document.getElementById('ev-name').value;
-    if(!name) return;
-    simulateAction('Saving event to school calendar...');
-    document.getElementById('event-modal').remove();
-    setTimeout(() => {
-        simulateAction('Event "' + name + '" published successfully.');
-        triggerLiveReRender();
-    }, 800);
+window.saveVPEvent = function () {
+  const name = document.getElementById('ev-name').value;
+  if (!name) return;
+  simulateAction('Saving event to school calendar...');
+  document.getElementById('event-modal').remove();
+  setTimeout(() => {
+    simulateAction('Event "' + name + '" published successfully.');
+    triggerLiveReRender();
+  }, 800);
 }
+
+/* ━━━━ INSTITUTIONAL HELP & ACTIONS ━━━━━━━━━━━━━━━━━━━━━━ */
+function helpParent(ticketId, parentName) {
+  const m = `<div class="modal-overlay" id="help-parent-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+        <div class="modal" style="max-width:450px">
+            <h3>🤝 Support Parent: ${parentName}</h3>
+            <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:20px">Ticket Reference: ${ticketId}</p>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+                <button class="btn-primary" style="text-align:left;padding:15px;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text)" onclick="simulateAction('Calling ${parentName}...'); document.getElementById('help-parent-modal').remove()">
+                    <i class="fas fa-phone-alt" style="color:var(--color-success);margin-right:10px"></i> Call Parent Directly
+                </button>
+                <button class="btn-primary" style="text-align:left;padding:15px;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text)" onclick="document.getElementById('help-parent-modal').remove(); navigateTo('vp_messages');">
+                    <i class="fas fa-comment-dots" style="color:var(--color-primary);margin-right:10px"></i> Open Direct Chat
+                </button>
+                <button class="btn-primary" style="text-align:left;padding:15px;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text)" onclick="simulateAction('Meeting request sent.'); document.getElementById('help-parent-modal').remove()">
+                    <i class="fas fa-calendar-plus" style="color:#f57c00;margin-right:10px"></i> Schedule Physical Meeting
+                </button>
+            </div>
+            <button class="btn-primary" style="width:100%;background:none;border:1px solid var(--color-border);color:var(--color-text)" onclick="document.getElementById('help-parent-modal').remove()">Dismiss</button>
+        </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+}
+
+function promoteStudents() {
+  if (confirm('Are you sure you want to proceed to the Promotion Wizard? This will prepare students for the next academic level (2026-2027).')) {
+    simulateAction('Promotion wizard initialized. Data integrity check in progress...');
+    setTimeout(() => {
+      alert('Promotion Readiness: 98%. Please review Class 10 board results before final lock.');
+    }, 1000);
+  }
+}
+
+function viewIssue(id) {
+  const issue = GLOBAL_ISSUES.find(i => i.id === id);
+  if (!issue) return;
+  const m = `<div class="modal-overlay" id="issue-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+        <div class="modal" style="max-width:500px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+                <h3 style="margin:0">Issue Details: ${id}</h3>
+                <button class="modal-close" onclick="document.getElementById('issue-modal').remove()">×</button>
+            </div>
+            <div style="margin-bottom:15px"><strong>Student:</strong> ${issue.studentName} (${issue.class})</div>
+            <div style="margin-bottom:15px"><strong>Category:</strong> ${issue.category}</div>
+            <div style="margin-bottom:15px;background:var(--color-surface-2);padding:15px;border-radius:10px;font-size:14px">${issue.description || 'Behavioral intervention required based on recent teacher reports.'}</div>
+            <div style="font-size:12px;color:var(--color-text-muted)">Stage: ${issue.stage} · Status: ${issue.status}</div>
+            <div style="margin-top:20px;display:flex;gap:10px">
+                <button class="btn-primary" style="flex:1" onclick="simulateAction('Issue marked for resolution.'); document.getElementById('issue-modal').remove();">Resolve</button>
+                <button class="btn-primary" style="flex:1;background:#f57c00" onclick="simulateAction('Escalated to management.'); document.getElementById('issue-modal').remove();">Escalate</button>
+            </div>
+        </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+}
+
+/* ━━━━ ADMIN BIN & UTILITIES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function buildRemovedBin(user) {
+  const bin = JSON.parse(localStorage.getItem('cc_removed_bin') || '[]');
+  const rows = bin.map(x => `
+        <tr>
+            <td>${x.id}</td>
+            <td>${x.type}</td>
+            <td>${x.name}</td>
+            <td>${x.removedDate}</td>
+            <td><button class="btn-primary" style="padding:4px 8px;background:var(--color-success);border:none" onclick="restoreFromBin('${x.id}')">Restore</button></td>
+        </tr>
+    `).join('');
+  return `<div class="dash-section" id="section-removed_bin">
+        <div class="card">
+            <h3>🗑️ Institutional Recycle Bin</h3>
+            <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:20px">Items deleted from the system (Staff, Students, Documents) are held here for 30 days.</p>
+            <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>ID</th><th>Type</th><th>Name</th><th>Removed</th><th>Action</th></tr></thead><tbody>${rows || '<tr><td colspan="5" style="text-align:center;padding:20px">Recycle bin is empty.</td></tr>'}</tbody></table></div>
+        </div>
+    </div>`;
+}
+
+function restoreFromBin(id) {
+  simulateAction('Restoring item ' + id + ' to original module...');
+  let bin = JSON.parse(localStorage.getItem('cc_removed_bin') || '[]');
+  bin = bin.filter(x => x.id !== id);
+  localStorage.setItem('cc_removed_bin', JSON.stringify(bin));
+  triggerLiveReRender();
+}
+
+function openAssignSubModal(teacher, slot) {
+  const m = `<div class="modal-overlay" id="sub-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+        <div class="modal" style="max-width:400px">
+            <h3>Assign Substitute</h3>
+            <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">For <strong>${teacher}</strong> at ${slot}</p>
+            <label style="font-size:12px;margin-bottom:6px;display:block">Select Available Teacher</label>
+            <select id="sub-teacher" class="form-control" style="margin-bottom:20px"><option>Venkat Iyer</option><option>Mohan Das</option><option>Suresh Naidu</option></select>
+            <button class="btn-primary" style="width:100%" onclick="localStorage.setItem('vp_sub_assigned','true'); simulateAction('Substitute assigned!'); document.getElementById('sub-modal').remove(); triggerLiveReRender();">Confirm Assignment</button>
+        </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+}
+
+function openAdjAllocModal() {
+  simulateAction('Opening Allocation Adjustment Wizard...');
+  alert('Resource Allocation Wizard: Optimized load balancing suggested for the Mathematics department. Apply?');
+}
+
+function openChangeActionPinModal() {
+  const m = `<div class="modal-overlay" id="pin-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+        <div class="modal" style="max-width:350px">
+            <h3>Action Security PIN</h3>
+            <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:15px">Verify your identity to perform administrative overrides.</p>
+            <input type="password" maxlength="6" class="form-control" placeholder="Current PIN" style="text-align:center;letter-spacing:5px;font-size:24px;margin-bottom:10px">
+            <input type="password" maxlength="6" class="form-control" placeholder="New PIN" style="text-align:center;letter-spacing:5px;font-size:24px;margin-bottom:20px">
+            <button class="btn-primary" style="width:100%" onclick="simulateAction('Security PIN updated successfully.'); document.getElementById('pin-modal').remove()">Update PIN</button>
+        </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+}
+

@@ -356,41 +356,125 @@
   }
 
   function buildParentFees(ctx) {
-    const fees = ctx.shared.fees || { total_due: 45000, paid: 35000, pending: 10000, next_due: '5 Apr 2026' };
-    const history = ctx.shared.feeHistory || [];
-    const paidPct = Math.round((fees.paid / fees.total_due) * 100);
+    const fees = ctx.shared.fees || (window.FEE_DATA ? JSON.parse(JSON.stringify(window.FEE_DATA)) : { total_due: 0, paid: 0, pending: 0, breakdown: [], history: [] });
+    const history = fees.history || [];
+    const paidPct = fees.total_due > 0 ? Math.round((fees.paid / fees.total_due) * 100) : 0;
+    const p = ctx.profile;
 
     return `
     <div class="dash-section" id="section-parent_fees">
+      <div class="welcome-banner" style="background: linear-gradient(135deg, #1a237e, #0d47a1); margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center">
+          <div>
+            <div class="welcome-greeting">Fee Payment Portal</div>
+            <div class="welcome-sub">${p.name} · Adm: ${p.admNo} · Class: ${p.class}</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 800; color: #ffeb3b; border: 1px solid rgba(255,255,255,0.2)">
+            DEMO MODE ONLY
+          </div>
+        </div>
+      </div>
+
       <div class="content-grid-equal">
-        <div class="card" style="text-align:center">
-          <h3>💰 Fee Status</h3>
-          <div style="width:160px;height:160px;margin:20px auto;border-radius:50%;background:conic-gradient(var(--color-primary) ${paidPct * 3.6}deg, var(--color-surface-2) 0);display:flex;align-items:center;justify-content:center;position:relative">
-            <div style="width:130px;height:130px;border-radius:50%;background:var(--color-surface);display:flex;flex-direction:column;align-items:center;justify-content:center">
-               <div style="font-size:24px;font-weight:900">${paidPct}%</div>
-               <small style="color:var(--color-text-muted)">Paid</small>
+        <div class="card" style="text-align:center; padding: 30px;">
+          <h3>💰 Outstanding Dues</h3>
+          <div style="width:180px; height:180px; margin:25px auto; border-radius:50%; background:conic-gradient(var(--color-primary) ${paidPct * 3.6}deg, var(--color-surface-2) 0); display:flex; align-items:center; justify-content:center; position:relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1)">
+            <div style="width:145px; height:145px; border-radius:50%; background:var(--color-surface); display:flex; flex-direction:column; align-items:center; justify-content:center">
+               <div style="font-size:32px; font-weight:900; color:var(--color-text)">${paidPct}%</div>
+               <small style="color:var(--color-text-muted); font-weight:700">PAID</small>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-around;margin-top:20px">
-             <div><div style="color:var(--color-primary);font-weight:900">₹${fees.paid}</div><small>Paid</small></div>
-             <div><div style="color:var(--color-danger);font-weight:900">₹${fees.pending}</div><small>Due</small></div>
+          <div style="display:flex; justify-content:space-around; margin: 25px 0">
+             <div>
+               <div style="color:var(--color-primary); font-size:22px; font-weight:900">₹${(fees.paid || 0).toLocaleString('en-IN')}</div>
+               <small style="text-transform:uppercase; letter-spacing:1px; color:var(--color-text-muted)">Total Paid</small>
+             </div>
+             <div style="width:1px; background:var(--color-border)"></div>
+             <div>
+               <div style="color:var(--color-danger); font-size:22px; font-weight:900">₹${(fees.pending || 0).toLocaleString('en-IN')}</div>
+               <small style="text-transform:uppercase; letter-spacing:1px; color:var(--color-text-muted)">Pending Amount</small>
+             </div>
           </div>
-          <button class="btn-primary" style="width:100%;margin-top:20px" onclick="parentPayNow()">Pay Outstanding Balance</button>
+          <button class="btn-primary" style="width:100%; padding: 16px; font-size: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(92,168,112,0.3)" onclick="parentPayNow()">
+            <i class="fas fa-credit-card" style="margin-right:8px"></i> Finalize & Pay Now
+          </button>
+          <div style="margin-top:15px; font-size:11px; color:var(--color-text-muted)">
+            <i class="fas fa-lock"></i> Secured via Razorpay Test Environment
+          </div>
         </div>
+
         <div class="card">
-          <h3>📜 Payment History</h3>
-          <div style="max-height:300px;overflow-y:auto">
+          <h3>📋 Category Breakdown</h3>
+          <div style="margin-top:15px">
             <table class="data-table">
-              <thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th style="text-align:right">Total</th>
+                  <th style="text-align:center">Status</th>
+                </tr>
+              </thead>
               <tbody>
-                ${history.map(h => `<tr><td>${h.date}</td><td>₹${h.amount}</td><td><span class="badge badge-active">${h.status}</span></td></tr>`).join('')}
+                ${(fees.breakdown || []).map(b => `
+                <tr>
+                  <td style="font-weight:600">${b.label}</td>
+                  <td style="text-align:right; font-weight:800">₹${b.amount.toLocaleString('en-IN')}</td>
+                  <td style="text-align:center">
+                    <span class="badge ${b.status === 'Paid' ? 'badge-active' : 'badge-warning'}" style="font-size:10px">${b.status}</span>
+                  </td>
+                </tr>`).join('')}
               </tbody>
             </table>
           </div>
-          <div style="margin-top:15px;padding-top:15px;border-top:1px solid var(--color-border)">
-            <p><strong>Next Payment Due:</strong> ${fees.next_due}</p>
+          <div style="margin-top:20px; padding: 15px; background: var(--color-surface-2); border-radius: 10px; border-left: 4px solid var(--color-info)">
+            <div style="font-size:13px; font-weight:700">📅 Next Payment Due</div>
+            <div style="font-size:18px; font-weight:900; color:var(--color-primary)">${fees.next_due || 'N/A'}</div>
           </div>
         </div>
+      </div>
+
+      <div class="card" style="margin-top: 25px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+          <h3>📜 Payment History & Receipts</h3>
+          <div style="font-size:12px; color:var(--color-text-muted)">Showing last ${history.length} transactions</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trans. ID</th>
+                <th>Date</th>
+                <th>Method</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th style="text-align:center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${history.map(h => `
+              <tr>
+                <td style="font-family: monospace; font-size:12px">${h.id}</td>
+                <td>${h.date}</td>
+                <td>${h.method || '—'}</td>
+                <td style="font-weight:800">₹${h.amount.toLocaleString('en-IN')}</td>
+                <td><span class="badge badge-active">${h.status}</span></td>
+                <td style="text-align:center">
+                  <button class="btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="viewParentReceipt('${h.id}')">
+                    <i class="fas fa-file-invoice"></i> Receipt
+                  </button>
+                </td>
+              </tr>`).join('') || '<tr><td colspan="6" style="text-align:center; padding: 30px; color:var(--color-text-muted)">No payment records found.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Placeholder for Backend Integrators -->
+      <div style="margin-top:20px; padding:15px; border: 1px dashed var(--color-border); border-radius:10px; opacity: 0.6">
+        <small style="color:var(--color-text-muted)">
+          <strong>Developer Note:</strong> This UI is surgical and role-restricted. For production, wire <code>parentPayNow</code> to your secure 
+          <code>CREATE_ORDER</code> API and implement <code>VERIFY_PAYMENT</code> on success.
+        </small>
       </div>
     </div>`;
   }
@@ -500,34 +584,141 @@
   window.parentPayNow = function() {
     const sid = getParentSid(window.currentUser);
     const data = getChildSharedData(sid);
-    if (!data.fees) return;
+    
+    // Ensure we have a fee structure to work with
+    if (!data.fees) {
+      if (window.FEE_DATA) data.fees = JSON.parse(JSON.stringify(window.FEE_DATA));
+      else return; 
+    }
 
     if (data.fees.pending <= 0) {
-      if (typeof window.simulateAction === 'function') window.simulateAction("No pending amount.");
+      if (typeof window.simulateAction === 'function') window.simulateAction("No pending amount to be paid.");
       return;
     }
 
-    const amount = data.fees.pending;
+    const amountToPay = data.fees.pending;
+    
+    // --- RAZORPAY SURGICAL INTEGRATION ---
+    // In production, this Order ID must be fetched from your secure backend server.
+    const DEMO_ORDER_ID = "order_demo_" + Math.random().toString(36).substring(7);
+    
+    const options = {
+      "key": "rzp_test_campuscore_demo", // [PLACEHOLDER] Replace with your actual Public Key
+      "amount": amountToPay * 100, // Razorpay works in Paisa (INR)
+      "currency": "INR",
+      "name": "CampusCore School Fee",
+      "description": `Fee payment for ${data.fees.student?.name || 'Student'}`,
+      "order_id": DEMO_ORDER_ID, // [BACKEND HOOK] Wire to 'CREATE_SECURE_ORDER_URL'
+      "handler": function (response) {
+        // [PLACEHOLDER] Signature Verification should be done on backend via 'VERIFY_PAYMENT_URL'
+        parentFinalizePayment(sid, amountToPay, response);
+      },
+      "prefill": {
+        "name": window.currentUser.name,
+        "email": window.currentUser.email,
+        "contact": window.currentUser.phone
+      },
+      "theme": {
+        "color": "#5ca870"
+      },
+      "modal": {
+        "ondismiss": function() {
+          if (typeof window.simulateAction === 'function') window.simulateAction("Payment cancelled by parent.");
+        }
+      }
+    };
+
+    try {
+      if (typeof Razorpay === 'undefined') {
+        throw new Error("Razorpay SDK not loaded. Check internet connection.");
+      }
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } catch (e) {
+      console.error("[CampusCore] Razorpay Error:", e);
+      alert("Payment gateway failed to load. Please try again later. (Error: " + e.message + ")");
+    }
+  };
+
+  /**
+   * --- PAYMENT FINALIZATION ---
+   * Safely updates regional storage and adds to history.
+   */
+  window.parentFinalizePayment = function(sid, amount, rzpResponse) {
+    const data = getChildSharedData(sid);
+    if (!data.fees) return;
+
+    // Update financial stats
     data.fees.paid += amount;
     data.fees.pending = 0;
-    data.feeHistory = data.feeHistory || [];
-    data.feeHistory.unshift({
+    
+    // Update category status
+    if (data.fees.breakdown) {
+      data.fees.breakdown.forEach(b => {
+        if (b.status === 'Pending') b.status = 'Paid';
+      });
+    }
+
+    // Add to history
+    data.fees.history = data.fees.history || [];
+    data.fees.history.unshift({
+      id: rzpResponse.razorpay_payment_id || ("DEMO-" + Date.now()),
       date: new Date().toLocaleDateString('en-IN'),
+      method: "Razorpay (Test)",
       amount: amount,
-      status: 'Success'
+      status: 'Success',
+      receipt: "RCPT-" + Math.floor(1000 + Math.random() * 9000)
     });
 
+    // Persist
     if (typeof window.saveStudentSharedData === 'function') {
       window.saveStudentSharedData(sid, data);
     } else {
       localStorage.setItem('campuscore_student_data_' + sid, JSON.stringify(data));
     }
 
-    if (typeof window.simulateAction === 'function') window.simulateAction(`Payment of ₹${amount} processed!`);
-    
-    // Refresh
+    if (typeof window.simulateAction === 'function') {
+      window.simulateAction(`Secure receipt generated for ₹${amount}.`);
+    }
+
+    // Refresh dashboard
     if (typeof window.buildDashboard === 'function') window.buildDashboard(window.currentUser);
     window.navigateTo('parent_fees');
+    
+    // Success Toast/Alert
+    alert('Payment Successful!\nTransaction ID: ' + (rzpResponse.razorpay_payment_id || 'DEMO_MODE'));
+  };
+
+  /**
+   * --- VIEW RECEIPT ---
+   * Displays a detailed receipt modal for completed transactions.
+   */
+  window.viewParentReceipt = function(txId) {
+    const sid = getParentSid(window.currentUser);
+    const data = getChildSharedData(sid);
+    const tx = (data.fees?.history || []).find(h => h.id === txId);
+    
+    if(!tx) return;
+
+    const m = `<div class="modal-overlay" id="receipt-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+      <div class="modal" style="max-width:400px; padding: 40px; text-align:center">
+        <div style="color:var(--color-primary); font-size: 40px; margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
+        <h2 style="margin-bottom: 5px">Payment Receipt</h2>
+        <div style="color:var(--color-text-muted); font-size:12px; margin-bottom:20px;">Delhi Public School, Nadergul</div>
+        
+        <div style="border-top: 1px dashed var(--color-border); border-bottom: 1px dashed var(--color-border); padding: 15px 0; margin-bottom: 20px; text-align:left; font-size:14px">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px"><span>Receipt No:</span> <strong>${tx.receipt}</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px"><span>Transaction ID:</span> <strong style="font-size:11px; font-family:monospace">${tx.id}</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px"><span>Date:</span> <strong>${tx.date}</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px"><span>Student:</span> <strong>${data.fees?.student?.name || 'Student'}</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:18px"><span>Amount Paid:</span> <strong style="color:var(--color-primary)">₹${tx.amount.toLocaleString('en-IN')}</strong></div>
+        </div>
+        
+        <button class="btn-primary" style="width:100%" onclick="window.print(); document.getElementById('receipt-modal').remove()"> <i class="fas fa-print"></i> Print Receipt</button>
+        <button style="width:100%; margin-top:10px; background:none; border:none; color:var(--color-text-muted); font-size:13px; cursor:pointer" onclick="document.getElementById('receipt-modal').remove()">Close</button>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', m);
   };
 
   window.openRaiseConcernModal = function() {
