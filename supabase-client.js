@@ -119,13 +119,21 @@ async function sbAttemptLogin(username, password) {
   if (!sb) return null;
   try {
     const normalizedUsername = String(username || '').toUpperCase();
-    const { data, error } = await sb
-      .from('cc_users')
-      .select('*')
-      .ilike('username', normalizedUsername)
-      .single();
+    
+    // Create a timeout promise (3 seconds)
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('SB_TIMEOUT')), 3000)
+    );
+
+    // Race the Supabase query against the timeout
+    const { data, error } = await Promise.race([
+      sb.from('cc_users').select('*').ilike('username', normalizedUsername).single(),
+      timeoutPromise
+    ]);
+
     if (error || !data) return null;
     if (String(data.password || '').toUpperCase() !== String(password || '').toUpperCase()) return null;
+    
     // Map DB user to app user format
     return {
       id: data.id,
@@ -145,7 +153,14 @@ async function sbAttemptLogin(username, password) {
       childRoll: data.child_roll || null,
       notifications: []
     };
-  } catch(e) { console.warn('[Supabase] sbAttemptLogin exception:', e); return null; }
+  } catch(e) { 
+    if (e.message === 'SB_TIMEOUT') {
+      console.warn('[Supabase] Login query timed out after 3s, falling back to local data');
+    } else {
+      console.warn('[Supabase] sbAttemptLogin exception:', e); 
+    }
+    return null; 
+  }
 }
 
 // ─── Init: load live data into app globals ────────────────────
