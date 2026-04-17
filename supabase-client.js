@@ -4,22 +4,25 @@
    Falls back to local DEMO_USERS/STUDENTS data if Supabase fails.
    ============================================================ */
 
-const SUPABASE_URL = 'https://bzqqgurlqunpzgdavedz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6cXFndXJscXVucHpnZGF2ZWR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMTY0MDAsImV4cCI6MjA2MTY5MjQwMH0.ZlzLFhDMcCzVq_lFMVP8MmjZAFUTKKCBomz0wIFJZxY';
+if (!window.SUPABASE_URL) window.SUPABASE_URL = 'https://bzqqgurlqunpzgdavedz.supabase.co';
+if (!window.SUPABASE_KEY) window.SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6cXFndXJscXVucHpnZGF2ZWR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMTY0MDAsImV4cCI6MjA2MTY5MjQwMH0.ZlzLFhDMcCzVq_lFMVP8MmjZAFUTKKCBomz0wIFJZxY';
 
-let _supabase = null;
+if (!window.supabaseClient && typeof supabase !== 'undefined') {
+  window.supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+  console.log('[Supabase] window.supabaseClient initialized');
+}
 
 function getSupabase() {
-  if (_supabase) return _supabase;
+  if (window.supabaseClient) return window.supabaseClient;
   try {
     if (typeof supabase !== 'undefined' && supabase.createClient) {
-      _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      console.log('[Supabase] Client initialized');
+      window.supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+      return window.supabaseClient;
     }
-  } catch(e) {
+  } catch (e) {
     console.warn('[Supabase] Failed to initialize:', e);
   }
-  return _supabase;
+  return null;
 }
 
 // ─── Fetch users from Supabase cc_users table ────────────────
@@ -30,7 +33,7 @@ async function sbFetchUsers() {
     const { data, error } = await sb.from('cc_users').select('*');
     if (error) { console.warn('[Supabase] fetchUsers error:', error); return null; }
     return data;
-  } catch(e) { console.warn('[Supabase] fetchUsers exception:', e); return null; }
+  } catch (e) { console.warn('[Supabase] fetchUsers exception:', e); return null; }
 }
 
 // ─── Fetch students from Supabase cc_students table ──────────
@@ -55,7 +58,7 @@ async function sbFetchStudents() {
       gpa: parseFloat(s.gpa),
       parent: s.parent_name
     }));
-  } catch(e) { console.warn('[Supabase] fetchStudents exception:', e); return null; }
+  } catch (e) { console.warn('[Supabase] fetchStudents exception:', e); return null; }
 }
 
 // ─── Fetch announcements ──────────────────────────────────────
@@ -73,7 +76,7 @@ async function sbFetchAnnouncements() {
       category: a.category,
       priority: a.priority
     }));
-  } catch(e) { console.warn('[Supabase] fetchAnnouncements exception:', e); return null; }
+  } catch (e) { console.warn('[Supabase] fetchAnnouncements exception:', e); return null; }
 }
 
 // ─── Fetch homework ───────────────────────────────────────────
@@ -94,7 +97,7 @@ async function sbFetchHomework() {
       total: h.total,
       status: h.status
     }));
-  } catch(e) { console.warn('[Supabase] fetchHomework exception:', e); return null; }
+  } catch (e) { console.warn('[Supabase] fetchHomework exception:', e); return null; }
 }
 
 // ─── Fetch events ─────────────────────────────────────────────
@@ -110,7 +113,7 @@ async function sbFetchEvents() {
       desc: e.description,
       color: e.color
     }));
-  } catch(e) { console.warn('[Supabase] fetchEvents exception:', e); return null; }
+  } catch (e) { console.warn('[Supabase] fetchEvents exception:', e); return null; }
 }
 
 // ─── Login via Supabase cc_users ──────────────────────────────
@@ -119,9 +122,9 @@ async function sbAttemptLogin(username, password) {
   if (!sb) return null;
   try {
     const normalizedUsername = String(username || '').toUpperCase();
-    
+
     // Create a timeout promise (3 seconds)
-    const timeoutPromise = new Promise((_, reject) => 
+    const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('SB_TIMEOUT')), 3000)
     );
 
@@ -133,7 +136,7 @@ async function sbAttemptLogin(username, password) {
 
     if (error || !data) return null;
     if (String(data.password || '').toUpperCase() !== String(password || '').toUpperCase()) return null;
-    
+
     // Map DB user to app user format
     return {
       id: data.id,
@@ -153,13 +156,13 @@ async function sbAttemptLogin(username, password) {
       childRoll: data.child_roll || null,
       notifications: []
     };
-  } catch(e) { 
+  } catch (e) {
     if (e.message === 'SB_TIMEOUT') {
       console.warn('[Supabase] Login query timed out after 3s, falling back to local data');
     } else {
-      console.warn('[Supabase] sbAttemptLogin exception:', e); 
+      console.warn('[Supabase] sbAttemptLogin exception:', e);
     }
-    return null; 
+    return null;
   }
 }
 

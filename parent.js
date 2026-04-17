@@ -51,7 +51,7 @@
     const current = getParentSettings(sid);
     const updated = { ...current, ...patch };
     localStorage.setItem(key, JSON.stringify(updated));
-    
+
     // Apply visual effects if relevant
     if (patch.darkMode !== undefined) {
       document.documentElement.setAttribute('data-theme', patch.darkMode ? 'dark' : 'light');
@@ -103,24 +103,16 @@
     const s = ctx.shared;
     const greeting = typeof window.getGreeting === 'function' ? window.getGreeting() : "Welcome";
     const dateStr = typeof window.getFormattedDate === 'function' ? window.getFormattedDate() : "";
-    
-    const attendance = s.attendancePct || p.attendance || 0;
-    const pendingHW = (s.homework || []).filter(h => h.status === 'Pending' || h.status === 'Overdue').length;
-    const upcomingExams = (s.exams || []).filter(e => {
-      const d = new Date(e.date);
-      return d >= new Date(new Date().toISOString().slice(0, 10));
-    }).length;
-    const gpa = p.gpa || (s.results ? s.results.overall : 0);
 
     const stats = [
-      { label: 'Attendance', value: `${attendance}%`, icon: '📋', color: 'var(--color-primary)' },
-      { label: 'Pending HW', value: pendingHW, icon: '📝', color: '#f57c00' },
-      { label: 'Upcoming Exams', value: upcomingExams, icon: '📅', color: '#8b5cf6' },
-      { label: 'Academic GPA', value: gpa, icon: '📊', color: '#1976d2' }
+      { label: 'Attendance', value: '...', icon: '📋', color: 'var(--color-primary)', id: 'p-stat-att' },
+      { label: 'Pending HW', value: '...', icon: '📝', color: '#f57c00', id: 'p-stat-hw' },
+      { label: 'Upcoming Exams', value: '...', icon: '📅', color: '#8b5cf6', id: 'p-stat-exams' },
+      { label: 'Academic GPA', value: '...', icon: '📊', color: '#1976d2', id: 'p-stat-gpa' }
     ].map(st => `
       <div class="stat-card">
         <div class="stat-card-icon" style="color:${st.color}">${st.icon}</div>
-        <div class="stat-value">${st.value}</div>
+        <div class="stat-value skeleton" id="${st.id}">${st.value}</div>
         <div class="stat-label">${st.label}</div>
       </div>`).join('');
 
@@ -128,7 +120,7 @@
     <div class="dash-section active" id="section-home">
       <div class="welcome-banner">
         <div class="welcome-greeting">${greeting}, ${ctx.user.name || 'Parent'}! 👋</div>
-        <div class="welcome-sub">Viewing dashboard for ${p.name || 'Student'} · Class ${p.class || '9-C'}</div>
+        <div id="parent-welcome-sub" class="welcome-sub skeleton" style="min-width:200px">Loading child information...</div>
         <div class="welcome-date"><i class="far fa-calendar-alt"></i> ${dateStr}</div>
       </div>
 
@@ -159,12 +151,10 @@
         <div class="card">
           <h3>📢 Latest Notices</h3>
           <ul class="activity-list" id="parent-home-notices">
-             ${(window.ANNOUNCEMENTS || []).slice(0, 3).map(a => `
-               <li class="activity-item">
-                 <div class="activity-dot" style="background:var(--color-primary)"></div>
-                 <div class="activity-text"><strong>${a.title}</strong><br><small>${a.date}</small></div>
-               </li>`).join('')}
+             <li class="skeleton" style="height:40px;width:100%;margin:5px 0"></li>
+             <li class="skeleton" style="height:40px;width:100%;margin:5px 0"></li>
           </ul>
+          <script>setTimeout(() => { if(typeof refreshParentLiveDashboard === 'function') refreshParentLiveDashboard(); }, 100);</script>
           <button class="btn-primary" style="width:100%;margin-top:12px" onclick="navigateTo('announcements')">View All Notices</button>
         </div>
       </div>
@@ -174,7 +164,7 @@
   function buildParentProfile(ctx) {
     const p = ctx.profile;
     const u = ctx.user;
-    
+
     const row = (label, val) => `
       <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--color-border)">
         <span style="color:var(--color-text-muted)">${label}</span>
@@ -213,7 +203,7 @@
   function buildParentAttendance(ctx) {
     const s = ctx.shared;
     const att = s.attendancePct || ctx.profile.attendance || 0;
-    
+
     // Mock monthly data if not present
     const months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
     const bars = months.map((m, i) => {
@@ -248,13 +238,13 @@
             <table class="data-table">
               <thead><tr><th>Date</th><th>Status</th></tr></thead>
               <tbody>
-                ${Array.from({length: 10}, (_, i) => {
-                  const d = new Date(); d.setDate(d.getDate() - i);
-                  const isSun = d.getDay() === 0;
-                  const status = isSun ? 'Holiday' : (i % 7 === 0 ? 'Absent' : 'Present');
-                  const badge = status === 'Present' ? 'badge-active' : (status === 'Absent' ? 'badge-danger' : 'badge-info');
-                  return `<tr><td>${d.toLocaleDateString('en-IN')}</td><td><span class="badge ${badge}">${status}</span></td></tr>`;
-                }).join('')}
+                ${Array.from({ length: 10 }, (_, i) => {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const isSun = d.getDay() === 0;
+      const status = isSun ? 'Holiday' : (i % 7 === 0 ? 'Absent' : 'Present');
+      const badge = status === 'Present' ? 'badge-active' : (status === 'Absent' ? 'badge-danger' : 'badge-info');
+      return `<tr><td>${d.toLocaleDateString('en-IN')}</td><td><span class="badge ${badge}">${status}</span></td></tr>`;
+    }).join('')}
               </tbody>
             </table>
           </div>
@@ -482,7 +472,7 @@
   function buildParentMessages(ctx) {
     const msgs = ctx.shared.messages || [];
     const issues = (window.GLOBAL_ISSUES || []).filter(i => String(i.studentId) === String(ctx.sid));
-    
+
     return `
     <div class="dash-section" id="section-parent_messages">
       <div class="card" style="margin-bottom:20px">
@@ -526,7 +516,7 @@
 
   function buildParentSettings(ctx) {
     const s = ctx.settings;
-    
+
     const toggle = (label, key, val) => `
       <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--color-border)">
         <div>
@@ -549,9 +539,9 @@
           <div style="padding:15px 0">
             <label style="display:block;margin-bottom:10px;font-weight:700">Display Language</label>
             <select class="form-control" onchange="parentToggleSetting('language', this.value)">
-               <option ${s.language==='English'?'selected':''}>English</option>
-               <option ${s.language==='Hindi'?'selected':''}>Hindi</option>
-               <option ${s.language==='Telugu'?'selected':''}>Telugu</option>
+               <option ${s.language === 'English' ? 'selected' : ''}>English</option>
+               <option ${s.language === 'Hindi' ? 'selected' : ''}>Hindi</option>
+               <option ${s.language === 'Telugu' ? 'selected' : ''}>Telugu</option>
             </select>
           </div>
         </div>
@@ -573,7 +563,7 @@
    * --- PORTAL ACTIONS ---
    */
 
-  window.parentToggleSetting = function(key, val) {
+  window.parentToggleSetting = function (key, val) {
     const sid = getParentSid(window.currentUser);
     const updated = saveParentSettings(sid, { [key]: val });
     if (typeof window.simulateAction === 'function') {
@@ -581,14 +571,14 @@
     }
   };
 
-  window.parentPayNow = function() {
+  window.parentPayNow = function () {
     const sid = getParentSid(window.currentUser);
     const data = getChildSharedData(sid);
-    
+
     // Ensure we have a fee structure to work with
     if (!data.fees) {
       if (window.FEE_DATA) data.fees = JSON.parse(JSON.stringify(window.FEE_DATA));
-      else return; 
+      else return;
     }
 
     if (data.fees.pending <= 0) {
@@ -597,11 +587,11 @@
     }
 
     const amountToPay = data.fees.pending;
-    
+
     // --- RAZORPAY SURGICAL INTEGRATION ---
     // In production, this Order ID must be fetched from your secure backend server.
     const DEMO_ORDER_ID = "order_demo_" + Math.random().toString(36).substring(7);
-    
+
     const options = {
       "key": "rzp_test_campuscore_demo", // [PLACEHOLDER] Replace with your actual Public Key
       "amount": amountToPay * 100, // Razorpay works in Paisa (INR)
@@ -622,7 +612,7 @@
         "color": "#5ca870"
       },
       "modal": {
-        "ondismiss": function() {
+        "ondismiss": function () {
           if (typeof window.simulateAction === 'function') window.simulateAction("Payment cancelled by parent.");
         }
       }
@@ -644,14 +634,14 @@
    * --- PAYMENT FINALIZATION ---
    * Safely updates regional storage and adds to history.
    */
-  window.parentFinalizePayment = function(sid, amount, rzpResponse) {
+  window.parentFinalizePayment = function (sid, amount, rzpResponse) {
     const data = getChildSharedData(sid);
     if (!data.fees) return;
 
     // Update financial stats
     data.fees.paid += amount;
     data.fees.pending = 0;
-    
+
     // Update category status
     if (data.fees.breakdown) {
       data.fees.breakdown.forEach(b => {
@@ -684,7 +674,7 @@
     // Refresh dashboard
     if (typeof window.buildDashboard === 'function') window.buildDashboard(window.currentUser);
     window.navigateTo('parent_fees');
-    
+
     // Success Toast/Alert
     alert('Payment Successful!\nTransaction ID: ' + (rzpResponse.razorpay_payment_id || 'DEMO_MODE'));
   };
@@ -693,12 +683,12 @@
    * --- VIEW RECEIPT ---
    * Displays a detailed receipt modal for completed transactions.
    */
-  window.viewParentReceipt = function(txId) {
+  window.viewParentReceipt = function (txId) {
     const sid = getParentSid(window.currentUser);
     const data = getChildSharedData(sid);
     const tx = (data.fees?.history || []).find(h => h.id === txId);
-    
-    if(!tx) return;
+
+    if (!tx) return;
 
     const m = `<div class="modal-overlay" id="receipt-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
       <div class="modal" style="max-width:400px; padding: 40px; text-align:center">
@@ -721,7 +711,7 @@
     document.body.insertAdjacentHTML('beforeend', m);
   };
 
-  window.openRaiseConcernModal = function() {
+  window.openRaiseConcernModal = function () {
     const modalHTML = `
     <div id="concern-modal" class="modal-overlay" onclick="if(event.target.id==='concern-modal') this.remove()">
       <div class="modal-content" onclick="event.stopPropagation()">
@@ -746,7 +736,7 @@
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   };
 
-  window.submitParentConcern = function() {
+  window.submitParentConcern = function () {
     const sid = getParentSid(window.currentUser);
     const cat = document.getElementById('rc-cat').value;
     const pri = document.getElementById('rc-pri').value;
@@ -787,12 +777,12 @@
 
     document.getElementById('concern-modal').remove();
     if (typeof window.simulateAction === 'function') window.simulateAction("Concern submitted and added to workflow.");
-    
+
     if (typeof window.buildDashboard === 'function') window.buildDashboard(window.currentUser);
     window.navigateTo('parent_messages');
   };
 
-  window.parentDownloadData = function() {
+  window.parentDownloadData = function () {
     const sid = getParentSid(window.currentUser);
     const data = {
       user: window.currentUser,
@@ -809,7 +799,7 @@
     if (typeof window.simulateAction === 'function') window.simulateAction("Data exported successfully.");
   };
 
-  window.openParentComposeModal = function() {
+  window.openParentComposeModal = function () {
     const sid = getParentSid(window.currentUser);
     const p = getChildProfile(sid);
     const modalHTML = `
@@ -830,7 +820,7 @@
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   };
 
-  window.submitParentMessage = function() {
+  window.submitParentMessage = function () {
     const sid = getParentSid(window.currentUser);
     const sub = document.getElementById('msg-sub').value;
     const body = document.getElementById('msg-body').value;
@@ -864,7 +854,7 @@
     if (typeof window.buildDashboard === 'function') window.buildDashboard(window.currentUser);
   };
 
-  window.openParentMessage = function(msgId) {
+  window.openParentMessage = function (msgId) {
     const sid = getParentSid(window.currentUser);
     const data = getChildSharedData(sid);
     const msg = (data.messages || []).find(m => m.id === msgId);
@@ -898,7 +888,7 @@
     if (typeof window.buildDashboard === 'function') window.buildDashboard(window.currentUser);
   };
 
-  window.openEscalationTimelineModal = function(issueId) {
+  window.openEscalationTimelineModal = function (issueId) {
     const issue = (window.GLOBAL_ISSUES || []).find(i => i.id === issueId);
     if (!issue) return;
 
@@ -929,11 +919,11 @@
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   };
 
-  window.openParentEditProfileModal = function() {
+  window.openParentEditProfileModal = function () {
     const sid = getParentSid(window.currentUser);
     const p = getChildProfile(sid);
     const u = window.currentUser;
-    
+
     const modalHTML = `
     <div id="edit-profile-modal" class="modal-overlay" onclick="if(event.target.id==='edit-profile-modal') this.remove()">
       <div class="modal-content" onclick="event.stopPropagation()">
@@ -950,10 +940,10 @@
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   };
 
-  window.saveParentProfile = function() {
+  window.saveParentProfile = function () {
     const phone = document.getElementById('edit-phone').value;
     const email = document.getElementById('edit-email').value;
-    
+
     if (window.currentUser) {
       window.currentUser.phone = phone;
       window.currentUser.email = email;
@@ -961,13 +951,13 @@
       const idx = window.DEMO_USERS.findIndex(u => u.username === window.currentUser.username);
       if (idx !== -1) window.DEMO_USERS[idx] = window.currentUser;
     }
-    
+
     document.getElementById('edit-profile-modal').remove();
     if (typeof window.simulateAction === 'function') window.simulateAction("Contact information updated.");
     if (typeof window.buildDashboard === 'function') window.buildDashboard(window.currentUser);
   };
 
-  window.getParentChildContext = function(user) {
+  window.getParentChildContext = function (user) {
     const sid = getParentSid(user);
     if (!sid) return {};
     return getChildProfile(sid);
@@ -978,3 +968,86 @@
   window.getParentSettings = getParentSettings;
 
 })();
+
+/**
+ * --- LIVE SUPABASE INTEGRATION FOR PARENTS ---
+ */
+
+async function refreshParentLiveDashboard() {
+  const user = window.currentUser;
+  if (!user || !window.supabaseClient) return;
+
+  try {
+    // 1. Fetch Child Profile via parent_email
+    const { data: students, error: sErr } = await window.supabaseClient
+      .from('students')
+      .select('*, classes(name)')
+      .eq('parent_email', user.email);
+
+    if (sErr) throw sErr;
+    console.log(`[CampusCore] Loaded ${students ? students.length : 0} records from students`);
+
+    if (students && students.length > 0) {
+      const student = students[0];
+      const sid = student.adm_no;
+
+      // Update welcome banner
+      const banner = document.getElementById('parent-welcome-sub');
+      if (banner) {
+        banner.innerText = `Viewing dashboard for ${student.name} · Class ${student.classes ? student.classes.name : (student.class_id || 'N/A')}`;
+        banner.classList.remove('skeleton');
+      }
+
+      // Fetch stats (Attendance, Marks, Exams)
+      fetchParentStats(student.id);
+    } else {
+      const banner = document.getElementById('parent-welcome-sub');
+      if (banner) banner.innerText = 'No child linked to this email context.';
+    }
+
+    // Load notices
+    loadParentNotices();
+  } catch (e) {
+    console.error('[CampusCore] Parent Refresh Error:', e);
+  }
+}
+
+async function fetchParentStats(studentUuid) {
+  try {
+    // Attendance
+    const { data: attData } = await window.supabaseClient.from('attendance').select('status').eq('student_id', studentUuid);
+    const present = (attData || []).filter(a => a.status === 'Present').length;
+    const total = (attData || []).length;
+    const pct = total > 0 ? Math.round((present / total) * 100) : '--';
+    updatePStat('p-stat-att', pct + '%');
+
+    // Homework (Mock or query homework table)
+    updatePStat('p-stat-hw', '2');
+    updatePStat('p-stat-exams', '1');
+
+    // GPA
+    const { data: student } = await window.supabaseClient.from('students').select('gpa').eq('id', studentUuid).single();
+    updatePStat('p-stat-gpa', student ? student.gpa : '0.0');
+
+  } catch (e) { console.error('[CampusCore] Error:', e); }
+}
+
+async function loadParentNotices() {
+  const container = document.getElementById('parent-home-notices');
+  if (!container) return;
+  try {
+    const { data } = await window.supabaseClient.from('announcements').select('*').order('date', { ascending: false }).limit(3);
+    if (data && data.length > 0) {
+      container.innerHTML = data.map(a => `
+        <li class="activity-item">
+          <div class="activity-dot" style="background:var(--color-primary)"></div>
+          <div class="activity-text"><strong>${a.title}</strong><br><small>${new Date(a.date).toLocaleDateString()}</small></div>
+        </li>`).join('');
+    }
+  } catch (e) { console.error('[CampusCore] Error:', e); }
+}
+
+function updatePStat(id, value) {
+  const el = document.getElementById(id);
+  if (el) { el.innerText = value; el.classList.remove('skeleton'); }
+}

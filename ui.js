@@ -385,7 +385,26 @@ const TRANSLATIONS = {
   'Staff Helpdesk': 'సిబ్బంది హెల్ప్‌డెస్క్',
   'Digital ID Card': 'డిజిటల్ ఐడి కార్డ్',
   'Student Almanac': 'విద్యార్థి పంచాంగం',
-  'Request Center': 'విన్నపాల కేంద్రం'
+  'Request Center': 'విన్నపాల కేంద్రం',
+  'Master Dashboard': 'మాస్టర్ డాష్‌బోర్డ్',
+  'Role Views': 'పాత్రల వీక్షణలు',
+  'System-wide Logs': 'సిస్టమ్ లాగ్‌లు',
+  'All Issues': 'అన్ని సమస్యలు',
+  'All Notices': 'అన్ని నోటీసులు',
+  'All Approvals': 'అన్ని ఆమోదాలు',
+  'System Audit': 'సిస్టమ్ ఆడిట్',
+  'Removed Bin': 'తొలగించిన బిన్',
+  'Activity & System': 'కార్యాచరణ & సిస్టమ్',
+  'All Messages': 'అన్ని సందేశాలు',
+  'Full Helpdesk': 'పూర్తి హెల్ప్‌డెస్క్',
+  'Settings': 'సెట్టింగులు',
+  'Main': 'ప్రధాన ఎంపికలు',
+  'System-wide Issue Log': 'సిస్టమ్-వ్యాప్త సమస్యల లాగ్',
+  'Support Network': 'సహాయక నెట్వర్క్',
+  'Institutional Account Control': 'సంస్థాగత ఖాతా నియంత్రణ',
+  'Analytical Reports Hub': 'విశ్లేషణాత్మక నివేదిక కేంద్రం',
+  'Mid-Term Exam & Results Authority': 'మిడ్-టర్మ్ పరీక్ష & ఫలితాల అథారిటీ',
+  'Class Performance Matrix': 'తరగతి పనితీరు మ్యాట్రిక్స్'
 };
 
 window.saveGenericLanguage = function (newLang) {
@@ -395,8 +414,8 @@ window.saveGenericLanguage = function (newLang) {
   if (window.currentUser) {
     localStorage.setItem('campuscore_language_' + currentUser.id, newLang);
   }
-  applyLanguage();
   if (window.triggerLiveReRender) window.triggerLiveReRender();
+  setTimeout(applyLanguage, 50);
   if (window.simulateAction) simulateAction(`Language changed to ${newLang}`);
 };
 

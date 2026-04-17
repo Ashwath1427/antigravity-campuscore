@@ -716,6 +716,15 @@ const SCHEDULE = [
   { time: "14:55 – 15:40", subject: "Physical Education", class: "All", teacher: "Suresh Naidu", room: "Ground", color: "#ff5722" },
 ];
 
+const WEEKLY_SCHEDULE = {
+  "9:00 AM": { Mon: "Math", Tue: "English", Wed: "Science", Thu: "Math", Fri: "Social" },
+  "10:00 AM": { Mon: "Physics", Tue: "Chemistry", Wed: "Math", Thu: "Science", Fri: "Social" },
+  "11:00 AM": { Mon: "Sanskrit", Tue: "Tamil/Telugu", Wed: "Hindi", Thu: "English", Fri: "Library" },
+  "12:00 PM": { Mon: "LUNCH", Tue: "LUNCH", Wed: "LUNCH", Thu: "LUNCH", Fri: "LUNCH" },
+  "01:00 PM": { Mon: "Lab", Tue: "Yoga", Wed: "Arts", Thu: "Music", Fri: "Civics" },
+  "02:00 PM": { Mon: "Geog", Tue: "Biology", Wed: "Comp Sci", Thu: "Games", Fri: "Values" }
+};
+
 // ─── Announcements ───────────────────────────────────────────
 const ANNOUNCEMENTS = [
   { id: 1, title: "Annual Sports Day – April 12, 2026", date: "28 Mar 2026", author: "Vice Principal", category: "Events", priority: "high" },
@@ -1273,18 +1282,7 @@ const TEACHER_MESSAGES = [
 // ─── Global State & LocalStorage Persistence ───────────────
 let GLOBAL_ISSUES = [];
 const EXCLUDED_STUDENTS = new Set([
-  "AARAV ASHWATH",
-  "MEERA SHARMA",
-  "RAVI DESAI",
-  "ANANYA REDDY",
-  "SIDDHARTH NANDA",
-  "LAKSHMI IYER",
-  "ARJUN PILLAI",
-  "DIVYA MENON",
-  "KARAN SINGH",
-  "PRIYA SUBRAMANIAM",
-  "HARISH NAIR",
-  "SNEHA REDDY",
+  // Array emptied. Students are no longer missing from tabs!
 ]);
 
 function isExcludedStudentRecord(s) {

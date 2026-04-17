@@ -20,56 +20,133 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
-    // CampusCore Supabase Configuration
-    const SUPABASE_URL = 'https://bzqqgurlqunpzgdavedz.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6cXFndXJscXVucHpnZGF2ZWR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NzI1NTMsImV4cCI6MjA5MTU0ODU1M30.lUz51FgdRElZolbICICGDz9qiVCHvF79otD861jVVLo';
-    window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('[CampusCore] Supabase connected:', SUPABASE_URL);
+    if (!window.SUPABASE_URL) window.SUPABASE_URL = 'https://bzqqgurlqunpzgdavedz.supabase.co';
+    if (!window.SUPABASE_ANON_KEY) window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6cXFndXJscXVucHpnZGF2ZWR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NzI1NTMsImV4cCI6MjA5MTU0ODU1M30.lUz51FgdRElZolbICICGDz9qiVCHvF79otD861jVVLo';
+    if (!window.supabaseClient && typeof supabase !== 'undefined') {
+      window.supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      console.log('[CampusCore] Supabase connected:', window.SUPABASE_URL);
+    }
   </script>
 
-<style>
-.modal-overlay {
-  position: fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-  z-index: 9999; display: flex; justify-content: center; align-items: center;
-}
-.modal-content, .modal {
-  background: var(--color-surface); width: 100%; max-width: 500px;
-  border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  display: flex; flex-direction: column; overflow: hidden;
-  max-height: 90vh; padding: 24px; overflow-y: auto;
-}
-.modal-header {
-  padding: 20px; border-bottom: 1px solid var(--color-border);
-  display: flex; justify-content: space-between; align-items: center;
-}
-.modal-header h3 { margin:0; color:var(--color-text); }
-.modal-close {
-  background: none; border: none; color: var(--color-text-muted);
-  font-size: 20px; cursor: pointer; transition: color 0.2s;
-}
-.modal-close:hover { color: var(--color-danger); }
-.modal-body {
-  padding: 20px; overflow-y: auto;
-}
-.form-group {
-  display: flex; flex-direction: column;
-}
-.form-group label {
-  font-size: 13px; font-weight: 600; color: var(--color-text); margin-bottom: 4px; margin-top: 8px;
-}
-.form-control {
-  width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--color-border);
-  background: var(--color-surface-2); color: var(--color-text); font-family: inherit;
-  margin-bottom: 8px; margin-top: 6px; outline: none; transition: border-color 0.2s;
-  font-size: 14px;
-}
-.form-control:focus { border-color: var(--color-primary); }
-</style>
+  <style>
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content,
+    .modal {
+      background: var(--color-surface);
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      max-height: 90vh;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      color: var(--color-text);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--color-danger);
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+      color: var(--color-text);
+      font-family: inherit;
+      margin-bottom: 8px;
+      margin-top: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-size: 14px;
+    }
+
+    .form-control:focus {
+      border-color: var(--color-primary);
+    }
+
+    .skeleton {
+      background-color: var(--color-surface-2);
+      background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+      background-size: 200px 100%;
+      background-repeat: no-repeat;
+      display: inline-block;
+      border-radius: 4px;
+      animation: skeleton-loading 1.2s ease-in-out infinite;
+      min-height: 1.2em;
+      min-width: 50px;
+    }
+
+    @keyframes skeleton-loading {
+      0% {
+        background-position: -200px 0;
+      }
+
+      100% {
+        background-position: calc(200px + 100%) 0;
+      }
+    }
+  </style>
 
   <script>
     // SELF-CLEANING SCRIPT: Clear old broken credentials from cache
-    (function() {
+    (function () {
       // Force dark mode as default if no preference is saved
       const savedTheme = localStorage.getItem('cc_theme');
       if (!savedTheme) {
@@ -106,7 +183,10 @@
             <i class="fas fa-sign-in-alt"></i> Login
           </button>
           <!-- Trouble Login helper - subtle for testing -->
-          <button onclick="if(confirm('Clear all local data and reset app?')){ localStorage.clear(); sessionStorage.clear(); location.reload(); }" style="background:none;border:none;color:var(--color-text-muted);font-size:10px;cursor:pointer;opacity:0.3" title="Troubleshoot Login">
+          <button
+            onclick="if(confirm('Clear all local data and reset app?')){ localStorage.clear(); sessionStorage.clear(); location.reload(); }"
+            style="background:none;border:none;color:var(--color-text-muted);font-size:10px;cursor:pointer;opacity:0.3"
+            title="Troubleshoot Login">
             <i class="fas fa-sync"></i>
           </button>
         </div>
@@ -123,7 +203,8 @@
         <div class="land-hero-badge">WELCOME TO</div>
         <h1>Campus<span>Core</span></h1>
         <p class="land-hero-tagline">Smart School Management</p>
-        <p class="land-hero-desc">A high-performance digital ecosystem for Delhi Public School Nadergul. Empowering students, parents, and educators through centralized administration and seamless communication.</p>
+        <p class="land-hero-desc">A high-performance digital ecosystem for Delhi Public School Nadergul. Empowering
+          students, parents, and educators through centralized administration and seamless communication.</p>
         <div class="land-hero-btns">
           <button class="land-btn-primary" onclick="showPage('login')">
             <i class="fas fa-sign-in-alt"></i> Login to Dashboard
@@ -476,7 +557,8 @@
             <div class="how-icon"><i class="fas fa-calendar-alt"></i></div>
             <div class="how-content">
               <h4>Dynamic Timetable</h4>
-              <p>School leadership and Coordinators draft the master schedules. Teachers view their class assignments, and
+              <p>School leadership and Coordinators draft the master schedules. Teachers view their class assignments,
+                and
                 parents/students check the daily class subjects.</p>
             </div>
           </div>
@@ -484,7 +566,8 @@
             <div class="how-icon"><i class="fas fa-chart-pie"></i></div>
             <div class="how-content">
               <h4>Advanced Reports</h4>
-              <p>High-level statistics spanning across academics and finance are accessible by the Principal and VP to monitor institution performance at a glance.</p>
+              <p>High-level statistics spanning across academics and finance are accessible by the Principal and VP to
+                monitor institution performance at a glance.</p>
             </div>
           </div>
           <div class="how-card">
@@ -511,12 +594,14 @@
           <!-- Ashwath -->
           <div class="founder-card ashwath-card">
             <div class="founder-avatar ashwath-avatar">
-              <img src="0Z6A9994.JPG" alt="Ashwath" onerror="this.src='https://ui-avatars.com/api/?name=Ashwath&background=5ca870&color=fff'">
+              <img src="0Z6A9994.JPG" alt="Ashwath"
+                onerror="this.src='https://ui-avatars.com/api/?name=Ashwath&background=5ca870&color=fff'">
             </div>
             <div class="main-badge ashwath-badge">🖥️ 30,000+ Lines of Code</div>
             <h3>Ashwath</h3>
             <div class="sub-badge">Full-Stack Developer</div>
-            <p>The original architect and lead developer of CampusCore. Wrote over 30,000 lines of code powering every dashboard, module, and feature across the entire platform.</p>
+            <p>The original architect and lead developer of CampusCore. Wrote over 30,000 lines of code powering every
+              dashboard, module, and feature across the entire platform.</p>
           </div>
           <!-- Saicharan -->
           <div class="founder-card saicharan-card">
@@ -526,7 +611,8 @@
             <div class="main-badge saicharan-badge">🚀 Lead Publisher & Maintainer</div>
             <h3>Saicharan</h3>
             <div class="sub-badge">Publisher & Maintainer</div>
-            <p>The visionary behind CampusCore's direction and launch. Leads publishing, platform maintenance, and ensures the product evolves to serve the DPS Nadergul community.</p>
+            <p>The visionary behind CampusCore's direction and launch. Leads publishing, platform maintenance, and
+              ensures the product evolves to serve the DPS Nadergul community.</p>
           </div>
         </div>
       </div>
@@ -733,24 +819,24 @@
       </div>
       <div class="content-area" id="content-area"></div>
     </div>
-  <script src="data.js?v=19"></script>
-      <script src="supabase-client.js?v=1"></script>
-  <script src="auth.js?v=19"></script>
-  <script src="ui.js?v=19"></script>
-  <script src="student-registry.js?v=19"></script>
-  <script src="dashboard.js?v=19"></script>
-  <script src="parent.js?v=19"></script>
-  <!-- VP Student Analysis must use window.CAMPUSCORE_REGISTRY.getAllStudents()
+    <script src="data.js?v=19"></script>
+    <script src="supabase-client.js?v=1"></script>
+    <script src="auth.js?v=19"></script>
+    <script src="ui.js?v=19"></script>
+    <script src="student-registry.js?v=19"></script>
+    <script src="dashboard.js?v=19"></script>
+    <script src="parent.js?v=19"></script>
+    <!-- VP Student Analysis must use window.CAMPUSCORE_REGISTRY.getAllStudents()
      to get student list. Do NOT generate class/section independently.
      The registry reads from campuscore_student_data_<id> localStorage keys
      which are the single source of truth for all student data. -->
-  <script src="vp-fixes.js?v=19"></script>
-  <script src="global-fixes.js?v=19"></script>
-  <script src="workflow-manager.js?v=19"></script>
-  <script src="student.js?v=20"></script>
-  <script src="teacher.js?v=20"></script>
-  <script src="app.js?v=20"></script>
-      <script>if(typeof initSupabaseData==='function'){document.addEventListener('DOMContentLoaded',function(){initSupabaseData();});}</script>
+    <script src="vp-fixes.js?v=19"></script>
+    <script src="global-fixes.js?v=19"></script>
+    <script src="workflow-manager.js?v=19"></script>
+    <script src="student.js?v=20"></script>
+    <script src="teacher.js?v=20"></script>
+    <script src="app.js?v=20"></script>
+    <script>if (typeof initSupabaseData === 'function') { document.addEventListener('DOMContentLoaded', function () { initSupabaseData(); }); }</script>
 </body>
 
 </html>
