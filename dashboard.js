@@ -1613,9 +1613,6 @@ function saveGenericLanguage() {
   
   closeGenericLanguageModal();
 }
-    triggerLiveReRender();
-  }, 500);
-}
 
 /* ━━━━ TEACHER EXCEL ACTIONS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function downloadMarksTemplate() {
