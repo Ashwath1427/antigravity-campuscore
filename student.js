@@ -201,29 +201,40 @@
   }
 
   function seedHomework(sid) {
-    const t = [
-      ["Mathematics", "Quadratic Equations Worksheet", "Solve all questions from chapter set B."],
-      ["Physics", "Laws of Motion Lab Note", "Submit observation and conclusion pages."],
-      ["Chemistry", "Periodic Table Chart", "Prepare handwritten chart with groups and periods."],
-      ["English Literature", "Poem Analysis", "Write interpretation of prescribed poem in 250 words."],
-      ["History", "French Revolution Timeline", "Create timeline with key events and leaders."],
-      ["Computer Science", "Python Loops Program", "Write 10 loop-based coding problems in notebook."],
+    const subjects = [
+      ["Mathematics", "Finish Exercises 1.4 - 1.6 on Quadratic Equations."],
+      ["Physics", "Draw diagram of electric motor and explain working principle."],
+      ["Chemistry", "List 20 common elements with their atomic numbers and symbols."],
+      ["Biology", "Read Chapter 4: Cell Structure and complete the worksheet."],
+      ["English Literature", "Write a summary of 'The Merchant of Venice' Act 1."],
+      ["History", "Prepare a timeline of the Indian Independence Movement."],
+      ["Computer Science", "Implement a simple calculator using if-else logic in JavaScript."],
+      ["Civics", "Research the powers of the Parliament of India."],
+      ["Geography", "Map work: Identify major rivers and mountain ranges of India."],
+      ["Hindi", "Complete the essay on 'Mere Sapno Ka Bharat'."],
+      ["Physical Education", "Prepare a report on your favorite sports personality."]
     ];
-    const statuses = ["Pending", "Submitted", "Overdue", "Pending", "Submitted", "Overdue"];
-    return t.map((x, i) => {
-      const d = hashNum(`${sid}-${i}`, 1, 20);
+    const statuses = ["Pending", "Completed", "Submitted", "Late", "Pending", "Pending", "Completed", "Submitted", "Pending", "Late", "Completed"];
+    
+    // Pick 7 based on sid hash
+    const startIdx = hashNum(sid, 0, subjects.length - 7);
+    const selected = subjects.slice(startIdx, startIdx + 7);
+
+    return selected.map((x, i) => {
+      const d = 10 + (i * 2);
       return {
-        id: `${sid}-HW-${i + 1}`,
+        id: `HW-${sid}-${i}`,
         subject: x[0],
-        title: x[1],
-        description: x[2],
+        task: x[1],
         teacher: ({
           Mathematics: "Ramesh Sharma", Physics: "Venkat Iyer", Chemistry: "Mohan Das",
-          Biology: "Pooja Mehta", "English Literature": "Anita Pillai", History: "Sunita Verma", "Computer Science": "Prasana Reddy"
+          Biology: "Pooja Mehta", "English Literature": "Anita Pillai", History: "Sunita Verma", 
+          "Computer Science": "Prasana Reddy", Civics: "Amitabh Raj", Geography: "Sushma Swaraj",
+          Hindi: "Rajesh Kumar", "Physical Education": "Coach Raju"
         })[x[0]] || "Class Teacher",
         assignedDate: `2026-04-${String(Math.max(1, d - 3)).padStart(2, "0")}`,
         dueDate: `2026-04-${String(d).padStart(2, "0")}`,
-        status: statuses[i],
+        status: statuses[i] || "Pending",
       };
     });
   }
@@ -260,6 +271,16 @@
     return { marks, overall, trend: [{ label: "Unit Test 1", pct: t1 }, { label: "Mid Term", pct: mt }, { label: "Unit Test 2", pct: t2 }, { label: "Final", pct: overall }] };
   }
 
+  function generateActivityLog(sid) {
+    return [
+      { text: "Attendance marked: Present", time: "Today 08:32 AM", icon: "✅", color: "var(--color-success)" },
+      { text: "New Physics assignment uploaded", time: "Yesterday 04:15 PM", icon: "📝", color: "var(--color-primary)" },
+      { text: "Fee payment confirmed: ₹12,500", time: "2 days ago", icon: "💰", color: "var(--color-warning)" },
+      { text: "Mathematics Unit Test result published", time: "3 days ago", icon: "📊", color: "var(--color-info)" },
+      { text: "Participated in Inter-school Debate", time: "4 days ago", icon: "🏆", color: "#f57c00" }
+    ];
+  }
+
   function seedMessages(sid, studentName) {
     const first = studentName.split(" ")[0];
     const pool = [
@@ -267,14 +288,17 @@
       { sender: "Venkat Iyer", role: "Physics Teacher", subject: "Lab Report Status", body: `Hello ${first},\nYour physics lab report is due next week. Ensure all data is logged correctly.\n\n- Physics Dept`, ts: "Yesterday 2:30 PM" },
       { sender: "Suman", role: "Vice Principal", subject: "Academic Appreciation", body: `Dear ${studentName},\nWe've noticed your improved performance in recent tests. Keep it up!\n\n- VP Suman`, ts: "2 days ago" },
       { sender: "Anitha", role: "Coordinator", subject: "Uniform Notice", body: `Dear ${first},\nPlease ensure full school uniform starting Monday.\n\n- Administration`, ts: "3 days ago" },
-      { sender: "Coach Raju", role: "PE Coach", subject: "Sports Day Signup", body: `Hey ${first},\nSports day signups are open till Thursday. Don't miss out!`, ts: "Today 08:30 AM" }
+      { sender: "Coach Raju", role: "PE Coach", subject: "Sports Day Signup", body: `Hey ${first},\nSports day signups are open till Thursday. Don't miss out!`, ts: "Today 08:30 AM" },
+      { sender: "Librarian", role: "Staff", subject: "Library Book Overdue", body: `Hi ${first},\nThe book 'Introduction to Algorithms' is due for return.`, ts: "4 days ago" },
+      { sender: "Office Room", role: "Admin", subject: "Fee Receipt Generated", body: `Dear Parent,\nQ4 Fee receipt for ${studentName} is generated and available in the fees section.`, ts: "Yesterday 11:00 AM" }
     ];
-    // Pick 3 based on ID hash
+    // Pick 4 based on ID hash
     const idx1 = hashNum(sid + "m1", 0, pool.length - 1);
     const idx2 = (idx1 + 1) % pool.length;
     const idx3 = (idx1 + 2) % pool.length;
+    const idx4 = (idx1 + 3) % pool.length;
     
-    return [pool[idx1], pool[idx2], pool[idx3]].map((m, i) => ({
+    return [pool[idx1], pool[idx2], pool[idx3], pool[idx4]].map((m, i) => ({
       id: `${sid}-M${i + 1}`,
       ...m,
       preview: m.body.slice(0, 50) + "...",
@@ -347,6 +371,11 @@
     const results = shared.results || generateResults(sid);
     const exams = Array.isArray(shared.exams) ? shared.exams : seedExamSchedule();
     const attendancePct = shared.attendancePct || getAttendancePct(sid) || 0;
+    
+    shared.exams = shared.exams || seedExamSchedule();
+    shared.messages = shared.messages || seedMessages(sid, profile.name);
+    shared.activities = shared.activities || generateActivityLog(sid);
+    saveStudentSharedData(sid, shared);
 
     return {
       sid, profile, homework, messages, notices, read, results, exams, attendancePct,
@@ -355,7 +384,8 @@
       upcomingExams: exams.filter(e => examStatus(e.date) === "Upcoming").length,
       unreadMessages: messages.filter(m => m.unread).length,
       unreadNotices: notices.filter(n => !read.has(String(n.id))).length,
-      latestResult: results.overall || 0
+      latestResult: results.overall || 0,
+      shared
     };
   }
 
@@ -371,8 +401,10 @@
     const sid = sidFromUser(u);
     if (!sid || !bySid(sid)) return Promise.resolve(u);
 
-    // Safety: If role is already student/parent, don't show select overlay
-    if (u.role === "student" || u.role === "parent") return Promise.resolve(u);
+    // Enforce overlay choice for Parent/Student usernames for variety, 
+    // but skip for high-level roles like VP, Teacher, etc.
+    const skipRoles = ["vice_principal", "teacher", "coordinator", "class_teacher", "principal", "super_admin", "apaaas"];
+    if (skipRoles.includes(u.role)) return Promise.resolve(u);
 
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
@@ -507,7 +539,10 @@
   };
 
   function buildStudentHome(d) {
+    const greeting = typeof window.getGreeting === 'function' ? window.getGreeting() : "Welcome";
+    const dateStr = typeof window.getFormattedDate === 'function' ? window.getFormattedDate() : "";
     const first = d.profile.fullName.split(" ")[0];
+    
     const cards = [
       ["Attendance %", `${d.attendancePct}%`, "📋"],
       ["Pending Homework", d.pendingHomework, "📝"],
@@ -516,19 +551,40 @@
       ["Unread Notices", d.unreadNotices, "📢"],
       ["Unread Messages", d.unreadMessages, "✉️"],
     ].map(x => `<div class="stat-card"><div class="stat-card-icon">${x[2]}</div><div class="stat-value">${x[1]}</div><div class="stat-label">${x[0]}</div></div>`).join("");
+    
     const quick = [
       ["View Timetable", "student_timetable"],
       ["Submit Homework", "student_homework"],
       ["Check Results", "student_results"],
       ["View Notices", "student_notices"]
     ].map(q => `<button class="quick-action-btn" onclick="navigateTo('${q[1]}')"><div class="qa-icon" style="background:var(--color-primary)"><i class="fas fa-arrow-right"></i></div><span class="qa-label">${q[0]}</span></button>`).join("");
+
+    const activities = (d.shared.activities || []).map(a => `
+      <li class="activity-item">
+        <div class="activity-dot" style="background:${a.color}"></div>
+        <div class="activity-text">${a.icon} ${a.text}</div>
+        <div class="activity-time">${a.time}</div>
+      </li>`).join('');
+
     return `<div class="dash-section active" id="section-home">
       <div class="welcome-banner">
-        <div class="welcome-greeting">Good ${getGreeting().replace("Good ", "")}, ${first}!</div>
-        <div class="welcome-date"><i class="far fa-calendar-alt"></i> ${getFormattedDate()}</div>
+        <div class="welcome-greeting">${greeting}, ${first}! 👋</div>
+        <div class="welcome-sub">Student Dashboard · Class ${d.profile.class} · Roll No: ${d.profile.roll}</div>
+        <div class="welcome-date"><i class="far fa-calendar-alt"></i> ${dateStr}</div>
       </div>
+
       <div class="stats-grid">${cards}</div>
-      <div class="card"><h3>⚡ Quick Links</h3><div class="quick-actions">${quick}</div></div>
+
+      <div class="content-grid">
+        <div class="card">
+          <h3>⚡ Quick Links</h3>
+          <div class="quick-actions">${quick}</div>
+        </div>
+        <div class="card">
+          <h3>⏱️ Recent Activity</h3>
+          <ul class="activity-list">${activities}</ul>
+        </div>
+      </div>
     </div>`;
   }
   function buildStudentProfile(d) {

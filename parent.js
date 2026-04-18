@@ -118,7 +118,14 @@
 
     const subText = `Viewing dashboard for ${p.fullName || p.name} · Class ${p.className || p.class || '9-C'}`;
     
-    return `
+      const activities = (s.activities || []).map(a => `
+        <li class="activity-item">
+          <div class="activity-dot" style="background:${a.color}"></div>
+          <div class="activity-text">${a.icon} ${a.text}</div>
+          <div class="activity-time">${a.time}</div>
+        </li>`).join('');
+
+      return `
     <div class="dash-section active" id="section-home">
       <div class="welcome-banner">
         <div class="welcome-greeting">${greeting}, ${ctx.user.name || 'Parent'}! 👋</div>
@@ -150,6 +157,13 @@
             </button>
           </div>
         </div>
+        <div class="card">
+          <h3>⏱️ Recent Activity</h3>
+          <ul class="activity-list">${activities}</ul>
+        </div>
+      </div>
+
+      <div class="content-grid">
         <div class="card">
           <h3>📢 Latest Notices</h3>
           <ul class="activity-list" id="parent-home-notices">
