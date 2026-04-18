@@ -261,11 +261,26 @@
   }
 
   function seedMessages(sid, studentName) {
-    return [
-      { id: `${sid}-M1`, sender: "Anita Pillai", role: "Class Teacher", subject: "Homework Reminder", preview: `${studentName.split(" ")[0]}, complete your pending homework before Friday.`, body: `Hi ${studentName},\n\nPlease submit your pending homework by Friday.\n\n- Class Teacher`, ts: "Today 9:10 AM", unread: true, replies: [] },
-      { id: `${sid}-M2`, sender: "Anitha", role: "Coordinator", subject: "Uniform Check Notice", preview: "Students must follow complete uniform code from Monday.", body: `Dear ${studentName},\n\nPlease follow complete uniform code from Monday.\n\n- Coordinator`, ts: "Yesterday 4:20 PM", unread: true, replies: [] },
-      { id: `${sid}-M3`, sender: "Suman", role: "Vice Principal", subject: "Academic Focus Week", preview: "Revision sessions start next week. Attend all classes.", body: `Hello ${studentName},\n\nAcademic focus week starts next Monday. Attend all sessions.\n\n- VP`, ts: "2 days ago", unread: false, replies: [] },
+    const first = studentName.split(" ")[0];
+    const pool = [
+      { sender: "Anita Pillai", role: "Class Teacher", subject: "Homework Reminder", body: `Hi ${first},\nPlease submit your pending homework by Friday.\n\n- Class Teacher`, ts: "Today 10:15 AM" },
+      { sender: "Venkat Iyer", role: "Physics Teacher", subject: "Lab Report Status", body: `Hello ${first},\nYour physics lab report is due next week. Ensure all data is logged correctly.\n\n- Physics Dept`, ts: "Yesterday 2:30 PM" },
+      { sender: "Suman", role: "Vice Principal", subject: "Academic Appreciation", body: `Dear ${studentName},\nWe've noticed your improved performance in recent tests. Keep it up!\n\n- VP Suman`, ts: "2 days ago" },
+      { sender: "Anitha", role: "Coordinator", subject: "Uniform Notice", body: `Dear ${first},\nPlease ensure full school uniform starting Monday.\n\n- Administration`, ts: "3 days ago" },
+      { sender: "Coach Raju", role: "PE Coach", subject: "Sports Day Signup", body: `Hey ${first},\nSports day signups are open till Thursday. Don't miss out!`, ts: "Today 08:30 AM" }
     ];
+    // Pick 3 based on ID hash
+    const idx1 = hashNum(sid + "m1", 0, pool.length - 1);
+    const idx2 = (idx1 + 1) % pool.length;
+    const idx3 = (idx1 + 2) % pool.length;
+    
+    return [pool[idx1], pool[idx2], pool[idx3]].map((m, i) => ({
+      id: `${sid}-M${i + 1}`,
+      ...m,
+      preview: m.body.slice(0, 50) + "...",
+      unread: i < 2,
+      replies: []
+    }));
   }
 
   function getNotices() {
@@ -434,7 +449,11 @@
       childId: s.id,
       childClass: "9-C",
       childRoll: String(s.roll).padStart(2, "0"),
-      notifications: [],
+      notifications: [
+        { id: `notif-${s.id}-1`, type: "Attendance", text: `${s.name} was marked Present today.`, time: "Today 08:45 AM", unread: true, color: "var(--color-success)" },
+        { id: `notif-${s.id}-2`, type: "Fee", text: "Q4 Tuition fee notice generated.", time: "Yesterday 4:00 PM", unread: true, color: "var(--color-warning)" },
+        { id: `notif-${s.id}-3`, type: "Homework", text: "New assignment uploaded in Mathematics.", time: "2 days ago", unread: false, color: "var(--color-primary)" }
+      ],
     }));
     window.DEMO_USERS = [...preserved, ...parents];
   }
