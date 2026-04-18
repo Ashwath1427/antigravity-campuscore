@@ -259,7 +259,7 @@ function buildSidebar(user) {
   if (!isAdmin) {
     sections = (sections || []).filter(s => {
       const label = (s.label || '').toUpperCase();
-      return label !== 'ADMIN' && label !== 'SYSTEM' && label !== 'MASTER';
+      return label !== 'ADMIN' && label !== 'SYSTEM_INTERNAL' && label !== 'MASTER';
     });
   }
 

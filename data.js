@@ -851,7 +851,7 @@ const ROLE_NAV = {
       ]
     },
     {
-      label: "System", items: [
+      label: "Account", items: [
         { id: "settings", icon: "fa-cog", label: "Settings" },
       ]
     },
