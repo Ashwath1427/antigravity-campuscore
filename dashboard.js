@@ -2549,13 +2549,15 @@ async function executeAttendanceSubmission() {
   
   if (classStudents.length === 0) return;
   
-  simulateAction('Finalizing attendance records...');
+  simulateAction('Finalizing local records...');
+  
+  const studentUpdates = [];
   
   classStudents.forEach(s => {
     const status = marking[s.id] || 'Present';
     const remark = marking['remark_' + s.id] || '';
     
-    // Add to logs
+    // Ensure logs exist and append today's record
     const logs = s.attendance_logs || [];
     logs.push({
       date: new Date().toISOString().split('T')[0],
@@ -2568,21 +2570,44 @@ async function executeAttendanceSubmission() {
     const presentCount = logs.filter(l => l.status === 'Present' || l.status === 'Late').length;
     const newPct = Math.round((presentCount / logs.length) * 100);
     
-    // Update student object
+    // Update student object locally
     s.attendance_logs = logs;
     s.attendancePct = newPct;
+    s.last_sync_at = new Date().toISOString();
     
-    // Persist
+    // Build update payload for Supabase
+    studentUpdates.push({
+      id: s.id,
+      attendance_logs: s.attendance_logs,
+      attendance_pct: s.attendancePct,
+      gpa: s.gpa || 0,
+      last_sync_at: s.last_sync_at
+    });
+    
+    // Persist to LocalStorage
     localStorage.setItem('campuscore_student_data_' + s.id, JSON.stringify(s));
   });
   
   // Clear temp buffer
   localStorage.removeItem('teacher_current_marking');
   
-  simulateAction('Attendance records synced to institutional registry. Notifications sent to parents.');
+  // 1. Success Message for Local Persistence
+  simulateAction('Attendance records saved locally.');
+
+  // 2. Asynchronous Sync to Supabase (Local-First approach)
+  try {
+     if (typeof sbSyncAttendance === 'function') {
+        await sbSyncAttendance(studentUpdates);
+        simulateAction('Attendance records synced to server.');
+     }
+  } catch (error) {
+     console.error('[Attendance] Sync failed', error);
+     simulateAction('Saved locally, will sync when online');
+  }
+  
   setTimeout(() => {
     triggerLiveReRender();
-  }, 1500);
+  }, 1000);
 }
 
 function buildTeacherHomework(user) {
