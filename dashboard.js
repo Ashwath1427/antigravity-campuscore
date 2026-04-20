@@ -2598,7 +2598,7 @@ async function executeAttendanceSubmission() {
   try {
      if (typeof sbSyncAttendance === 'function') {
         await sbSyncAttendance(studentUpdates);
-        simulateAction('Attendance records synced to server.');
+        simulateAction('Attendance synced to server');
      }
   } catch (error) {
      console.error('[Attendance] Sync failed', error);
