@@ -35,6 +35,15 @@
   }
 
   function getParentSettings(sid) {
+    if (window.CCStorage) {
+      return CCStorage.getItem('parent_settings', 'parent', sid, {
+        darkMode: false,
+        compactMode: false,
+        notifications: true,
+        emailAlerts: true,
+        language: "English"
+      });
+    }
     const key = `campuscore_parent_settings_${sid}`;
     const defaults = {
       darkMode: false,
@@ -47,6 +56,18 @@
   }
 
   function saveParentSettings(sid, patch) {
+    if (window.CCStorage) {
+      const current = getParentSettings(sid);
+      const updated = { ...current, ...patch };
+      CCStorage.setItem('parent_settings', updated, 'parent', sid);
+      if (patch.darkMode !== undefined) {
+        document.documentElement.setAttribute('data-theme', patch.darkMode ? 'dark' : 'light');
+      }
+      if (patch.compactMode !== undefined) {
+        document.documentElement.setAttribute('data-compact', patch.compactMode ? 'true' : 'false');
+      }
+      return updated;
+    }
     const key = `campuscore_parent_settings_${sid}`;
     const current = getParentSettings(sid);
     const updated = { ...current, ...patch };
@@ -507,7 +528,7 @@
                  <small>${m.ts}</small>
                </div>
                <div style="font-weight:700;margin-bottom:5px">${m.subject}</div>
-               <div style="font-size:13px;color:var(--color-text-muted)">${m.preview || m.body.slice(0, 80)}...</div>
+               <div style="font-size:13px;color:var(--color-text-muted)">${m.preview || (m.body ? m.body.slice(0, 80) : "")}...</div>
              </div>`).join('') || '<p style="text-align:center;color:var(--color-text-muted)">No messages yet.</p>'}
         </div>
       </div>
@@ -515,16 +536,26 @@
       <div class="card">
         <h3>📍 My Raised Concerns</h3>
         <div style="display:grid;gap:10px;margin-top:10px">
-          ${issues.map(i => `
+          ${issues.map(i => {
+            const stageBadge = i.stage === 'VP' ? 'badge-primary' : i.stage === 'Coordinator' ? 'badge-warning' : 'badge-info';
+            const statusBadge = i.status === 'Resolved' ? 'badge-success' : i.status === 'Open' ? 'badge-info' : 'badge-primary';
+            return `
             <div style="padding:15px;border:1px solid var(--color-border);border-radius:12px">
               <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-                <strong>${i.id} · ${i.category}</strong>
-                <span class="badge" style="background:${i.status === 'Open' ? 'var(--color-info)' : 'var(--color-primary)'}">${i.status}</span>
+                <div style="display:flex;gap:5px;align-items:center">
+                  <strong>${i.id}</strong>
+                  <span class="badge ${stageBadge}" style="font-size:10px">${i.stage || 'Teacher'} Level</span>
+                </div>
+                <span class="badge ${statusBadge}">${i.status}</span>
               </div>
               <div style="font-size:14px;font-weight:700;margin-bottom:5px">${i.title}</div>
-              <div style="font-size:12px;color:var(--color-text-muted)">Assigned to: ${i.assignedTo}</div>
+              <div style="font-size:12px;color:var(--color-text-muted);display:flex;justify-content:space-between">
+                <span>Assigned: ${i.assignedTo}</span>
+                <span>Category: ${i.category}</span>
+              </div>
               <button class="btn-primary" style="margin-top:12px;padding:6px 12px;font-size:12px" onclick="openEscalationTimelineModal('${i.id}')">View Full History</button>
-            </div>`).join('') || '<p style="text-align:center;color:var(--color-text-muted)">No active concerns.</p>'}
+            </div>`;
+          }).join('') || '<p style="text-align:center;color:var(--color-text-muted)">No active concerns.</p>'}
         </div>
       </div>
     </div>`;

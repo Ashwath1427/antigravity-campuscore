@@ -12,18 +12,37 @@ window.CAMPUSCORE_REGISTRY = {
   },
 
   getAllStudents: function() {
-    const ids = [
-      '3160136','3160417','3160662','3170292','3170355',
-      '3170390','3180076','3180133','3180183','3180184',
-      '3180286','3190472','3200320','3200437','3210447',
-      '3210590','3230302','3230706','3240214','3240504',
-      '3240693','3250112','3260066','3230719','3170068',
-      '3220915','3190133'
-    ];
+    // Dynamically build IDs from SCHOOL_DATA if available, else fallback to hardcoded
+    let ids = [];
+    if (window.SCHOOL_DATA && window.SCHOOL_DATA.classes) {
+      Object.values(window.SCHOOL_DATA.classes).forEach(cls => {
+        Object.values(cls).forEach(sec => {
+          sec.forEach(stu => ids.push(stu.id));
+        });
+      });
+    }
+
+    if (ids.length === 0) {
+      ids = [
+        '3160136','3160417','3160662','3170292','3170355',
+        '3170390','3180076','3180133','3180183','3180184',
+        '3180286','3190472','3200320','3200437','3210447',
+        '3210590','3230302','3230706','3240214','3240504',
+        '3240693','3250112','3260066','3230719','3170068',
+        '3220915','3190133'
+      ];
+    }
+
     return ids.map(id => {
-      const data = JSON.parse(
-        localStorage.getItem('campuscore_student_data_' + id) || '{}'
-      );
+      // Try namespaced storage first, then legacy
+      let data = null;
+      if (window.CCStorage) {
+        data = CCStorage.getItem('student_data_' + id, 'vice_principal', 'VP001');
+      }
+      if (!data) {
+        data = JSON.parse(localStorage.getItem('campuscore_student_data_' + id) || '{}');
+      }
+      
       return {
         id: id,
         name: data.name || 'Unknown',

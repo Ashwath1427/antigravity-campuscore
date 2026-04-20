@@ -330,20 +330,42 @@ function navigateTo(sectionId) {
     if (typeof logout === 'function') logout();
     return;
   }
+
+  console.log(`[CampusCore] Navigating to: ${sectionId}`);
+
+  // Defensive: If the target section doesn't exist in DOM, we might need a re-render
+  const targetSec = document.getElementById('section-' + sectionId);
+  if (!targetSec && window.triggerLiveReRender) {
+    console.warn(`[CampusCore] Section ${sectionId} not found, forcing re-render`);
+    window.triggerLiveReRender();
+  }
+
   document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
   const activeNav = document.getElementById('nav-' + sectionId);
   if (activeNav) activeNav.classList.add('active');
-  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+
+  document.querySelectorAll('.dash-section').forEach(s => {
+    s.classList.remove('active');
+  });
+
   const sec = document.getElementById('section-' + sectionId);
-  if (sec) { sec.classList.add('active'); currentSection = sectionId; }
+  if (sec) {
+    sec.classList.add('active');
+    currentSection = sectionId;
+    
+    // Explicitly scroll the content area to the top
+    const contentArea = document.getElementById('content-area');
+    if (contentArea) contentArea.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
   // Close mobile sidebar
-  if (window.innerWidth <= 768) {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebar-overlay').classList.remove('active');
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (overlay) overlay.classList.remove('active');
     document.body.style.overflow = '';
   }
-  // Scroll to top of content
-  document.getElementById('content-area').scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ─── Utility Helpers ─────────────────────────────────────────

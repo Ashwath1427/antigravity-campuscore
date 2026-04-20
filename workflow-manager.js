@@ -333,17 +333,26 @@ window.wfmUpdateStudentRoster = function () {
     const c = document.getElementById('wfm-cls-sel').value;
     const s = document.getElementById('wfm-sec-sel').value;
 
-    if (c === '9' && s === 'C') {
-        // Mock default seed
-        root.innerHTML = `<div class="card" style="display:flex;justify-content:space-between;align-items:center">
-          <div><h3 style="margin-bottom:4px">KASULA ASHWATH</h3><p style="color:var(--color-text-muted);font-size:12px;margin:0">Class 9C</p></div>
-          <div style="display:flex;gap:8px">
-             <button style="background:var(--color-success);color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer" onclick="wfmPromote('KASULA ASHWATH', '9C')">Promote</button>
-             <button style="background:var(--color-danger);color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer" onclick="wfmSuspend('KASULA ASHWATH')">Suspend</button>
-          </div>
-        </div>`;
+    let studentsToRender = [];
+    if (window.SCHOOL_DATA && window.SCHOOL_DATA.classes[c] && window.SCHOOL_DATA.classes[c][s]) {
+        studentsToRender = window.SCHOOL_DATA.classes[c][s];
+    }
+
+    if (studentsToRender.length > 0) {
+        root.innerHTML = studentsToRender.map(stu => `
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:16px;margin-bottom:12px">
+              <div>
+                <h3 style="margin-bottom:4px;font-size:16px">${stu.name}</h3>
+                <p style="color:var(--color-text-muted);font-size:12px;margin:0">Roll: ${stu.roll} • Adm: ${stu.admNo} • Class ${stu.class}${stu.section}</p>
+              </div>
+              <div style="display:flex;gap:8px">
+                 <button class="btn-primary" style="padding:6px 12px;font-size:12px" onclick="wfmPromote('${stu.name}', '${stu.class}${stu.section}')">Promote</button>
+                 <button style="background:var(--color-danger);color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px" onclick="wfmSuspend('${stu.name}')">Suspend</button>
+              </div>
+            </div>
+        `).join('');
     } else {
-        root.innerHTML = `<div class="empty-state" style="text-align:center;padding:40px;color:var(--color-text-muted)">No student data available for this class yet.</div>`;
+        root.innerHTML = `<div class="empty-state" style="text-align:center;padding:40px;color:var(--color-text-muted)">No student data available for Class ${c}-${s} yet.</div>`;
     }
 };
 
@@ -457,11 +466,17 @@ window.renderVPStudentIssuesTabs = function () {
         html += `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-text-muted)">No issues in this tab.</div>`;
     } else {
         activeArr.forEach((issue, idx) => {
+            const dateObj = new Date(issue.date);
+            const diffDays = Math.floor((new Date() - dateObj) / (1000 * 60 * 60 * 24));
+            const durationLabel = diffDays === 0 ? 'Recently added' : `${diffDays} days active`;
+            const durationColor = diffDays > 3 ? 'var(--color-danger)' : 'var(--color-success)';
+
             html += `<div class="card" style="display:flex;flex-direction:column;">
                 <div style="display:flex;justify-content:space-between;margin-bottom:10px">
                    <h4 style="margin:0">${issue.student}</h4>
                    <span class="badge" style="background:${issue.priority === 'High' ? 'var(--color-danger)' : issue.priority === 'Medium' ? '#f57c00' : 'var(--color-success)'}">${issue.priority}</span>
                 </div>
+                <span class="badge" style="background:${durationColor};margin-bottom:8px;width:fit-content">${durationLabel}</span>
                 <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:8px">ID: ${issue.id} • Class: ${issue.class}</div>
                 <p style="font-size:13px;flex:1">${issue.desc}</p>
                 <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:12px">Reported: ${issue.date} <br/>By: ${issue.reportedBy}</div>
@@ -509,6 +524,34 @@ window.wfmResolveVP = function (id, sourceArrKey) {
         localStorage.setItem('campuscore_vp_issues', JSON.stringify(d));
         simulateAction('Issue resolved and moved to Resolved Bin');
         renderVPStudentIssuesTabs();
+    }
+};
+
+window.wfmHandleIssue = function (id, action) {
+    const data = JSON.parse(localStorage.getItem('campuscore_vp_issues') || '{}');
+    let issue = null;
+    let fromList = '';
+
+    const findAndRemove = (listName) => {
+        const idx = (data[listName] || []).findIndex(i => i.id === id);
+        if (idx !== -1) {
+            issue = data[listName].splice(idx, 1)[0];
+            fromList = listName;
+            return true;
+        }
+        return false;
+    };
+
+    if (findAndRemove('mainIssues') || findAndRemove('escalatedIssues')) {
+        if (action === 'resolve') {
+            data.resolvedIssues.push(issue);
+            simulateAction(`Issue ${id} resolved successfully`);
+        } else if (action === 'forward') {
+            data.escalatedIssues.push(issue);
+            simulateAction(`Issue ${id} forwarded to higher authority`);
+        }
+        localStorage.setItem('campuscore_vp_issues', JSON.stringify(data));
+        renderVPIssues();
     }
 };
 

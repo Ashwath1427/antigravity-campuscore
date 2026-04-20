@@ -1426,7 +1426,18 @@ function buildVPReports(user) {
 }
 
 function buildVPApprovals(user) {
-  const localComments = JSON.parse(localStorage.getItem('cc_approval_comments') || '{}');
+  console.log('[CampusCore] Rendering Approvals section...');
+  
+  // Guard against undefined data
+  if (typeof VP_APPROVALS === 'undefined') {
+    console.warn('[CampusCore] VP_APPROVALS is undefined, using empty fallback');
+    return `<div class="dash-section" id="section-vp_approvals"><div class="card"><p>No approval data available.</p></div></div>`;
+  }
+
+  const localComments = window.CCStorage 
+    ? CCStorage.getItem('approval_comments', user.role, user.id, {})
+    : JSON.parse(localStorage.getItem('cc_approval_comments') || '{}');
+
   const rows = VP_APPROVALS.map(a => {
     const comment = localComments[a.id] || a.comment;
     return `<tr>

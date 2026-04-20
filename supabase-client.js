@@ -12,22 +12,47 @@ if (!window.supabaseClient && typeof supabase !== 'undefined') {
   console.log('[Supabase] window.supabaseClient initialized');
 }
 
-function getSupabase() {
+window.isUsingFallbackData = false;
+
+/**
+ * Central client getter with timeout protection.
+ * If Supabase is unavailable or slow, falls back to demo data.
+ */
+async function getLiveClient() {
   if (window.supabaseClient) return window.supabaseClient;
+
+  // Race client creation against a 3s timeout
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('SB_INIT_TIMEOUT')), 3000)
+  );
+
   try {
-    if (typeof supabase !== 'undefined' && supabase.createClient) {
-      window.supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
-      return window.supabaseClient;
-    }
+    const clientPromise = (async () => {
+      if (typeof supabase !== 'undefined' && supabase.createClient) {
+        window.supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+        return window.supabaseClient;
+      }
+      throw new Error('Supabase library not loaded');
+    })();
+
+    return await Promise.race([clientPromise, timeoutPromise]);
   } catch (e) {
-    console.warn('[Supabase] Failed to initialize:', e);
+    window.isUsingFallbackData = true;
+    const banner = document.getElementById('fallback-banner');
+    if (banner) banner.classList.remove('hidden');
+    console.warn('[Supabase] Falling back to demo data:', e.message);
+    return null;
   }
-  return null;
+}
+
+// Deprecated, use getLiveClient()
+function getSupabase() {
+  return window.supabaseClient || null;
 }
 
 // ─── Fetch users from Supabase cc_users table ────────────────
 async function sbFetchUsers() {
-  const sb = getSupabase();
+  const sb = await getLiveClient();
   if (!sb) return null;
   try {
     const { data, error } = await sb.from('cc_users').select('*');
@@ -38,7 +63,7 @@ async function sbFetchUsers() {
 
 // ─── Fetch students from Supabase cc_students table ──────────
 async function sbFetchStudents() {
-  const sb = getSupabase();
+  const sb = await getLiveClient();
   if (!sb) return null;
   try {
     const { data, error } = await sb.from('cc_students').select('*');
@@ -63,7 +88,7 @@ async function sbFetchStudents() {
 
 // ─── Fetch announcements ──────────────────────────────────────
 async function sbFetchAnnouncements() {
-  const sb = getSupabase();
+  const sb = await getLiveClient();
   if (!sb) return null;
   try {
     const { data, error } = await sb.from('cc_announcements').select('*').order('id');
@@ -81,7 +106,7 @@ async function sbFetchAnnouncements() {
 
 // ─── Fetch homework ───────────────────────────────────────────
 async function sbFetchHomework() {
-  const sb = getSupabase();
+  const sb = await getLiveClient();
   if (!sb) return null;
   try {
     const { data, error } = await sb.from('cc_homework').select('*').order('id');
@@ -102,7 +127,7 @@ async function sbFetchHomework() {
 
 // ─── Fetch events ─────────────────────────────────────────────
 async function sbFetchEvents() {
-  const sb = getSupabase();
+  const sb = await getLiveClient();
   if (!sb) return null;
   try {
     const { data, error } = await sb.from('cc_events').select('*').order('id');
@@ -118,7 +143,7 @@ async function sbFetchEvents() {
 
 // ─── Login via Supabase cc_users ──────────────────────────────
 async function sbAttemptLogin(username, password) {
-  const sb = getSupabase();
+  const sb = await getLiveClient();
   if (!sb) return null;
   try {
     const normalizedUsername = String(username || '').toUpperCase();
@@ -168,7 +193,14 @@ async function sbAttemptLogin(username, password) {
 
 // ─── Init: load live data into app globals ────────────────────
 async function initSupabaseData() {
-  console.log('[Supabase] Loading live data...');
+  console.log('[Supabase] Initializing live data sync...');
+
+  // Ensure client is ready or timed out
+  const sb = await getLiveClient();
+  if (!sb || window.isUsingFallbackData) {
+    console.warn('[Supabase] Data sync skipped: Using local fallback');
+    return;
+  }
 
   const [sbStudents, sbAnnouncements, sbHomework, sbEvents] = await Promise.all([
     sbFetchStudents(),

@@ -776,6 +776,10 @@
     </aside>
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <div class="main-content" id="main-content">
+      <div id="fallback-banner" class="fallback-banner hidden">
+        <i class="fas fa-plug-circle-exclamation"></i>
+        <span>Operating in <strong>Offline Demo Mode</strong>. Live backend connection timed out.</span>
+      </div>
       <header class="sticky-top-banner" id="topbar">
         <div class="banner-left">
           <button class="hamburger-menu" id="hamburger"><span></span><span></span><span></span></button>
@@ -819,8 +823,9 @@
       </div>
       <div class="content-area" id="content-area"></div>
     </div>
-    <script src="data.js?v=19"></script>
-    <script src="supabase-client.js?v=1"></script>
+    <script src="data.js?v=20"></script>
+    <script src="storage-util.js?v=20"></script>
+    <script src="supabase-client.js?v=20"></script>
     <script src="auth.js?v=19"></script>
     <script src="ui.js?v=19"></script>
     <script src="student-registry.js?v=19"></script>
