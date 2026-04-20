@@ -37,17 +37,37 @@ function safeRender(name, builderFunc, user) {
   }
 }
 
+/**
+ * Universal Translator Helper
+ * @param {string} key - The translation key defined in data.js 
+ * @returns {string} - Translated text for current language 
+ */
+window.t = function(key) {
+  const lang = localStorage.getItem('cc_sys_lang') || 'en';
+  if (!TRANSLATIONS[key]) return key;
+  return TRANSLATIONS[key][lang] || TRANSLATIONS[key]['en'];
+};
+
+window.changeLanguage = function(lang) {
+  localStorage.setItem('cc_sys_lang', lang);
+  const labels = { en: 'English', te: 'తెలుగు', hi: 'हिन्दी' };
+  const lbl = document.getElementById('current-lang-label');
+  if (lbl) lbl.textContent = labels[lang] || 'English';
+  
+  console.log(`[CampusCore] System language changed to: ${lang}`);
+  simulateAction(`Language set to ${labels[lang]}`);
+  
+  triggerLiveReRender();
+};
+
 window.triggerLiveReRender = function () {
   if (window.currentUser) {
     buildDashboard(window.currentUser);
-    // If global-fixes.js navigation hook is active, it handles section retention.
-    // If not, we stay on 'home' or current.
+    // Explicitly re-apply sidebar as well to update menu tokens
+    buildSidebar(window.currentUser);
   }
 };
 
-/**
- * Borrows logic from another role context without mutating the primary user object.
- */
 function renderWithRoleContext(user, role, builderFunc) {
   const originalRole = user.role;
   try {
@@ -91,35 +111,27 @@ function buildDashboard(user) {
       buildStaffHelpdesk(user), buildSettings(user)
     ].join('');
   } else if (user.role === 'teacher') {
-    if (typeof window.buildTeacherDashboard === 'function') {
-      const teacherHtml = window.buildTeacherDashboard(user);
-      if (teacherHtml) {
-        c.innerHTML = teacherHtml;
-      } else {
-        // Fallback if the function returned null or empty
-        c.innerHTML = [
-          buildTeacherHome(user), buildTeacherClasses(user), buildTeacherAttendance(user),
-          buildTeacherHomework(user), buildTeacherSchedule(user), buildTeacherResults(user),
-          buildTeacherStudentPerf(user), buildDocumentUploadSection(user),
-          buildAnnouncements(user), buildEvents(user),
-          buildTeacherMessages(user), buildStaffHelpdesk(user), buildSettings(user)
-        ].join('');
-      }
-    } else {
-      c.innerHTML = [
-        buildTeacherHome(user), buildTeacherClasses(user), buildTeacherAttendance(user),
-        buildTeacherHomework(user), buildTeacherSchedule(user), buildTeacherResults(user),
-        buildTeacherStudentPerf(user), buildDocumentUploadSection(user),
-        buildAnnouncements(user), buildEvents(user),
-        buildTeacherMessages(user), buildStaffHelpdesk(user), buildSettings(user)
-      ].join('');
-    }
+    c.innerHTML = [
+      safeRender('Home', buildTeacherHome, user),
+      safeRender('Teacher Classes', buildTeacherClasses, user),
+      safeRender('Teacher Attendance', buildTeacherAttendance, user),
+      safeRender('Teacher Homework', buildTeacherHomework, user),
+      safeRender('Teacher Schedule', buildTeacherSchedule, user),
+      safeRender('Teacher Results', buildTeacherResults, user),
+      safeRender('Teacher Performance', buildTeacherStudentPerf, user),
+      safeRender('Upload Documents', buildDocumentUploadSection, user),
+      safeRender('Announcements', buildAnnouncements, user),
+      safeRender('Events', buildEvents, user),
+      safeRender('Teacher Messages', buildTeacherMessages, user),
+      safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
+      safeRender('Settings', buildSettings, user)
+    ].join('');
   } else if (user.role === 'student') {
     c.innerHTML = safeRender('Student Dashboard', window.buildStudentDashboard || buildHome, user);
   } else if (user.role === 'principal' || String(user.username || '').toUpperCase() === 'PRIN001') {
     // Hardened Principal Render Logic
     c.innerHTML = [
-      renderWithRoleContext(user, 'vice_principal', (u) => safeRender('Home', buildHome, u)),
+      safeRender('Home', buildHome, user),
       safeRender('Profile', buildProfile, user),
       safeRender('Attendance', buildVPAttendance, user).replace('id="section-vp_attendance"', 'id="section-attendance_reports"'),
       safeRender('Exams', buildVPExams, user).replace('id="section-vp_exams"', 'id="section-exam_results"'),
@@ -130,6 +142,8 @@ function buildDashboard(user) {
       safeRender('Events', buildEvents, user),
       safeRender('Messages', buildVPMessages, user).replace('id="section-vp_messages"', 'id="section-messages"'),
       safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
+      safeRender('Teacher Monitoring', buildVPTeachers, user),
+      safeRender('User Registration', buildRegistration, user),
       safeRender('Settings', buildSettings, user)
     ].join('');
   } else if (user.role === 'apaaas' || String(user.username || '').toUpperCase() === 'APAAAS' || user.role === 'superadmin' || user.role === 'super_admin') {
@@ -143,9 +157,12 @@ function buildDashboard(user) {
       safeRender('All Attendance', buildVPAttendance, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_attendance"'),
       safeRender('All Results', buildVPClassPerf, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_results"'),
       safeRender('All Approvals', buildVPApprovals, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_approvals"'),
+      safeRender('Notices', buildAnnouncements, user),
+      safeRender('Events', buildEvents, user),
       safeRender('Manage Documents', buildManageDocuments, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-manage_documents"'),
       safeRender('All Messages', buildVPMessages, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_messages"'),
       safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-full_helpdesk"'),
+      safeRender('User Registration', buildRegistration, user),
       safeRender('Settings', buildSettings, user)
     ].join('');
   } else {
@@ -164,6 +181,12 @@ function buildDashboard(user) {
       safeRender('Events', buildEvents, user),
       safeRender('Settings', buildSettings, user),
     ].join('');
+  }
+
+  // Restore current section visibility after re-render
+  if (window.navigateTo && window.currentSection) {
+    console.log(`[CampusCore] Restoring section state: ${window.currentSection}`);
+    window.navigateTo(window.currentSection);
   }
 }
 
@@ -225,9 +248,9 @@ function buildHome(user) {
   const welcome = `
     <div class="welcome-banner">
       <div class="welcome-greeting">${greeting}, ${firstName}! 👋</div>
-      <div class="welcome-sub">${user.roleLabel} Dashboard · Here's a quick view of what's happening across your campus today.</div>
+      <div class="welcome-sub">${user.roleLabel} ${t('home')} · ${t('quick_view')}</div>
       <div class="welcome-date"><i class="far fa-calendar-alt"></i> ${dateStr}</div>
-      <div class="welcome-school">🏫 Delhi Public School, Nadergul</div>
+      <div class="welcome-school">🏫 ${t('school_name')}</div>
     </div>`;
 
   // KPI Stats
@@ -361,7 +384,7 @@ function buildHome(user) {
     </div>`).join('');
 
   return `
-  <div class="dash-section active" id="section-home">
+  <div class="dash-section" id="section-home">
     ${welcome}
     <div class="stats-grid">${stats}</div>
 
@@ -418,8 +441,18 @@ function buildProfile(user) {
 
 
 /* ━━━━ STUDENTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function getVPStudents() {
+  let s = localStorage.getItem('campuscore_student_registry');
+  if (!s) {
+    localStorage.setItem('campuscore_student_registry', JSON.stringify(STUDENTS));
+    return STUDENTS;
+  }
+  return JSON.parse(s);
+}
+
 function buildStudents(user) {
-  const rows = STUDENTS.map((s, i) => `<tr>
+  const allStudents = getVPStudents();
+  const rows = allStudents.map((s, i) => `<tr>
     <td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>Adm: ${s.admNo}</span></div></div></td>
     <td>${s.class}</td><td>${s.roll}</td><td>${s.gender}</td>
     <td><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar" style="flex:1;min-width:60px"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div><strong style="color:${attColor(s.attendance)};font-size:12px">${s.attendance}%</strong></div></td>
@@ -429,10 +462,61 @@ function buildStudents(user) {
     <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
       <div style="position:relative;flex:1;min-width:200px"><i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--color-text-muted)"></i>
       <input type="text" placeholder="Search students..." id="student-search" style="width:100%;padding:11px 14px 11px 40px;border:2px solid var(--color-border);border-radius:10px;background:var(--color-surface);color:var(--color-text);font-size:14px;outline:none;font-family:Inter,sans-serif" oninput="filterStudents(this.value)"></div>
-      <button class="btn-primary" onclick="simulateAction('Add Student form opened. Fill in admission details.')"><i class="fas fa-plus"></i> Add Student</button>
+      <button class="btn-primary" onclick="openAddStudentModal()"><i class="fas fa-plus"></i> Add Student</button>
     </div>
     <div style="overflow-x:auto;border-radius:14px"><table class="data-table" id="students-table"><thead><tr><th>Student</th><th>Class</th><th>Roll</th><th>Gender</th><th>Attendance</th><th>Behavior</th><th>Fee</th><th>GPA</th></tr></thead><tbody id="students-tbody">${rows}</tbody></table></div></div></div>`;
 }
+
+window.openAddStudentModal = function() {
+  const m = `<div class="modal-overlay" id="add-student-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+    <div class="modal" style="max-width:500px">
+      <h3>Admit New Student</h3>
+      <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:15px">
+        <div class="form-group" style="grid-column: 1 / -1"><label>Full Name</label><input type="text" id="ns-name" class="form-control" placeholder="Student Name"></div>
+        <div class="form-group"><label>Grade</label><select id="ns-grade" class="form-control"><option>10</option><option>9</option><option>8</option><option>7</option><option>6</option></select></div>
+        <div class="form-group"><label>Section</label><select id="ns-sec" class="form-control"><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+        <div class="form-group"><label>Adm No</label><input type="text" id="ns-adm" class="form-control" placeholder="e.g. 202401"></div>
+        <div class="form-group"><label>Gender</label><select id="ns-gender" class="form-control"><option>Male</option><option>Female</option></select></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:25px">
+        <button class="btn-primary" style="flex:1" onclick="saveNewStudent()">Confirm Admission</button>
+        <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px;cursor:pointer" onclick="document.getElementById('add-student-modal').remove()">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+};
+
+window.saveNewStudent = function() {
+  const name = document.getElementById('ns-name').value;
+  const grade = document.getElementById('ns-grade').value;
+  const sec = document.getElementById('ns-sec').value;
+  const adm = document.getElementById('ns-adm').value;
+  const gender = document.getElementById('ns-gender').value;
+
+  if (!name || !adm) return;
+
+  const newStudent = {
+    name: name,
+    class: `${grade}-${sec}`,
+    admNo: adm,
+    roll: "TBD",
+    gender: gender,
+    attendance: 100,
+    behavior: "Good",
+    fee_status: "Paid",
+    gpa: 0
+  };
+
+  let all = getVPStudents();
+  all.unshift(newStudent);
+  localStorage.setItem('campuscore_student_registry', JSON.stringify(all));
+
+  document.getElementById('add-student-modal').remove();
+  simulateAction(`Student ${name} successfully admitted to ${grade}-${sec}.`);
+  triggerLiveReRender();
+  navigateTo('students');
+};
 function filterStudents(q) { const t = document.getElementById('students-tbody'); if (!t) return; const s = q.toLowerCase(); t.querySelectorAll('tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(s) ? '' : 'none'; }); }
 
 /* ━━━━ TEACHERS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -551,43 +635,144 @@ function buildFees(user) {
 function buildAnnouncements(user) {
   const catC = { Events: '#5ca870', Academic: '#1976d2', Meeting: '#f57c00', Finance: '#d32f2f', Holiday: '#8b5cf6', CCA: '#00bcd4' };
   const priC = { high: '#d32f2f', medium: '#f57c00', low: '#5ca870' };
+  const filterCat = localStorage.getItem('vp_notice_filter_cat') || 'All Categories';
+  const vpNoticeTab = localStorage.getItem('vp_notice_tab') || 'active';
+  
   let liveAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
   let archivedAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
-  const vpNoticeTab = localStorage.getItem('vp_notice_tab') || 'active';
+  
   const parentSid = user.role === 'parent' ? String(user.childId || user.username.replace(/^P/i, '').replace(/A$/i, '')) : null;
   const parentShared = (parentSid && typeof getStudentSharedData === 'function') ? getStudentSharedData(parentSid) : null;
   const readSet = new Set((parentShared && parentShared.noticesRead) || []);
-  const source = user.role === 'vice_principal' && vpNoticeTab === 'archived' ? archivedAnnouncements : liveAnnouncements;
+  
+  let source = user.role === 'vice_principal' && vpNoticeTab === 'archived' ? archivedAnnouncements : liveAnnouncements;
+  
+  // Apply Target Audience Filter for Students/Parents
+  if (user.role === 'student' || user.role === 'parent') {
+    source = source.filter(a => (a.target || 'All') === 'All' || a.target === (user.role === 'student' ? 'Students' : 'Parents'));
+  }
+
+  // Apply Category Filter
+  if (filterCat !== 'All Categories') {
+    source = source.filter(a => a.category === filterCat);
+  }
+
   const cards = source.map((a, index) => {
     const c = catC[a.category] || '#5ca870';
     const p = priC[a.priority] || '#5ca870';
     const isUnread = user.role === 'parent' ? !readSet.has(String(a.id)) : false;
-    return `<div class="card" style="padding:0;overflow:hidden"><div style="height:5px;background:${p}"></div><div style="padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;gap:6px"><span class="badge" style="background:${c};font-size:10px;padding:4px 10px">${a.category}</span> ${user.role === 'vice_principal' ? `<span class="badge" style="background:var(--color-surface-2);color:var(--color-text);font-size:10px;border:1px solid var(--color-border)">Target: ${a.target || 'All'}</span>` : ''} ${user.role === 'parent' && isUnread ? `<span class="badge badge-info" style="font-size:10px">Unread</span>` : ''}</div><span style="font-size:10px;font-weight:800;color:${p};text-transform:uppercase;letter-spacing:1px">${a.priority}</span></div><h4 style="font-size:15px;font-weight:700;color:var(--color-text);margin-bottom:10px;line-height:1.4">${a.title}</h4><p style="font-size:13px;color:var(--color-text-light);margin-bottom:12px">${a.body || ''}</p><div style="font-size:12px;color:var(--color-text-muted);display:flex;gap:12px;margin-bottom:12px"><span>📅 Pub: ${a.date}</span><span>👤 ${a.author}</span></div>${user.role === 'vice_principal' && vpNoticeTab === 'active' ? `<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-active" style="flex:1;text-align:center;font-size:11px">Published</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #1976d2;color:#1976d2;cursor:pointer" onclick="openNoticeModal(${index})"><i class="fas fa-edit"></i></button><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #999;color:#999;cursor:pointer" onclick="archiveNotice(${index})"><i class="fas fa-archive"></i></button></div>` : ''}${user.role === 'vice_principal' && vpNoticeTab === 'archived' ? `<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-warning" style="flex:1;text-align:center;font-size:11px">Archived</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid var(--color-primary);color:var(--color-primary);cursor:pointer" onclick="restoreNotice(${index})"><i class="fas fa-undo"></i></button></div>` : ''}${user.role === 'parent' ? `<button class="btn-primary" style="width:100%" onclick="parentReadNotice('${a.id}')">Read More</button>` : ''}</div></div>`;
+    
+    // Pick translated title and body based on current system language
+    const lang = localStorage.getItem('cc_sys_lang') || 'en';
+    const displayTitle = (lang === 'te' && a.title_te) ? a.title_te : (lang === 'hi' && a.title_hi) ? a.title_hi : a.title;
+    const displayBody = (lang === 'te' && a.body_te) ? a.body_te : (lang === 'hi' && a.body_hi) ? a.body_hi : (a.body || '');
+
+    return `<div class="card" style="padding:0;overflow:hidden"><div style="height:5px;background:${p}"></div><div style="padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;gap:6px"><span class="badge" style="background:${c};font-size:10px;padding:4px 10px">${a.category}</span> ${user.role === 'vice_principal' ? `<span class="badge" style="background:var(--color-surface-2);color:var(--color-text);font-size:10px;border:1px solid var(--color-border)">Target: ${a.target || 'All'}</span>` : ''} ${user.role === 'parent' && isUnread ? `<span class="badge badge-info" style="font-size:10px">Unread</span>` : ''}</div><span style="font-size:10px;font-weight:800;color:${p};text-transform:uppercase;letter-spacing:1px">${a.priority}</span></div><h4 style="font-size:15px;font-weight:700;color:var(--color-text);margin-bottom:10px;line-height:1.4">${displayTitle}</h4><p style="font-size:13px;color:var(--color-text-light);margin-bottom:12px">${displayBody}</p><div style="font-size:12px;color:var(--color-text-muted);display:flex;gap:12px;margin-bottom:12px"><span>📅 Pub: ${a.date}</span><span>👤 ${a.author}</span></div>${user.role === 'vice_principal' && vpNoticeTab === 'active' ? `<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-active" style="flex:1;text-align:center;font-size:11px">Published</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #1976d2;color:#1976d2;cursor:pointer" onclick="openNoticeModal(${index})"><i class="fas fa-edit"></i></button><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid #999;color:#999;cursor:pointer" onclick="archiveNotice(${index})"><i class="fas fa-archive"></i></button></div>` : ''}${user.role === 'vice_principal' && vpNoticeTab === 'archived' ? `<div style="display:flex;gap:8px;border-top:1px solid var(--color-border);padding-top:12px;margin-top:12px"><span class="badge badge-warning" style="flex:1;text-align:center;font-size:11px">Archived</span><button style="padding:4px 8px;font-size:11px;border-radius:4px;background:none;border:1px solid var(--color-primary);color:var(--color-primary);cursor:pointer" onclick="restoreNotice(${index})"><i class="fas fa-undo"></i></button></div>` : ''}${user.role === 'parent' ? `<button class="btn-primary" style="width:100%" onclick="parentReadNotice('${a.id}')">Read More</button>` : ''}</div></div>`;
   }).join('');
 
+  const categories = Object.keys(catC);
+
   return `<div class="dash-section" id="section-announcements">
-    ${user.role === 'vice_principal' ? `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap"><h3>📢 Broadcasting & Notices</h3><div style="display:flex;gap:8px"><button class="btn-primary" onclick="setVPNoticeTab('active')" style="${vpNoticeTab === 'active' ? '' : 'opacity:.75'}">Active</button><button class="btn-primary" onclick="setVPNoticeTab('archived')" style="${vpNoticeTab === 'archived' ? '' : 'opacity:.75'}">Archived</button><button class="btn-primary" style="padding:8px 16px" onclick="openNoticeModal(null)"><i class="fas fa-plus"></i> Create Notice</button></div></div>` : ''}
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px">${cards || `<div class="card"><p style="color:var(--color-text-muted)">No notices in this tab.</p></div>`}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px">
+      <h3>📢 Broadcasting & Notices</h3>
+      ${user.role === 'vice_principal' ? `
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <select class="form-control" style="width:160px" onchange="updateVPNoticeFilter(this.value)">
+          <option value="All Categories">All Categories</option>
+          ${categories.map(c => `<option value="${c}" ${filterCat === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+        <div style="display:flex;gap:6px;background:var(--color-surface-2);padding:4px;border-radius:10px">
+          <button class="btn-primary" onclick="setVPNoticeTab('active')" style="${vpNoticeTab === 'active' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Active</button>
+          <button class="btn-primary" onclick="setVPNoticeTab('archived')" style="${vpNoticeTab === 'archived' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Archived</button>
+        </div>
+        <button class="btn-primary" style="padding:8px 16px" onclick="openNoticeModal(null)"><i class="fas fa-plus"></i> Create Notice</button>
+      </div>` : ''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px">
+      ${cards || `<div class="card"><p style="color:var(--color-text-muted)">No notices found for this category.</p></div>`}
+    </div>
   </div>`;
 }
 
-function parentReadNotice(noticeId) {
-  if (!currentUser || currentUser.role !== 'parent' || typeof getStudentSharedData !== 'function') return;
-  const sid = String(currentUser.childId || currentUser.username.replace(/^P/i, '').replace(/A$/i, ''));
+window.updateVPNoticeFilter = function(val) {
+  localStorage.setItem('vp_notice_filter_cat', val);
+  triggerLiveReRender();
+  navigateTo('announcements');
+};
+
+window.parentReadNotice = function(noticeId) {
+  if (!window.currentUser || window.currentUser.role !== 'parent' || typeof getStudentSharedData !== 'function') return;
+  const sid = String(window.currentUser.childId || window.currentUser.username.replace(/^P/i, '').replace(/A$/i, ''));
   const shared = getStudentSharedData(sid);
   const set = new Set(shared.noticesRead || []);
   set.add(String(noticeId));
   shared.noticesRead = Array.from(set);
   saveStudentSharedData(sid, shared);
   simulateAction('Notice marked as read');
-  buildDashboard(currentUser);
+  buildDashboard(window.currentUser);
   navigateTo('announcements');
+};
+
+function getVPEvents() {
+  let e = localStorage.getItem('campuscore_events');
+  if (!e) {
+    localStorage.setItem('campuscore_events', JSON.stringify(EVENTS));
+    return EVENTS;
+  }
+  return JSON.parse(e);
 }
 
 function buildEvents(user) {
-  const cards = EVENTS.map(e => `<div class="event-card"><div class="event-bar" style="background:${e.color}"></div><div class="event-body"><div class="event-date" style="color:${e.color}"><i class="fas fa-calendar-alt"></i> ${e.date}</div><div class="event-title">${e.title}</div><div class="event-desc">${e.desc}</div>${user.role === 'vice_principal' ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--color-border);font-size:12px;color:var(--color-text-muted)"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>👤 In-charge: A. Sharma</span> <span class="badge ${e.title.includes('Sports') ? 'badge-warning' : 'badge-active'}" style="font-size:10px">${e.title.includes('Sports') ? 'Stage 2/4' : 'Approved'}</span></div><div>👩‍🎓 Classes: 6A - 10L</div><div style="margin-top:8px;color:var(--color-primary);font-weight:600"><i class="fas fa-tasks"></i> Readiness: 80%</div></div>` : ''}<button style="margin-top:12px;width:100%;padding:8px 18px;background:${e.color}15;color:${e.color};border:2px solid ${e.color}30;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" onmouseover="this.style.background='${e.color}';this.style.color='white'" onmouseout="this.style.background='${e.color}15';this.style.color='${e.color}'" onclick="simulateAction('Event master plan opened with full schedule.')" onclick="simulateAction('Event master plan opened with full schedule.')">View Event Master Plan</button></div></div>`).join('');
-  return `<div class="dash-section" id="section-events"><div class="events-grid">${cards}</div></div>`;
+  const filterCat = localStorage.getItem('vp_event_filter_cat') || 'All Events';
+  
+  let source = getVPEvents();
+  if (filterCat !== 'All Events') {
+    source = source.filter(e => e.title.includes(filterCat) || (filterCat === 'Sports' && e.title.includes('Sports')) || (filterCat === 'Cultural' && (e.title.includes('Annual') || e.title.includes('Club'))));
+  }
+
+  const lang = localStorage.getItem('cc_sys_lang') || 'en';
+  const cards = source.map(e => {
+    const displayTitle = (lang === 'te' && e.title_te) ? e.title_te : (lang === 'hi' && e.title_hi) ? e.title_hi : e.title;
+    const displayDesc = (lang === 'te' && e.desc_te) ? e.desc_te : (lang === 'hi' && e.desc_hi) ? e.desc_hi : (e.desc || '');
+
+    return `<div class="event-card">
+      <div class="event-bar" style="background:${e.color || '#1976d2'}"></div>
+      <div class="event-body">
+        <div class="event-date" style="color:${e.color || '#1976d2'}"><i class="fas fa-calendar-alt"></i> ${e.date}</div>
+        <div class="event-title">${displayTitle}</div>
+        <div class="event-desc">${displayDesc}</div>
+        ${user.role === 'vice_principal' ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--color-border);font-size:12px;color:var(--color-text-muted)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>👤 In-charge: Staff</span> <span class="badge ${e.title.includes('Sports') ? 'badge-warning' : 'badge-active'}" style="font-size:10px">${e.title.includes('Sports') ? 'Phase 2/3' : 'Approved'}</span></div>
+          <div>👩‍🎓 Targets: All Students</div>
+        </div>` : ''}
+        <button style="margin-top:12px;width:100%;padding:8px 18px;background:${e.color}15;color:${e.color};border:2px solid ${e.color}30;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s" onmouseover="this.style.background='${e.color}';this.style.color='white'" onmouseout="this.style.background='${e.color}15';this.style.color='${e.color}'" onclick="openEventMasterPlan('${(displayTitle || e.title).replace(/'/g, "\\'")}')">View Event Master Plan</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="dash-section" id="section-events">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px">
+      <h3>📅 Institutional Events Calendar</h3>
+      ${user.role === 'vice_principal' ? `
+      <div style="display:flex;gap:10px">
+        <select class="form-control" style="width:160px" onchange="updateVPEventFilter(this.value)">
+          <option value="All Events">All Events</option>
+          <option value="Sports" ${filterCat === 'Sports' ? 'selected' : ''}>Sports</option>
+          <option value="Academic" ${filterCat === 'Academic' ? 'selected' : ''}>Academic</option>
+          <option value="Cultural" ${filterCat === 'Cultural' ? 'selected' : ''}>Cultural</option>
+        </select>
+        <button class="btn-primary" style="padding:8px 16px" onclick="openVPEventModal()"><i class="fas fa-plus"></i> Propose Event</button>
+      </div>` : ''}
+    </div>
+    <div class="events-grid">${cards || `<div class="card"><p style="color:var(--color-text-muted)">No events found for this category.</p></div>`}</div>
+  </div>`;
 }
+
+window.updateVPEventFilter = function(val) {
+  localStorage.setItem('vp_event_filter_cat', val);
+  triggerLiveReRender();
+  navigateTo('events');
+};
 
 /* ━━━━ SETTINGS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
@@ -755,61 +940,205 @@ function applyAttendanceFilter() {
 }
 
 function buildVPClassPerf(user) {
-  const rows = CLASS_PERFORMANCE.map(c => `<tr onclick="openVPStudentAnalysis('${c.class}')" style="cursor:pointer">
-    <td style="font-weight:700">${c.class}</td>
-    <td>${c.teacher}</td>
-    <td><strong style="color:${attColor(c.avgAtt)}">${c.avgAtt}%</strong></td>
-    <td><strong style="color:var(--color-primary)">${c.avgGPA}</strong></td>
-    <td><span class="badge ${c.weak > 3 ? 'badge-danger' : 'badge-active'}">${c.weak}</span></td>
-    <td><span class="badge ${c.issues > 1 ? 'badge-warning' : 'badge-info'}">${c.issues}</span></td>
-    <td>${c.topper}</td>
-  </tr>`).join('');
+  // Helper to get unique grades and sections for dropdowns
+  const grades = [...new Set(CLASS_PERFORMANCE.map(c => c.class.split('-')[0]))].sort((a, b) => b - a);
+  const sections = [...new Set(CLASS_PERFORMANCE.map(c => c.class.split('-')[1]))].sort();
+
+  const gradeOptions = grades.map(g => `<option value="${g}">Grade ${g}</option>`).join('');
+  const sectionOptions = sections.map(s => `<option value="${s}">Section ${s}</option>`).join('');
+
   return `<div class="dash-section" id="section-vp_class_perf">
     <div class="card" style="margin-bottom:20px;background:var(--color-surface-2)">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
         <div>
           <h3>📊 Class Performance Matrix</h3>
-          <p style="color:var(--color-text-muted);font-size:13px">Comparing academic and discipline health across 6A - 10L. Click a row to analyze students.</p>
+          <p style="color:var(--color-text-muted);font-size:13px">Comparing academic and discipline health across many classes. Use filters to narrow down.</p>
         </div>
-        <div style="display:flex;gap:10px">
-          <button style="padding:10px 16px;border-radius:10px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-weight:600" onclick="compareVPSections()"><i class="fas fa-balance-scale"></i> Compare Sections</button>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="display:flex;gap:5px;background:var(--color-surface);padding:5px;border-radius:12px;border:1px solid var(--color-border)">
+            <select id="vp-filter-grade" class="form-control" style="width:120px;border:none;background:transparent" onchange="updateVPPerfFilter()">
+              <option value="all">All Grades</option>
+              ${gradeOptions}
+            </select>
+            <select id="vp-filter-section" class="form-control" style="width:120px;border:none;background:transparent" onchange="updateVPPerfFilter()">
+              <option value="all">All Sections</option>
+              ${sectionOptions}
+            </select>
+          </div>
+          <button style="padding:10px 16px;border-radius:10px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-weight:600" onclick="compareVPSections()"><i class="fas fa-balance-scale"></i> Compare</button>
           <button class="btn-primary" onclick="exportVPReport()"><i class="fas fa-file-pdf"></i> Export</button>
         </div>
       </div>
     </div>
-    <div class="card"><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Class</th><th>Class Teacher</th><th>Avg. Att.</th><th>Avg. GPA</th><th>Weak Students</th><th>Discipline Issues</th><th>Topper</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+    <div class="card">
+      <div style="overflow-x:auto;border-radius:14px">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Class Teacher</th>
+              <th>Avg. Att.</th>
+              <th>Avg. GPA</th>
+              <th>Weak Students</th>
+              <th>Discipline Issues</th>
+              <th>Topper</th>
+            </tr>
+          </thead>
+          <tbody id="vp-perf-table-body">
+            ${renderVPPerfTableRows('all', 'all')}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>`;
+}
+
+window.updateVPPerfFilter = function () {
+  const grade = document.getElementById('vp-filter-grade').value;
+  const section = document.getElementById('vp-filter-section').value;
+  const body = document.getElementById('vp-perf-table-body');
+  if (body) {
+    body.innerHTML = renderVPPerfTableRows(grade, section);
+  }
+};
+
+function renderVPPerfTableRows(grade, section) {
+  let filtered = CLASS_PERFORMANCE;
+  if (grade !== 'all') {
+    filtered = filtered.filter(c => c.class.startsWith(grade + '-'));
+  }
+  if (section !== 'all') {
+    filtered = filtered.filter(c => c.class.endsWith('-' + section));
+  }
+
+  if (filtered.length === 0) {
+    return `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--color-text-muted)">
+      <i class="fas fa-search" style="font-size:24px;display:block;margin-bottom:10px"></i>
+      No classes found matching these filters.
+    </td></tr>`;
+  }
+
+  return filtered.map(c => `
+    <tr onclick="openVPStudentAnalysis('${c.class}')" style="cursor:pointer">
+      <td style="font-weight:700">${c.class}</td>
+      <td>${c.teacher}</td>
+      <td><strong style="color:${attColor(c.avgAtt)}">${c.avgAtt}%</strong></td>
+      <td><strong style="color:var(--color-primary)">${c.avgGPA}</strong></td>
+      <td><span class="badge ${c.weak > 3 ? 'badge-danger' : 'badge-active'}">${c.weak}</span></td>
+      <td><span class="badge ${c.issues > 1 ? 'badge-warning' : 'badge-info'}">${c.issues}</span></td>
+      <td>${c.topper}</td>
+    </tr>`).join('');
 }
 
 window.compareVPSections = function () {
   const m = `<div class="modal-overlay" id="vp-compare-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
-    <div class="modal" style="max-width:500px">
-      <h3>⚖️ Compare Sections</h3>
-      <div class="form-group">
-        <label>Select Base Section</label>
-        <select class="form-control"><option>10A</option><option>9C</option></select>
-        <label style="margin-top:10px">Select Target Section</label>
-        <select class="form-control"><option>10B</option><option>8A</option></select>
+    <div class="modal" style="max-width:600px;width:95%">
+      <h3 style="margin-bottom:20px">⚖️ Section Comparison Matrix</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:25px">
+        <div>
+          <label style="font-size:12px;color:var(--color-text-muted)">Baseline Section</label>
+          <select id="comp-1" class="form-control" onchange="updateCompMatrix()">
+            ${CLASS_PERFORMANCE.map(c => `<option value="${c.class}">${c.class}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--color-text-muted)">Target Section</label>
+          <select id="comp-2" class="form-control" onchange="updateCompMatrix()">
+            ${CLASS_PERFORMANCE.map((c, i) => `<option value="${c.class}" ${i === 1 ? 'selected' : ''}>${c.class}</option>`).join('')}
+          </select>
+        </div>
       </div>
-      <button class="btn-primary" style="width:100%;margin-top:20px" onclick="simulateAction('Comparison matrix generated successfully!'); document.getElementById('vp-compare-modal').remove()">Generate Matrix</button>
+      <div id="comp-results" class="card" style="background:var(--color-surface-2);padding:0;overflow:hidden">
+         <table class="data-table" style="margin:0">
+            <thead><tr><th>Metric</th><th id="lbl-1">10-A</th><th id="lbl-2">10-B</th></tr></thead>
+            <tbody id="comp-body"></tbody>
+         </table>
+      </div>
+      <div style="margin-top:25px;text-align:right">
+        <button class="btn-primary" onclick="document.getElementById('vp-compare-modal').remove()">Close Comparison</button>
+      </div>
     </div>
   </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
+  window.updateCompMatrix();
+};
+
+window.updateCompMatrix = function() {
+  const c1 = document.getElementById('comp-1').value;
+  const c2 = document.getElementById('comp-2').value;
+  const d1 = CLASS_PERFORMANCE.find(x => x.class === c1);
+  const d2 = CLASS_PERFORMANCE.find(x => x.class === c2);
+  
+  document.getElementById('lbl-1').innerText = c1;
+  document.getElementById('lbl-2').innerText = c2;
+  
+  const body = document.getElementById('comp-body');
+  body.innerHTML = `
+    <tr><td>Avg Attendance</td><td>${d1.avgAtt}%</td><td>${d2.avgAtt}%</td></tr>
+    <tr><td>Academic GPA</td><td>${d1.avgGPA}</td><td>${d2.avgGPA}</td></tr>
+    <tr><td>Weak Students</td><td>${d1.weak}</td><td>${d2.weak}</td></tr>
+    <tr><td>Discipline Issues</td><td>${d1.issues}</td><td>${d2.issues}</td></tr>
+    <tr><td>Teacher</td><td>${d1.teacher}</td><td>${d2.teacher}</td></tr>
+  `;
 };
 
 window.exportVPReport = function () {
   const m = `<div class="modal-overlay" id="vp-export-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
     <div class="modal" style="max-width:400px">
-      <h3>📄 Export Audit Report</h3>
-      <p style="font-size:13px;color:var(--color-text-muted)">Select the dataset range to perform an institutional export.</p>
+      <h3>📄 Institutional Audit Export</h3>
+      <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">Prepare a comprehensive performance dossier for the Board of Governors.</p>
       <div class="form-group">
-        <label>Report Type</label>
-        <select class="form-control"><option>Full Academic Audit (.pdf)</option><option>Raw Class Metrics (.xlsx)</option></select>
+        <label>Report Format</label>
+        <select class="form-control" id="exp-format">
+          <option value="PDF">Full Academic Audit (.pdf)</option>
+          <option value="Excel">Raw Class Metrics (.xlsx)</option>
+          <option value="CSV">Attendance Logs (.csv)</option>
+        </select>
       </div>
-      <button class="btn-primary" style="width:100%;margin-top:20px" onclick="simulateAction('Initiating secure file download...'); setTimeout(() => { simulateAction('Report downloaded: perf_audit_2026.pdf'); document.getElementById('vp-export-modal').remove(); }, 1500)">Execute Export</button>
+      <div id="export-progress" style="display:none;margin-top:20px">
+         <div style="font-size:12px;margin-bottom:8px" id="exp-status">Securing data pipeline...</div>
+         <div class="progress-bar"><div id="exp-fill" class="progress-fill" style="width:0%;transition:width 0.3s"></div></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:25px">
+        <button id="exp-btn" class="btn-primary" style="flex:1" onclick="runInstitutionalExport()">Execute Export</button>
+        <button id="exp-cancel" style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('vp-export-modal').remove()">Cancel</button>
+      </div>
     </div>
   </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
+};
+
+window.runInstitutionalExport = function() {
+  const btn = document.getElementById('exp-btn');
+  const cancel = document.getElementById('exp-cancel');
+  const progress = document.getElementById('export-progress');
+  const fill = document.getElementById('exp-fill');
+  const status = document.getElementById('exp-status');
+  const format = document.getElementById('exp-format').value;
+
+  btn.style.display = 'none';
+  cancel.style.display = 'none';
+  progress.style.display = 'block';
+
+  let p = 0;
+  const interval = setInterval(() => {
+    p += Math.random() * 25;
+    if (p > 100) p = 100;
+    fill.style.width = p + '%';
+    
+    if (p < 30) status.innerText = 'Extracting class metrics...';
+    else if (p < 70) status.innerText = 'Calculating institutional benchmarks...';
+    else if (p < 95) status.innerText = 'Formatting ' + format + ' dossier...';
+    else status.innerText = 'Finalizing download...';
+
+    if (p >= 100) {
+       clearInterval(interval);
+       setTimeout(() => {
+         simulateAction(`Success: Institutional_${format}_Report_2026.zip downloaded.`);
+         document.getElementById('vp-export-modal').remove();
+       }, 800);
+    }
+  }, 400);
 };
 
 window.openVPStudentAnalysis = function (className) {
@@ -1028,6 +1357,7 @@ function buildVPStudents(user) {
         <button class="btn-primary" style="padding:6px 8px;font-size:11px;background:var(--color-success);border-color:var(--color-success)" onclick="openVPStudentActionFlow('${d.sid}','promote')">Promote</button>
         <button class="btn-primary" style="padding:6px 8px;font-size:11px;background:var(--color-danger);border-color:var(--color-danger)" onclick="openVPStudentActionFlow('${d.sid}','demote')">Demote</button>
         <button class="btn-primary" style="padding:6px 8px;font-size:11px;background:#f57c00;border-color:#f57c00" onclick="openVPStudentActionFlow('${d.sid}','suspend')">Suspend</button>
+        <button style="padding:6px 8px;font-size:11px;background:none;border:1px solid var(--color-danger);color:var(--color-danger);border-radius:6px;cursor:pointer" onclick="deleteAccount('${d.sid}')"><i class="fas fa-trash-alt"></i></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1098,19 +1428,24 @@ function openVPStudentProfileModal(studentId) {
 
 function buildVPStudentIssues(user) {
   const tab = localStorage.getItem('vp_issue_tab') || 'main';
+  const filterGrade = localStorage.getItem('vp_issue_filter_grade') || 'All Grades';
+  
   const escStore = getEscalationStore();
-  const issues = (GLOBAL_ISSUES || []).slice().sort((a, b) => new Date(b.updated || b.created) - new Date(a.updated || a.created));
+  let issues = (GLOBAL_ISSUES || []).slice().sort((a, b) => new Date(b.updated || b.created) - new Date(a.updated || a.created));
+  
+  // Apply Grade Filter if set
+  if (filterGrade !== 'All Grades') {
+    issues = issues.filter(i => String(i.class || '').startsWith(filterGrade));
+  }
+
   const mainIssues = issues.filter(i => i.stage === 'VP' && i.status !== 'Resolved' && i.status !== 'Closed' && i.status !== 'Escalated');
   const globalEsc = issues.filter(i => i.status === 'Escalated').map(i => ({ ...i, _source: 'main' }));
   const localVpEsc = (escStore.vpEscalated || []).map(i => ({ ...i, _source: 'coordinator' }));
-  const externalVp = (() => {
-    const raw = JSON.parse(localStorage.getItem('campuscore_vp_issues') || '{}');
-    const arr = Array.isArray(raw) ? raw : (Array.isArray(raw.escalatedIssues) ? raw.escalatedIssues : []);
-    return arr.map(i => ({ ...i, _source: 'main' }));
-  })();
-  const escalatedIssues = [...localVpEsc, ...globalEsc, ...externalVp];
+  
+  const escalatedIssues = [...localVpEsc, ...globalEsc];
   const resolvedIssues = issues.filter(i => i.status === 'Resolved' || i.status === 'Closed');
   const activeList = tab === 'escalated' ? escalatedIssues : tab === 'resolved' ? resolvedIssues : mainIssues;
+
   const cards = activeList.map(i => {
     const priority = i.priority || i.urgency || 'Normal';
     const isHigh = priority === 'High';
@@ -1121,47 +1456,200 @@ function buildVPStudentIssues(user) {
       <h4 style="margin-bottom:6px;font-size:16px;color:var(--color-text)">${i.studentName || i.student || 'Student'}</h4>
       <p style="color:var(--color-text-muted);font-size:13px;margin-bottom:12px">${i.title || i.issue || '-'}</p>
       <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:6px"><i class="fas fa-user-shield"></i> Reported by: ${i.reporterName || i.reporter || i.escalatedByCoordinator || '-'}</div>
-      ${tab === 'escalated' ? `<div style="font-size:12px;color:var(--color-text-muted);margin-bottom:10px"><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${i._source === 'coordinator' ? 'From Coordinator' : 'From Main Issues'}</span> ${i.escalationReason ? ` · Reason: ${i.escalationReason}` : ''} ${i.escalatedDate ? ` · ${i.escalatedDate}` : ''}</div>` : ''}
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         ${tab !== 'resolved' ? `<button class="btn-primary" style="flex:1;min-width:100px;font-size:12px;padding:8px" onclick="${i._source === 'coordinator' ? 'vpResolveEscalationIssue' : 'resolveVPIssue'}('${i.id}')">Resolve</button>` : ''}
         <button style="flex:1;min-width:100px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-text);cursor:pointer" onclick="${i._source === 'coordinator' ? 'openEscalationTimelineModal' : 'viewIssue'}('${i.id}')"><i class="fas fa-folder-open"></i> Open Case</button>
-        ${tab === 'main' ? `<button style="width:100%;margin-top:6px;background:var(--color-surface-2);border:1px solid var(--color-primary);border-radius:8px;font-weight:700;font-size:12px;color:var(--color-primary);cursor:pointer;padding:8px" onclick="openEscalateIssueModal('${i.id}')"><i class="fas fa-level-up-alt"></i> ↗ Escalate Up</button>` : ''}
-        ${tab === 'main' ? `<button style="width:100%;background:none;border:1px dashed #1976d2;border-radius:8px;font-weight:600;font-size:12px;color:#1976d2;cursor:pointer;padding:8px" onclick="openForwardCoordModal('${i.id}','${(i.studentName || i.student || '').replace(/'/g, '&#39;')}','${(i.title || i.issue || '').replace(/'/g, '&#39;')}')"><i class="fas fa-share"></i> Forward to Coordinator</button>` : ''}
-        ${tab === 'escalated' ? `<button style="width:100%;background:none;border:1px dashed var(--color-primary);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-primary);cursor:pointer;padding:8px" onclick="${i._source === 'coordinator' ? 'vpRestoreEscalationIssue' : 'vpRestoreIssue'}('${i.id}')"><i class="fas fa-undo"></i> Restore to Main</button>` : ''}
       </div>
     </div>`;
   }).join('');
+
   return `<div class="dash-section" id="section-vp_student_issues">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
-      <h3 style="font-size:18px">Escalated Discipline & Attendance Cases</h3>
-      <div style="display:flex;gap:10px;align-items:center">
-        <span style="background:rgba(211,47,47,0.1);color:var(--color-danger);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700">${mainIssues.length} Cases Require Action</span>
-        <div style="display:flex;gap:6px">
-          <button class="btn-primary" onclick="setVPIssueTab('main')" style="${tab === 'main' ? '' : 'opacity:.75'}">Main</button>
-          <button class="btn-primary" onclick="setVPIssueTab('escalated')" style="${tab === 'escalated' ? '' : 'opacity:.75'}">Escalated</button>
-          <button class="btn-primary" onclick="setVPIssueTab('resolved')" style="${tab === 'resolved' ? '' : 'opacity:.75'}">Resolved Bin</button>
+      <div>
+        <h3 style="font-size:18px">Escalated Discipline & Attendance Cases</h3>
+        <p style="font-size:12px;color:var(--color-text-muted)">Manage critical student incidents escalated for VP review.</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <select id="vp-issue-grade-filter" class="form-control" style="width:130px" onchange="updateVPIssueGradeFilter(this.value)">
+           <option value="All Grades">All Grades</option>
+           <option value="6" ${filterGrade === '6' ? 'selected' : ''}>Grade 6</option>
+           <option value="7" ${filterGrade === '7' ? 'selected' : ''}>Grade 7</option>
+           <option value="8" ${filterGrade === '8' ? 'selected' : ''}>Grade 8</option>
+           <option value="9" ${filterGrade === '9' ? 'selected' : ''}>Grade 9</option>
+           <option value="10" ${filterGrade === '10' ? 'selected' : ''}>Grade 10</option>
+        </select>
+        <div style="display:flex;gap:6px;background:var(--color-surface-2);padding:4px;border-radius:10px">
+          <button class="btn-primary" onclick="setVPIssueTab('main')" style="${tab === 'main' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Main (${mainIssues.length})</button>
+          <button class="btn-primary" onclick="setVPIssueTab('escalated')" style="${tab === 'escalated' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Escalated (${escalatedIssues.length})</button>
+          <button class="btn-primary" onclick="setVPIssueTab('resolved')" style="${tab === 'resolved' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Resolved</button>
         </div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">${cards || `<div class="card"><p style="color:var(--color-text-muted)">No issues in this tab.</p></div>`}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">
+      ${cards || `<div class="card"><p style="color:var(--color-text-muted)">No issues found for this filter.</p></div>`}
+    </div>
   </div>`;
 }
 
+window.updateVPIssueGradeFilter = function(val) {
+  localStorage.setItem('vp_issue_filter_grade', val);
+  triggerLiveReRender();
+  navigateTo('vp_student_issues');
+};
+
+function getVPTeachers() {
+  let t = localStorage.getItem('campuscore_teachers');
+  if (!t) {
+    localStorage.setItem('campuscore_teachers', JSON.stringify(TEACHERS));
+    return TEACHERS;
+  }
+  return JSON.parse(t);
+}
+
+function saveVPTeachers(data) {
+  localStorage.setItem('campuscore_teachers', JSON.stringify(data));
+}
+
 function buildVPTeachers(user) {
-  const rows = TEACHERS.map((t, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i + 3)}">${getInitials(t.name)}</div><div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div></div></td><td>${t.subject}</td><td>${t.classes}</td><td><div class="progress-bar" style="margin-bottom:4px"><div class="progress-fill" style="width:${Math.floor(Math.random() * 20) + 80}%;background:#5ca870"></div></div><span style="font-size:11px;color:var(--color-text-muted)">95% Attendance</span></td><td><div class="progress-bar" style="margin-bottom:4px"><div class="progress-fill" style="width:${Math.floor(Math.random() * 40) + 60}%;background:var(--color-primary)"></div></div><span style="font-size:11px;color:var(--color-text-muted)">Syllabus coverage</span></td><td><span class="badge ${t.status === 'Active' ? 'badge-active' : 'badge-warning'}"><i class="fas fa-check"></i> Marks Uploaded</span></td><td><div style="display:flex;gap:6px"><button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:var(--color-text)" title="View Profile" onclick="openStaffProfile('${t.id}', '${t.name.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')"><i class="fas fa-user"></i></button><button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:#f57c00" title="Send Reminder" onclick="openVPTeacherReminder('${t.id}', '${t.name.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')"><i class="fas fa-bell"></i></button><button style="padding:6px;font-size:12px;border-radius:6px;background:none;border:1px solid var(--color-danger);cursor:pointer;color:var(--color-danger)" title="Flag Issue" onclick="openVPTeacherFlag('${t.id}', '${t.name.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')"><i class="fas fa-flag"></i></button></div></td></tr>`).join('');
+  const filterSub = localStorage.getItem('vp_teacher_filter_subject') || 'All Subjects';
+  const filterStatus = localStorage.getItem('vp_teacher_filter_status') || 'All Status';
+  
+  const allTeachers = getVPTeachers();
+  let filtered = allTeachers;
+  
+  if (filterSub !== 'All Subjects') {
+    filtered = filtered.filter(t => t.subject === filterSub);
+  }
+  
+  if (filterStatus !== 'All Status') {
+    filtered = filtered.filter(t => t.status === filterStatus);
+  }
+
+  const subjects = [...new Set(allTeachers.map(t => t.subject))];
+
+  const rows = filtered.map((t, i) => `<tr>
+    <td>
+      <div class="user-row">
+        <div class="avatar" style="background:${getAvatarColor(i + 3)}">${getInitials(t.name)}</div>
+        <div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div>
+      </div>
+    </td>
+    <td>${t.subject}</td>
+    <td>${t.classes}</td>
+    <td>
+      <div class="progress-bar" style="margin-bottom:4px">
+        <div class="progress-fill" style="width:${Math.floor(Math.random() * 20) + 80}%;background:#5ca870"></div>
+      </div>
+      <span style="font-size:11px;color:var(--color-text-muted)">95% Attendance</span>
+    </td>
+    <td>
+      <div class="progress-bar" style="margin-bottom:4px">
+        <div class="progress-fill" style="width:${Math.floor(Math.random() * 40) + 60}%;background:var(--color-primary)"></div>
+      </div>
+      <span style="font-size:11px;color:var(--color-text-muted)">Syllabus coverage</span>
+    </td>
+    <td><span class="badge ${t.status === 'Active' ? 'badge-active' : 'badge-warning'}">${t.status}</span></td>
+    <td>
+      <div style="display:flex;gap:6px">
+        <button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:var(--color-text)" title="View Profile" onclick="openStaffProfile('${t.id}', '${t.name.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')"><i class="fas fa-user"></i></button>
+        <button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:var(--color-primary)" title="Edit Faculty" onclick="openEditTeacherModal('${t.id}')"><i class="fas fa-edit"></i></button>
+        <button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:#f57c00" title="Send Reminder" onclick="openVPTeacherReminder('${t.id}', '${t.name.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')"><i class="fas fa-bell"></i></button>
+        <button style="padding:6px;font-size:12px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);cursor:pointer;color:var(--color-danger)" title="Delete Faculty" onclick="deleteAccount('${t.id}')"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </td>
+  </tr>`).join('');
+
   return `<div class="dash-section" id="section-vp_teachers">
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:15px">
         <div>
           <h3>👨‍🏫 Staff Monitoring & Syllabus Progress</h3>
           <p style="color:var(--color-text-muted);font-size:13px">Track workload and performance across active faculty members.</p>
         </div>
-        <button class="btn-primary" onclick="openVPPendingStaffWork()">Review Pending Work</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <select class="form-control" style="width:160px" onchange="updateVPTeacherFilter('subject', this.value)">
+            <option value="All Subjects">All Subjects</option>
+            ${subjects.map(s => `<option value="${s}" ${filterSub === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+          <select class="form-control" style="width:130px" onchange="updateVPTeacherFilter('status', this.value)">
+            <option value="All Status">All Status</option>
+            <option value="Active" ${filterStatus === 'Active' ? 'selected' : ''}>Active</option>
+            <option value="On Leave" ${filterStatus === 'On Leave' ? 'selected' : ''}>On Leave</option>
+          </select>
+          <button class="btn-primary" onclick="openVPPendingStaffWork()">Review Pending Work</button>
+        </div>
       </div>
-      <div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Teacher</th><th>Subject</th><th>Classes</th><th>Attendance</th><th>Syllabus</th><th>Marks Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div style="overflow-x:auto;border-radius:14px">
+        <table class="data-table">
+          <thead><tr><th>Teacher</th><th>Subject</th><th>Classes</th><th>Attendance</th><th>Syllabus</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="7" style="text-align:center;padding:20px">No staff members found matching these filters.</td></tr>'}</tbody>
+        </table>
+      </div>
     </div>
   </div>`;
 }
+
+window.openEditTeacherModal = function(id) {
+  const teachers = getVPTeachers();
+  const t = teachers.find(x => x.id === id);
+  if (!t) return;
+
+  const html = `<div class="modal-overlay" id="edit-teacher-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+    <div class="modal" style="max-width:500px">
+      <h3>Edit Faculty: ${t.name}</h3>
+      <div style="margin-top:20px">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="edit-t-name" class="form-control" value="${t.name}">
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <input type="text" id="edit-t-subject" class="form-control" value="${t.subject}">
+        </div>
+        <div class="form-group">
+          <label>Assigned Classes (comma separated)</label>
+          <input type="text" id="edit-t-classes" class="form-control" value="${t.classes}">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="edit-t-status" class="form-control">
+            <option value="Active" ${t.status === 'Active' ? 'selected' : ''}>Active</option>
+            <option value="On Leave" ${t.status === 'On Leave' ? 'selected' : ''}>On Leave</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:25px">
+          <button class="btn-primary" style="flex:1" onclick="updateTeacherData('${id}')">Save Changes</button>
+          <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px" onclick="document.getElementById('edit-teacher-modal').remove()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+};
+
+window.updateTeacherData = function(id) {
+  const teachers = getVPTeachers();
+  const idx = teachers.findIndex(x => x.id === id);
+  if (idx === -1) return;
+
+  teachers[idx].name = document.getElementById('edit-t-name').value;
+  teachers[idx].subject = document.getElementById('edit-t-subject').value;
+  teachers[idx].classes = document.getElementById('edit-t-classes').value;
+  teachers[idx].status = document.getElementById('edit-t-status').value;
+
+  saveVPTeachers(teachers);
+  document.getElementById('edit-teacher-modal').remove();
+  simulateAction('Teacher details updated successfully.');
+  triggerLiveReRender();
+  navigateTo('vp_teachers');
+};
+
+window.updateVPTeacherFilter = function(key, val) {
+  if (key === 'subject') localStorage.setItem('vp_teacher_filter_subject', val);
+  if (key === 'status') localStorage.setItem('vp_teacher_filter_status', val);
+  triggerLiveReRender();
+  navigateTo('vp_teachers');
+};
 
 window.openStaffProfile = function (id, name) {
   const m = `<div class="modal-overlay" id="staff-profile-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
@@ -1189,15 +1677,27 @@ window.openVPTeacherReminder = function (id, name) {
       <h3>🔔 Push Reminder to ${name}</h3>
       <div class="form-group">
         <label>Reminder Type</label>
-        <select class="form-control"><option>Upload Exam Marks</option><option>Submit Syllabus Planner</option><option>Update Attendance</option></select>
+        <select class="form-control" id="rem-type"><option>Upload Exam Marks</option><option>Submit Syllabus Planner</option><option>Update Attendance</option></select>
         <label style="margin-top:10px">Custom Note (Optional)</label>
-        <textarea class="form-control" rows="2" placeholder="e.g. Please finish unit 4 marks..."></textarea>
+        <textarea id="rem-note" class="form-control" rows="2" placeholder="e.g. Please finish unit 4 marks..."></textarea>
       </div>
       <button class="btn-primary" style="width:100%;margin-top:15px" onclick="simulateAction('Official reminder blasted to faculty dashboard'); document.getElementById('staff-rem-modal').remove()">Dispatch Reminder</button>
     </div>
   </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
 };
+
+window.flagTeacher = function(id) {
+  const reason = prompt('Specify reason for flagging this faculty member:');
+  if (reason) {
+    const flags = JSON.parse(localStorage.getItem('campuscore_teacher_flags') || '{}');
+    flags[id] = { reason, date: new Date().toLocaleDateString(), flaggedBy: currentUser.name };
+    localStorage.setItem('campuscore_teacher_flags', JSON.stringify(flags));
+    simulateAction(`Faculty member ${id} has been flagged for review.`);
+    triggerLiveReRender();
+  }
+};
+window.flagFaculty = function(id) { window.flagTeacher(id); };
 
 window.openVPTeacherFlag = function (id, name) {
   const m = `<div class="modal-overlay" id="staff-flag-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
@@ -1378,27 +1878,39 @@ function setResultsFilter(v) {
 }
 
 window.approveExamResult = function (cls, subj) {
-  let res = JSON.parse(localStorage.getItem('campuscore_results') || '[]');
-  const idx = res.findIndex(r => r.class === cls && r.subject === subj);
+  let results = JSON.parse(localStorage.getItem('campuscore_results') || '[]');
+  const idx = results.findIndex(r => r.class === cls && r.subject === subj);
   if (idx !== -1) {
-    res[idx].status = 'Published';
-    localStorage.setItem('campuscore_results', JSON.stringify(res));
-    simulateAction('Performance results for ' + cls + ' ' + subj + ' approved & published!');
+    results[idx].status = 'Published';
+    results[idx].date = new Date().toLocaleDateString();
+    localStorage.setItem('campuscore_results', JSON.stringify(results));
+    simulateAction(`Exam results for ${cls} ${subj} approved and published.`);
     triggerLiveReRender();
+    navigateTo('vp_exams');
   }
 };
-// Functions now handled at bottom of file for single source of truth
 
 function buildVPReports(user) {
+  const filterGrade = localStorage.getItem('vp_report_filter_grade') || 'All Classes';
+  
   return `<div class="dash-section" id="section-vp_reports">
     <div class="card" style="margin-bottom:20px">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
-        <h3><i class="fas fa-chart-line" style="color:var(--color-primary);margin-right:10px"></i> Analytical Reports Hub</h3>
-        <div style="display:flex;gap:10px;margin-top:10px">
-          <select style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none"><option>All Classes (6-10)</option><option>Class 10</option><option>Class 9</option></select>
-          <select style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none"><option>Last 30 Days</option><option>This Semester</option><option>All Time</option></select>
-          <button class="btn-primary" style="padding:8px 16px" onclick="simulateAction('PDF report generated and ready to download.')"><i class="fas fa-file-pdf"></i> Export PDF</button>
-          <button style="padding:8px 16px;border-radius:8px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);font-weight:600;cursor:pointer" onclick="simulateAction('Excel sheet exported successfully.')"><i class="fas fa-file-excel"></i> Excel</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
+        <div>
+          <h3><i class="fas fa-chart-line" style="color:var(--color-primary);margin-right:10px"></i> Analytical Reports Hub</h3>
+          <p style="color:var(--color-text-muted);font-size:13px">Aggregate institutional data for Grade ${filterGrade}.</p>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+          <select class="form-control" style="width:160px" onchange="updateVPReportFilter(this.value)">
+            <option value="All Classes" ${filterGrade === 'All Classes' ? 'selected' : ''}>All Classes (6-10)</option>
+            <option value="10" ${filterGrade === '10' ? 'selected' : ''}>Grade 10</option>
+            <option value="9" ${filterGrade === '9' ? 'selected' : ''}>Grade 9</option>
+            <option value="8" ${filterGrade === '8' ? 'selected' : ''}>Grade 8</option>
+            <option value="7" ${filterGrade === '7' ? 'selected' : ''}>Grade 7</option>
+            <option value="6" ${filterGrade === '6' ? 'selected' : ''}>Grade 6</option>
+          </select>
+          <button class="btn-primary" style="padding:8px 16px" onclick="runInstitutionalExport()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+          <button style="padding:8px 16px;border-radius:10px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);font-weight:600;cursor:pointer" onclick="runInstitutionalExport()"><i class="fas fa-file-excel"></i> Excel</button>
         </div>
       </div>
     </div>
@@ -1407,30 +1919,47 @@ function buildVPReports(user) {
         <i class="fas fa-user-check" style="font-size:32px;color:var(--color-primary);margin-bottom:16px"></i>
         <h4 style="margin-bottom:8px">Attendance Reports</h4>
         <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:16px">Generate class-wise and teacher attendance comparisons.</p>
-        <button class="btn-primary" style="font-size:12px;padding:8px 16px" onclick="navigateTo('vp_attendance')">Open Module</button>
+        <button class="btn-primary" style="font-size:12px;padding:8px 16px" onclick="navigateToVPModule('vp_attendance', '${filterGrade}')">Open Module</button>
       </div>
       <div class="card" style="text-align:center;padding:40px 20px;border-top:4px solid #f57c00">
         <i class="fas fa-chart-bar" style="font-size:32px;color:#f57c00;margin-bottom:16px"></i>
         <h4 style="margin-bottom:8px">Academic & Exam Reports</h4>
         <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:16px">Class performance comparisons, subject averages.</p>
-        <button class="btn-primary" style="font-size:12px;padding:8px 16px">Open Module</button>
+        <button class="btn-primary" style="font-size:12px;padding:8px 16px" onclick="navigateToVPModule('vp_class_perf', '${filterGrade}')">Open Module</button>
       </div>
       <div class="card" style="text-align:center;padding:40px 20px;border-top:4px solid var(--color-danger)">
         <i class="fas fa-balance-scale" style="font-size:32px;color:var(--color-danger);margin-bottom:16px"></i>
         <h4 style="margin-bottom:8px">Discipline Reports</h4>
         <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:16px">Track incidents across sections and escalate to Admin.</p>
-        <button class="btn-primary" style="font-size:12px;padding:8px 16px" onclick="navigateTo('vp_student_issues')">Open Module</button>
+        <button class="btn-primary" style="font-size:12px;padding:8px 16px" onclick="navigateToVPModule('vp_student_issues', '${filterGrade}')">Open Module</button>
       </div>
     </div>
   </div>`;
 }
 
+window.navigateToVPModule = function(target, grade) {
+  if (grade !== 'All Classes') {
+    if (target === 'vp_attendance') localStorage.setItem('att_filter_class', grade);
+    if (target === 'vp_class_perf') {
+       localStorage.setItem('vp_perf_grade', grade); // handled by table filter
+    }
+    if (target === 'vp_student_issues') localStorage.setItem('vp_issue_filter_grade', grade);
+  }
+  triggerLiveReRender();
+  navigateTo(target);
+};
+
+window.updateVPReportFilter = function(val) {
+  localStorage.setItem('vp_report_filter_grade', val);
+  triggerLiveReRender();
+  navigateTo('vp_reports');
+};
+
 function buildVPApprovals(user) {
-  console.log('[CampusCore] Rendering Approvals section...');
+  const filterType = localStorage.getItem('vp_approvals_filter_type') || 'All Approvals';
   
   // Guard against undefined data
   if (typeof VP_APPROVALS === 'undefined') {
-    console.warn('[CampusCore] VP_APPROVALS is undefined, using empty fallback');
     return `<div class="dash-section" id="section-vp_approvals"><div class="card"><p>No approval data available.</p></div></div>`;
   }
 
@@ -1438,7 +1967,26 @@ function buildVPApprovals(user) {
     ? CCStorage.getItem('approval_comments', user.role, user.id, {})
     : JSON.parse(localStorage.getItem('cc_approval_comments') || '{}');
 
-  const rows = VP_APPROVALS.map(a => {
+  let liveApprovals = JSON.parse(localStorage.getItem('campuscore_approvals') || '[]');
+  if (liveApprovals.length === 0) {
+    liveApprovals = VP_APPROVALS;
+  }
+
+  let filtered = liveApprovals;
+  if (filterType !== 'All Approvals') {
+    // Map human filter to data type
+    const map = {
+      'Leave Requests': 'Leave Request',
+      'Timetable Changes': 'Timetable Swap',
+      'Notices': 'Notice Draft',
+      'Exams/Results': 'Result Release',
+      'Events': 'Event Fund'
+    };
+    const target = map[filterType];
+    if (target) filtered = filtered.filter(a => a.type === target);
+  }
+
+  const rows = filtered.map(a => {
     const comment = localComments[a.id] || a.comment;
     return `<tr>
     <td><span style="font-weight:700;color:var(--color-text)">${a.id}</span></td>
@@ -1455,6 +2003,7 @@ function buildVPApprovals(user) {
     </div>` : `<div style="font-size:11px;color:var(--color-text-muted)">Resolved</div>`}
     </td>
   </tr>`}).join('');
+
   return `<div class="dash-section" id="section-vp_approvals">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap">
@@ -1463,13 +2012,31 @@ function buildVPApprovals(user) {
           <p style="color:var(--color-text-muted);font-size:13px">Review pending requests from staff and coordinators.</p>
         </div>
         <div style="display:flex;gap:10px">
-          <select style="padding:6px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none"><option>All Approvals</option><option>Leave Requests</option><option>Timetable Changes</option><option>Notices</option><option>Exams/Results</option><option>Events</option></select>
+          <select id="vp-filter-approvals-type" style="padding:6px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none" onchange="updateVPApprovalsFilter(this.value)">
+            <option ${filterType === 'All Approvals' ? 'selected' : ''}>All Approvals</option>
+            <option ${filterType === 'Leave Requests' ? 'selected' : ''}>Leave Requests</option>
+            <option ${filterType === 'Timetable Changes' ? 'selected' : ''}>Timetable Changes</option>
+            <option ${filterType === 'Notices' ? 'selected' : ''}>Notices</option>
+            <option ${filterType === 'Exams/Results' ? 'selected' : ''}>Exams/Results</option>
+            <option ${filterType === 'Events' ? 'selected' : ''}>Events</option>
+          </select>
         </div>
       </div>
-      <div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Req ID</th><th>Type</th><th>Details</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div style="overflow-x:auto;border-radius:14px">
+        <table class="data-table">
+          <thead><tr><th>Req ID</th><th>Type</th><th>Details</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="6" style="text-align:center;padding:20px">No matching approval requests.</td></tr>'}</tbody>
+        </table>
+      </div>
     </div>
   </div>`;
 }
+
+window.updateVPApprovalsFilter = function(val) {
+  localStorage.setItem('vp_approvals_filter_type', val);
+  triggerLiveReRender();
+  navigateTo('vp_approvals');
+};
 
 function buildVPMessages(user) {
 
@@ -1489,8 +2056,8 @@ function buildVPMessages(user) {
     ${m.replies && m.replies.length > 0 ? `<div style="margin-top:10px;padding-left:15px;border-left:2px solid var(--color-primary)">` + m.replies.map(r => `<div style="font-size:12px;color:var(--color-text-muted)"><strong style="color:var(--color-text)">${r.sender} (${r.time})</strong>: ${r.content}</div>`).join('') + `</div>` : ''}
     
     <div style="margin-top:12px;display:flex;gap:10px">
-      <button style="padding:6px 14px;border-radius:6px;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:12px;font-weight:600" onclick="document.getElementById('reply-box-${index}').style.display='block';"><i class="fas fa-reply"></i> Reply</button>
-      <button style="padding:6px 14px;border-radius:6px;background:none;border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:12px;font-weight:600" onclick="openMsgForwardModal('${m.subject}', '${m.sender}')"><i class="fas fa-share"></i> Forward</button>
+      <button style="padding:6px 14px;border-radius:10px;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:12px;font-weight:600" onclick="document.getElementById('reply-box-${index}').style.display='block';"><i class="fas fa-reply"></i> Reply</button>
+      <button style="padding:6px 14px;border-radius:10px;background:none;border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:12px;font-weight:600" onclick="openMsgForwardModal('${m.subject}', '${m.sender}')"><i class="fas fa-share"></i> Forward</button>
     </div>
     <div id="reply-box-${index}" style="display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--color-border)">
         <textarea id="reply-text-${index}" class="form-control" rows="2" placeholder="Type your reply here..." style="font-size:12px;resize:none;margin-bottom:8px"></textarea>
@@ -1903,39 +2470,119 @@ function buildTeacherClasses(user) {
 }
 
 function buildTeacherAttendance(user) {
-  const rows = TEACHER_ATT_MARKING.map(s => {
-    const isP = s.status === 'Present' || s.status === '';
+  // Get real students for the teacher's default class (9-B)
+  const allStudents = (typeof window.CAMPUSCORE_REGISTRY !== 'undefined') ? window.CAMPUSCORE_REGISTRY.getAllStudents() : [];
+  const classStudents = allStudents.filter(s => s.grade === '9' && s.section === 'B');
+  
+  // State recovery: Get pending marks from this session
+  const currentMarks = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
+  
+  const rows = classStudents.map((s, i) => {
+    const status = currentMarks[s.id] || 'Present'; // Default to Present
+    const isP = status === 'Present';
+    const isA = status === 'Absent';
+    const isL = status === 'Late';
+    
+    // Simulate last 5 days if none exist
+    const last5 = (s.attendance_logs || []).slice(-5).map(l => l.status);
+    while (last5.length < 5) last5.push('Present');
+
     return `<tr>
-      <td>${s.roll}</td>
-      <td style="font-weight:600">${s.name}</td>
+      <td>${i + 1}</td>
+      <td>
+        <div class="user-row">
+          <div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div>
+          <div class="user-row-info"><strong>${s.name}</strong><span>${s.id}</span></div>
+        </div>
+      </td>
       <td>
         <div style="display:flex;gap:4px">
-          ${s.last5.map(d => `<div style="width:10px;height:10px;border-radius:50%;background:${d === 'Present' ? '#5ca870' : d === 'Absent' ? 'var(--color-danger)' : '#f57c00'}" title="${d}"></div>`).join('')}
+          ${last5.map(d => `<div style="width:10px;height:10px;border-radius:50%;background:${d === 'Present' ? '#5ca870' : d === 'Absent' ? 'var(--color-danger)' : '#f57c00'}" title="${d}"></div>`).join('')}
         </div>
       </td>
       <td>
-        <div class="attendance-btn-group" data-student-index="${s.roll}">
-          <button class="att-btn p ${isP ? 'active' : ''}" onclick="markTeacherAttendance('${s.roll}', 'Present', this)">P</button>
-          <button class="att-btn a ${s.status === 'Absent' ? 'active' : ''}" onclick="markTeacherAttendance('${s.roll}', 'Absent', this)">A</button>
-          <button class="att-btn l ${s.status === 'Late' ? 'active' : ''}" onclick="markTeacherAttendance('${s.roll}', 'Late', this)">L</button>
+        <div class="attendance-btn-group">
+          <button class="att-btn p ${isP ? 'active' : ''}" onclick="markTeacherAttendance('${s.id}', 'Present', this)">P</button>
+          <button class="att-btn a ${isA ? 'active' : ''}" onclick="markTeacherAttendance('${s.id}', 'Absent', this)">A</button>
+          <button class="att-btn l ${isL ? 'active' : ''}" onclick="markTeacherAttendance('${s.id}', 'Late', this)">L</button>
         </div>
       </td>
-      <td><input type="text" placeholder="Add remark..." style="padding:6px;width:100%;border-radius:6px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)" /></td>
+      <td><input type="text" id="remark-${s.id}" placeholder="Add remark..." value="${currentMarks['remark_'+s.id] || ''}" oninput="saveAttendanceRemark('${s.id}', this.value)" style="padding:6px;width:100%;border-radius:6px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)" /></td>
     </tr>`;
   }).join('');
+
+  const today = new Date().toISOString().split('T')[0];
+
   return `<div class="dash-section" id="section-teacher_attendance">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
       <h3>📋 Mark Attendance</h3>
       <div style="display:flex;gap:10px">
-        <select style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)"><option>Class 9-B (Mathematics)</option></select>
-        <input type="date" value="2026-03-30" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)" />
+        <select class="form-control" style="width:220px"><option>Class 9-B (Mathematics)</option></select>
+        <input type="date" value="${today}" class="form-control" style="width:160px" />
       </div>
     </div>
     <div class="card">
-      <div style="overflow-x:auto;border-radius:14px;margin-bottom:20px"><table class="data-table"><thead><tr><th>Roll</th><th>Student Name</th><th>Last 5 Days</th><th>Mark Status</th><th>Remarks</th></tr></thead><tbody>${rows}</tbody></table></div>
-      <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--color-text-muted);font-size:13px">Showing 8 students (filtered view)</span><button class="btn-primary" onclick="simulateAction('Attendance submitted successfully for Class 9-C on ' + new Date().toLocaleDateString('en-IN') + '.')"><i class="fas fa-check"></i> Submit Attendance</button></div>
+      <div style="overflow-x:auto;border-radius:14px;margin-bottom:20px">
+        <table class="data-table">
+          <thead><tr><th>Roll</th><th>Student Name</th><th>Last 5 Days</th><th>Mark Status</th><th>Remarks</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="5" style="text-align:center;padding:40px">No students assigned to this class.</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--color-text-muted);font-size:13px">Showing ${classStudents.length} students</span>
+        <button class="btn-primary" onclick="executeAttendanceSubmission()"><i class="fas fa-check"></i> Submit Attendance</button>
+      </div>
     </div>
   </div>`;
+}
+
+window.saveAttendanceRemark = function(id, val) {
+  let marking = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
+  marking['remark_' + id] = val;
+  localStorage.setItem('teacher_current_marking', JSON.stringify(marking));
+};
+
+async function executeAttendanceSubmission() {
+  const marking = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
+  const allStudents = window.CAMPUSCORE_REGISTRY.getAllStudents();
+  const classStudents = allStudents.filter(s => s.grade === '9' && s.section === 'B');
+  
+  if (classStudents.length === 0) return;
+  
+  simulateAction('Finalizing attendance records...');
+  
+  classStudents.forEach(s => {
+    const status = marking[s.id] || 'Present';
+    const remark = marking['remark_' + s.id] || '';
+    
+    // Add to logs
+    const logs = s.attendance_logs || [];
+    logs.push({
+      date: new Date().toISOString().split('T')[0],
+      status: status,
+      remark: remark,
+      timestamp: new Date().getTime()
+    });
+    
+    // Calculate new percentage
+    const presentCount = logs.filter(l => l.status === 'Present' || l.status === 'Late').length;
+    const newPct = Math.round((presentCount / logs.length) * 100);
+    
+    // Update student object
+    s.attendance_logs = logs;
+    s.attendancePct = newPct;
+    
+    // Persist
+    localStorage.setItem('campuscore_student_data_' + s.id, JSON.stringify(s));
+  });
+  
+  // Clear temp buffer
+  localStorage.removeItem('teacher_current_marking');
+  
+  simulateAction('Attendance records synced to institutional registry. Notifications sent to parents.');
+  setTimeout(() => {
+    triggerLiveReRender();
+  }, 1500);
 }
 
 function buildTeacherHomework(user) {
@@ -3083,34 +3730,168 @@ function buildAllIssuesSuperAdmin(user) {
 
 
 // --- FIX 3: MESSAGES ---
+// --- FIX 3: MESSAGES ---
 function sendMsgReply(index) {
   let activeMessages = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
   let content = document.getElementById('reply-text-' + index).value.trim();
   if (!content) return;
+  
   if (!activeMessages[index].replies) activeMessages[index].replies = [];
-  activeMessages[index].replies.push({ sender: currentUser.name, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), content });
+  activeMessages[index].replies.push({ 
+    sender: currentUser.name, 
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
+    content 
+  });
+  
   localStorage.setItem('campuscore_vp_msgs', JSON.stringify(activeMessages));
-  simulateAction('Reply sent');
+  simulateAction('Reply sent to thread.');
   triggerLiveReRender();
+  navigateTo('vp_messages');
 }
+
 function openMsgForwardModal(sub, sender) {
-  const m = `<div class="modal-overlay" id="fwd-msg-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">Forward Message</h3>
-    <div class="form-group"><label>Forward To</label><select class="form-control"><option>Coordinator</option><option>Teacher</option><option>Admin</option></select><label style="margin-top:10px">Add forwarding note (optional)</label><textarea class="form-control" rows="3"></textarea>
-    <div style="display:flex;gap:10px;margin-top:15px"><button class="btn-primary" style="flex:1" onclick="document.getElementById('fwd-msg-modal').remove(); simulateAction('Message forwarded');">Forward</button><button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('fwd-msg-modal').remove()">Cancel</button></div></div></div></div>`;
+  const m = `<div class="modal-overlay" id="fwd-msg-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+    <div class="modal" style="max-width:400px">
+      <h3>Forward Message</h3>
+      <div class="form-group">
+        <label>Forward To</label>
+        <select class="form-control" id="fwd-target">
+          <option>Coordinator</option>
+          <option>Principal</option>
+          <option>Admin Office</option>
+        </select>
+        <label style="margin-top:10px">Additional Note</label>
+        <textarea class="form-control" id="fwd-note" rows="3" placeholder="Optional context..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn-primary" style="flex:1" onclick="executeMsgForward('${sub.replace(/'/g, "\\'")}', '${sender.replace(/'/g, "\\Source")}')">Forward Now</button>
+        <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('fwd-msg-modal').remove()">Cancel</button>
+      </div>
+    </div>
+  </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
 }
+
+window.executeMsgForward = function(sub, sender) {
+  const target = document.getElementById('fwd-target').value;
+  const note = document.getElementById('fwd-note').value;
+  
+  let msgs = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
+  const newMsg = {
+    _id: Date.now(),
+    sender: `Fwd: ${sender}`,
+    subject: `Fwd: ${sub}`,
+    time: "Just Now",
+    unread: false,
+    content: `[Forwarded to ${target}] \nNote: ${note}\n---\nOriginal Message follows...`,
+    replies: []
+  };
+  
+  msgs.unshift(newMsg);
+  localStorage.setItem('campuscore_vp_msgs', JSON.stringify(msgs));
+  document.getElementById('fwd-msg-modal').remove();
+  simulateAction(`Message forwarded to ${target}.`);
+  triggerLiveReRender();
+  navigateTo('vp_messages');
+};
+
 function openBroadcastModal() {
-  const m = `<div class="modal-overlay" id="bc-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">Broadcast Message</h3>
-    <div class="form-group"><label>Target Audience</label><select class="form-control"><option>All Staff</option><option>Teachers Only</option><option>Coordinators Only</option></select><label style="margin-top:10px">Message</label><textarea class="form-control" rows="4"></textarea>
-    <div style="display:flex;gap:10px;margin-top:15px"><button class="btn-primary" style="flex:1" onclick="document.getElementById('bc-modal').remove(); simulateAction('Broadcast sent to staff members');">Send Broadcast</button><button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('bc-modal').remove()">Cancel</button></div></div></div></div>`;
+  const m = `<div class="modal-overlay" id="bc-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+    <div class="modal" style="max-width:400px">
+      <h3>Broadcast to Staff</h3>
+      <div class="form-group">
+        <label>Target Group</label>
+        <select class="form-control" id="bc-target">
+          <option>All Faculty</option>
+          <option>Department Heads</option>
+          <option>Class Teachers (9-10)</option>
+        </select>
+        <label style="margin-top:10px">Broadcast Content</label>
+        <textarea class="form-control" id="bc-content" rows="4" placeholder="Type mission-critical update..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn-primary" style="flex:1" onclick="executeBroadcast()">Send Broadcast</button>
+        <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('bc-modal').remove()">Cancel</button>
+      </div>
+    </div>
+  </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
-}
+};
+
+window.executeBroadcast = function() {
+  const target = document.getElementById('bc-target').value;
+  const content = document.getElementById('bc-content').value;
+  if (!content) return;
+
+  let msgs = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
+  const newMsg = {
+    _id: Date.now(),
+    sender: "You (Broadcast)",
+    subject: `Broadcast to ${target}`,
+    time: "Just Now",
+    unread: false,
+    content: content,
+    replies: []
+  };
+  
+  msgs.unshift(newMsg);
+  localStorage.setItem('campuscore_vp_msgs', JSON.stringify(msgs));
+  document.getElementById('bc-modal').remove();
+  simulateAction(`Broadcast dispatched to ${target}.`);
+  triggerLiveReRender();
+  navigateTo('vp_messages');
+};
+
 function openNewMessageModal() {
-  const m = `<div class="modal-overlay" id="nm-modal" style="display:flex" onclick="if(event.target===this) this.remove()"><div class="modal" style="max-width:400px"><h3 style="margin-top:0">New Message</h3>
-    <div class="form-group"><label>To</label><select class="form-control"><option>Anitha (Coordinator)</option><option>Venkat (Teacher)</option></select><label style="margin-top:10px">Subject</label><input type="text" class="form-control"><label style="margin-top:10px">Message</label><textarea class="form-control" rows="4"></textarea>
-    <div style="display:flex;gap:10px;margin-top:15px"><button class="btn-primary" style="flex:1" onclick="document.getElementById('nm-modal').remove(); simulateAction('Message sent');">Send</button><button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('nm-modal').remove()">Cancel</button></div></div></div></div>`;
+  const m = `<div class="modal-overlay" id="nm-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+    <div class="modal" style="max-width:400px">
+      <h3>New Direct Message</h3>
+      <div class="form-group">
+        <label>Recipient</label>
+        <select class="form-control" id="nm-target">
+           <option>Principal</option>
+           <option>Coordinator - Anitha</option>
+           <option>Teacher - Prasana Reddy</option>
+           <option>Teacher - Venkat Iyer</option>
+        </select>
+        <label style="margin-top:10px">Subject</label>
+        <input type="text" class="form-control" id="nm-sub" placeholder="Subject...">
+        <label style="margin-top:10px">Message</label>
+        <textarea class="form-control" id="nm-content" rows="4" placeholder="Write message..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn-primary" style="flex:1" onclick="executeNewMsg()">Send Message</button>
+        <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;border-radius:8px" onclick="document.getElementById('nm-modal').remove()">Cancel</button>
+      </div>
+    </div>
+  </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
-}
+};
+
+window.executeNewMsg = function() {
+  const target = document.getElementById('nm-target').value;
+  const sub = document.getElementById('nm-sub').value;
+  const content = document.getElementById('nm-content').value;
+  if (!content || !sub) return;
+
+  let msgs = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
+  const newMsg = {
+    _id: Date.now(),
+    sender: `To: ${target}`,
+    subject: sub,
+    time: "Just Now",
+    unread: false,
+    content: content,
+    replies: []
+  };
+  
+  msgs.unshift(newMsg);
+  localStorage.setItem('campuscore_vp_msgs', JSON.stringify(msgs));
+  document.getElementById('nm-modal').remove();
+  simulateAction(`Message sent to ${target}.`);
+  triggerLiveReRender();
+  navigateTo('vp_messages');
+};
 
 
 // --- FIX 4: NOTICES ---
@@ -3382,7 +4163,13 @@ function rejectRequest(id) {
 
 function buildStaffHelpdesk(user) {
   const filter = localStorage.getItem('helpdesk_filter') || 'All';
-  const raw = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
+  let raw = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
+  
+  // Fallback to institutional data if localStorage is empty
+  if (raw.length === 0 && window.HELPDESK_TICKETS) {
+    raw = window.HELPDESK_TICKETS;
+  }
+  
   const tickets = filter === 'All' ? raw : raw.filter(t => t.status === filter);
 
   const rows = tickets.map(t => `
@@ -3451,6 +4238,268 @@ function viewTicketDetails(id) {
     </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
 }
+function buildRegistration(user) {
+  return `<div class="dash-section" id="section-registration">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div>
+          <h3>📝 Institutional User Registration</h3>
+          <p style="color:var(--color-text-muted);font-size:13px">Register new faculty, staff, and student-parent pairs to the system.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;background:var(--color-surface-2);padding:6px;border-radius:12px;width:fit-content">
+        <button class="btn-primary" id="reg-tab-parent" onclick="switchRegTab('parent')" style="padding:8px 20px">Parents & Students</button>
+        <button class="btn-primary" id="reg-tab-teacher" onclick="switchRegTab('teacher')" style="background:transparent;color:var(--color-text);border:none;padding:8px 20px">Teachers / Faculty</button>
+        <button class="btn-primary" id="reg-tab-bulk" onclick="switchRegTab('bulk')" style="background:transparent;color:var(--color-text);border:none;padding:8px 20px">Bulk Upload (CSV/Excel)</button>
+      </div>
+
+      <!-- Parent & Student Form -->
+      <div id="reg-form-parent">
+        <div class="content-grid">
+          <div>
+            <h4 style="margin-bottom:15px;color:var(--color-primary)"><i class="fas fa-user-graduate"></i> Student Details</h4>
+            <div class="form-group"><label>Student Full Name</label><input type="text" id="reg-s-name" class="form-control" placeholder="e.g. Rahul Sharma"></div>
+            <div style="display:flex;gap:10px">
+              <div style="flex:1" class="form-group"><label>Class</label><select id="reg-s-class" class="form-control"><option>9</option><option>10</option><option>8</option><option>7</option></select></div>
+              <div style="flex:1" class="form-group"><label>Section</label><select id="reg-s-sec" class="form-control"><option>A</option><option>B</option><option>C</option></select></div>
+              <div style="flex:1" class="form-group"><label>Roll No</label><input type="number" id="reg-s-roll" class="form-control" placeholder="01"></div>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin-bottom:15px;color:var(--color-primary)"><i class="fas fa-user-friends"></i> Parent Details</h4>
+            <div class="form-group"><label>Parent Full Name</label><input type="text" id="reg-p-name" class="form-control" placeholder="e.g. Sunil Sharma"></div>
+            <div class="form-group"><label>Username</label><input type="text" id="reg-p-user" class="form-control" placeholder="e.g. P3180076A"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="reg-p-pass" class="form-control" value="parent123"></div>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:20px;padding:12px 30px" onclick="executeRegistration('parent')">Register Family Account</button>
+      </div>
+
+      <!-- Teacher Form -->
+      <div id="reg-form-teacher" style="display:none">
+        <div style="max-width:500px">
+          <h4 style="margin-bottom:15px;color:var(--color-primary)"><i class="fas fa-chalkboard-teacher"></i> Faculty Details</h4>
+          <div class="form-group"><label>Full Name</label><input type="text" id="reg-t-name" class="form-control" placeholder="e.g. Ms. Kavita"></div>
+          <div class="form-group"><label>Username</label><input type="text" id="reg-t-user" class="form-control" placeholder="e.g. T005"></div>
+          <div class="form-group"><label>Password</label><input type="password" id="reg-t-pass" class="form-control" value="teacher123"></div>
+          <div class="form-group"><label>Primary Subject</label><input type="text" id="reg-t-subject" class="form-control" placeholder="e.g. Mathematics"></div>
+          <div class="form-group"><label>Department</label><select id="reg-t-dept" class="form-control"><option>Mathematics</option><option>Science</option><option>English</option><option>Social Studies</option></select></div>
+        </div>
+        <button class="btn-primary" style="margin-top:20px;padding:12px 30px" onclick="executeRegistration('teacher')">Register Faculty Member</button>
+      </div>
+
+      <!-- Bulk Upload Section -->
+      <div id="reg-form-bulk" style="display:none">
+        <div class="card" style="background:var(--color-surface-2);border:1px dashed var(--color-border);padding:25px;text-align:center">
+          <div style="font-size:40px;margin-bottom:15px;color:var(--color-primary)"><i class="fas fa-file-excel"></i></div>
+          <h4>Bulk Register Students & Parents</h4>
+          <p style="color:var(--color-text-muted);font-size:13px;max-width:500px;margin:10px auto 20px">Upload a CSV or Excel file containing student and parent details. The system will automatically create accounts and sync them to the database.</p>
+          
+          <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px">
+            <button class="btn-primary" style="background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border)" onclick="downloadStudentBulkTemplate()">
+              <i class="fas fa-download"></i> Download Template
+            </button>
+            <label class="btn-primary" style="cursor:pointer">
+              <i class="fas fa-upload"></i> Choose Excel / CSV File
+              <input type="file" id="bulk-student-upload" style="display:none" onchange="handleBulkStudentUpload(event)" accept=".csv,.xlsx,.xls">
+            </label>
+          </div>
+          <p style="font-size:11px;color:var(--color-text-muted)">Columns required: Name, Class, Section, Roll No, ParentName, Username, Password</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+window.switchRegTab = function(type) {
+  const pBtn = document.getElementById('reg-tab-parent');
+  const tBtn = document.getElementById('reg-tab-teacher');
+  const bBtn = document.getElementById('reg-tab-bulk');
+  const pForm = document.getElementById('reg-form-parent');
+  const tForm = document.getElementById('reg-form-teacher');
+  const bForm = document.getElementById('reg-form-bulk');
+
+  const btns = [pBtn, tBtn, bBtn];
+  const forms = [pForm, tForm, bForm];
+
+  btns.forEach(b => { if(b){ b.style.background = 'transparent'; b.style.color = 'var(--color-text)'; b.style.border = 'none'; } });
+  forms.forEach(f => { if(f){ f.style.display = 'none'; } });
+
+  if (type === 'parent') {
+    pBtn.style.background = 'var(--color-primary)'; pBtn.style.color = 'white'; pBtn.style.border = '';
+    pForm.style.display = 'block';
+  } else if (type === 'teacher') {
+    tBtn.style.background = 'var(--color-primary)'; tBtn.style.color = 'white'; tBtn.style.border = '';
+    tForm.style.display = 'block';
+  } else if (type === 'bulk') {
+    if(bBtn) { bBtn.style.background = 'var(--color-primary)'; bBtn.style.color = 'white'; bBtn.style.border = ''; }
+    if(bForm) bForm.style.display = 'block';
+  }
+};
+
+window.executeRegistration = function(type) {
+  if (type === 'teacher') {
+    const name = document.getElementById('reg-t-name').value.trim();
+    const username = document.getElementById('reg-t-user').value.trim();
+    const password = document.getElementById('reg-t-pass').value;
+    const subject = document.getElementById('reg-t-subject').value.trim();
+    const dept = document.getElementById('reg-t-dept').value;
+
+    if (!name || !username || !subject) { simulateAction('Please fill all required fields'); return; }
+
+    const teacherData = { id: username, name, username, password, subject, department: dept, role: 'teacher', status: 'Active', classes: '7A, 8B', avatar_color: '#5ca870', icon: 'fa-chalkboard-teacher' };
+    
+    // 1. Register for Auth
+    if (typeof registerDynamicUser === 'function') registerDynamicUser(teacherData);
+    
+    // 2. Add to Teacher Monitor
+    const teachers = getVPTeachers();
+    teachers.push({ id: username, name, subject, status: 'Active', classes: '9A, 10B' });
+    saveVPTeachers(teachers);
+
+    simulateAction(`Teacher ${name} registered successfully!`);
+  } else {
+    const sName = document.getElementById('reg-s-name').value.trim();
+    const sClass = document.getElementById('reg-s-class').value;
+    const sSec = document.getElementById('reg-s-sec').value;
+    const sRoll = document.getElementById('reg-s-roll').value;
+
+    const pName = document.getElementById('reg-p-name').value.trim();
+    const pUsername = document.getElementById('reg-p-user').value.trim();
+    const pPass = document.getElementById('reg-p-pass').value;
+
+    if (!sName || !pName || !pUsername) { simulateAction('Please fill all student and parent fields'); return; }
+
+    const studentId = 'Dynamic' + Date.now().toString().slice(-4);
+    
+    // 1. Create Student Data
+    const studentData = { name: sName, currentClass: sClass, currentSection: sSec, roll: sRoll, attendancePct: 100, gpa: 0, status: 'Active', activityLog: [] };
+    localStorage.setItem('campuscore_student_data_' + studentId, JSON.stringify(studentData));
+    
+    // 2. Update Student Registry Index
+    const dynamicIds = JSON.parse(localStorage.getItem('campuscore_dynamic_student_ids') || '[]');
+    dynamicIds.push(studentId);
+    localStorage.setItem('campuscore_dynamic_student_ids', JSON.stringify(dynamicIds));
+
+    // 3. Register Parent for Auth
+    const parentUser = { id: Date.now(), name: pName, username: pUsername, password: pPass, role: 'parent', roleLabel: 'Parent', childName: sName, childId: studentId, childClass: `${sClass}-${sSec}`, avatar_color: '#f57c00', icon: 'fa-user-friends' };
+    if (typeof registerDynamicUser === 'function') registerDynamicUser(parentUser);
+
+    simulateAction(`Family registered: ${sName} and Parent ${pName}`);
+  }
+  
+  triggerLiveReRender();
+};
+
+window.downloadStudentBulkTemplate = function() {
+  const headers = "Name,Class,Section,RollNo,ParentName,Username,Password\n";
+  const blob = new Blob([headers], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('hidden', '');
+  a.setAttribute('href', url);
+  a.setAttribute('download', 'student_bulk_upload_template.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  simulateAction('Template downloaded: student_bulk_upload_template.csv');
+};
+
+window.handleBulkStudentUpload = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  simulateAction('Reading file: ' + file.name + '...');
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    window.processBulkStudentData(text);
+  };
+  reader.readAsText(file);
+};
+
+window.processBulkStudentData = function(csvText) {
+  const lines = csvText.trim().split('\n');
+  if (lines.length <= 1) {
+    simulateAction('Error: File is empty or has no data rows.');
+    return;
+  }
+
+  const students = [];
+  // Skip header
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Simple CSV split (comma separated)
+    const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+    if (cols.length >= 7) {
+      students.push({
+        sName: cols[0],
+        sClass: cols[1],
+        sSec: cols[2],
+        sRoll: cols[3],
+        pName: cols[4],
+        pUsername: cols[5],
+        pPass: cols[6]
+      });
+    }
+  }
+
+  if (students.length === 0) {
+    simulateAction('Error: No valid rows found in CSV. Expected: Name, Class, Section, Roll No, ParentName, Username, Password');
+    return;
+  }
+
+  simulateAction(`Found ${students.length} student records. Registering...`);
+
+  students.forEach((s, idx) => {
+    const studentId = 'Bulk' + Date.now().toString().slice(-4) + idx;
+    
+    // 1. Create Student Data
+    const studentData = { 
+      name: s.sName, 
+      currentClass: s.sClass, 
+      currentSection: s.sSec, 
+      roll: s.sRoll, 
+      attendancePct: 100, 
+      gpa: 0, 
+      status: 'Active', 
+      activityLog: [{ note: 'Bulk uploaded to system', date: new Date().toISOString(), actor: currentUser.name }] 
+    };
+    localStorage.setItem('campuscore_student_data_' + studentId, JSON.stringify(studentData));
+    
+    // 2. Update Student Registry Index
+    const dynamicIds = JSON.parse(localStorage.getItem('campuscore_dynamic_student_ids') || '[]');
+    dynamicIds.push(studentId);
+    localStorage.setItem('campuscore_dynamic_student_ids', JSON.stringify(dynamicIds));
+
+    // 3. Register Parent for Auth
+    const parentUser = { 
+      id: Date.now() + idx, 
+      name: s.pName, 
+      username: s.pUsername, 
+      password: s.pPass, 
+      role: 'parent', 
+      roleLabel: 'Parent', 
+      childName: s.sName, 
+      childId: studentId, 
+      childClass: `${s.sClass}-${s.sSec}`, 
+      avatar_color: '#f57c00', 
+      icon: 'fa-user-friends' 
+    };
+    if (typeof registerDynamicUser === 'function') registerDynamicUser(parentUser);
+  });
+
+  setTimeout(() => {
+    simulateAction(`Success: ${students.length} families added to institutional database.`);
+    triggerLiveReRender();
+  }, 1000);
+};
+
+
 function replyTicket(id) {
   const r = prompt('Type your reply/internal note for this ticket:');
   if (r) {
@@ -3611,18 +4660,34 @@ function setRoleView(r) {
 }
 
 function buildAllAccounts(user) {
-  const list = DEMO_USERS.filter(u => {
+  const filterRole = localStorage.getItem('account_filter_role') || 'All Roles';
+  const allAccounts = (typeof getUnifiedAccounts === 'function') ? getUnifiedAccounts() : [...DEMO_USERS];
+
+  let filtered = allAccounts.filter(u => {
     const isAdminLogged = currentUser.role === 'apaaas' || currentUser.role === 'super_admin' || String(currentUser.username || '').toUpperCase() === 'APAAAS';
-    const isTargetAdmin = u.role === 'super_admin' || u.username === 'APAAAS' || u.name === 'Admin';
-    return isAdminLogged || !isTargetAdmin;
-  }).map(u => {
-    const isSuper = u.role === 'super_admin' || u.username === 'APAAAS';
-    const roleLabel = isSuper ? 'System Administrator' : u.roleLabel;
+    const isTargetAdmin = u.role === 'super_admin' || u.username === 'APAAAS' || u.role === 'apaaas' || u.name === 'Admin';
+    if (!isAdminLogged && isTargetAdmin) return false;
+    return true;
+  });
+
+  if (filterRole !== 'All Roles') {
+    if (filterRole === 'Students & Parents') {
+      filtered = filtered.filter(u => u.role === 'student' || u.role === 'parent');
+    } else if (filterRole === 'Teachers') {
+      filtered = filtered.filter(u => u.role === 'teacher' || u.role === 'coordinator');
+    } else if (filterRole === 'Admin & Staff') {
+      filtered = filtered.filter(u => ['super_admin', 'apaaas', 'principal', 'vice_principal'].includes(u.role));
+    }
+  }
+
+  const list = filtered.map(u => {
+    const isSuper = u.role === 'super_admin' || u.username === 'APAAAS' || u.role === 'apaaas';
+    const roleLabel = isSuper ? 'System Administrator' : (u.roleLabel || u.role.charAt(0).toUpperCase() + u.role.slice(1));
     return `<tr>
             <td><div class="user-row"><div class="avatar" style="background:${u.avatar_color || '#ccc'}">${getInitials(u.name)}</div><strong>${u.name}</strong></div></td>
             <td><code>${u.username}</code></td>
             <td><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${roleLabel}</span></td>
-            <td>${u.email}</td>
+            <td>${u.email || (u.username + '@campuscore.edu')}</td>
             <td>
                 <div style="display:flex;gap:6px">
                     <button class="btn-primary" style="padding:4px 8px;font-size:11px" onclick="viewAccount('${u.username}')">View</button>
@@ -3634,29 +4699,32 @@ function buildAllAccounts(user) {
 
   return `<div class="dash-section" id="section-all_accounts">
         <div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                <h3>👥 Institutional Account Control</h3>
-                <button class="btn-primary" onclick="simulateAction('Account creation wizard opened.')"><i class="fas fa-plus"></i> Create Account</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:15px">
+                <div>
+                  <h3>👥 Institutional Account Control</h3>
+                  <p style="color:var(--color-text-muted);font-size:13px">Global directory of all authenticated users and roles.</p>
+                </div>
+                <div style="display:flex;gap:10px">
+                    <select class="form-control" style="width:180px" onchange="setAccountFilter(this.value)">
+                      <option value="All Roles" ${filterRole === 'All Roles' ? 'selected' : ''}>All Roles</option>
+                      <option value="Students & Parents" ${filterRole === 'Students & Parents' ? 'selected' : ''}>Students & Parents</option>
+                      <option value="Teachers" ${filterRole === 'Teachers' ? 'selected' : ''}>Teachers</option>
+                      <option value="Admin & Staff" ${filterRole === 'Admin & Staff' ? 'selected' : ''}>Admin & Staff</option>
+                    </select>
+                    <button class="btn-primary" onclick="navigateTo('registration')"><i class="fas fa-plus"></i> Create Account</button>
+                </div>
             </div>
-            <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Name</th><th>User ID</th><th>Role</th><th>Email</th><th>Action</th></tr></thead><tbody>${list}</tbody></table></div>
+            <div style="overflow-x:auto;border-radius:12px"><table class="data-table"><thead><tr><th>Name</th><th>User ID</th><th>Role</th><th>Email</th><th>Action</th></tr></thead><tbody>${list || '<tr><td colspan="5" style="text-align:center;padding:20px">No accounts found matching this filter.</td></tr>'}</tbody></table></div>
         </div>
     </div>`;
 }
 
-function buildRemovedBin(user) {
-  return `<div class="dash-section" id="section-removed_bin">
-        <div class="card" style="text-align:center;padding:60px 20px">
-            <div style="width:100px;height:100px;background:var(--color-surface-2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px">
-                <i class="fas fa-trash-alt" style="font-size:40px;opacity:0.2"></i>
-            </div>
-            <h3>Removed Personnel Archive</h3>
-            <p style="color:var(--color-text-muted);max-width:400px;margin:12px auto 24px">All dismissed staff or withdrawn student accounts are held here for 30 days before permanent deletion.</p>
-            <div style="background:rgba(211,47,47,0.05);border:1px solid rgba(211,47,47,0.2);padding:16px;border-radius:12px;display:inline-block">
-                <p style="color:var(--color-danger);font-weight:700;font-size:14px"><i class="fas fa-info-circle"></i> Bin is currently empty.</p>
-            </div>
-        </div>
-    </div>`;
-}
+window.setAccountFilter = function(val) {
+  localStorage.setItem('account_filter_role', val);
+  triggerLiveReRender();
+  navigateTo('all_accounts');
+};
+
 
 // --- ESCALATION LOGIC ---
 function openEscalateIssueModal(id) {
@@ -3724,15 +4792,6 @@ function rejectApprovalItem(id) {
 // Removed duplicate buildAllAccounts block. Main component relies on the secure filtering version defined higher up.
 
 
-function buildRemovedBin(user) {
-  return `<div class="dash-section" id="section-removed_bin">
-        <div class="card" style="text-align:center;padding:40px">
-            <div style="font-size:48px;color:var(--color-text-muted);margin-bottom:20px"><i class="fas fa-trash-alt"></i></div>
-            <h3>🗑️ Removed Records Bin</h3>
-            <p style="color:var(--color-text-muted);max-width:400px;margin:0 auto">Deleted students, staff, or issues can be restored from here. Currently empty.</p>
-        </div>
-    </div>`;
-}
 
 function setGhostRoleContext(role) {
   simulateAction('Entering ' + role + ' view context...');
@@ -3793,26 +4852,72 @@ function translateSuperAdminUI() {
 
 // --- ACCOUNTS LOGIC ---
 function viewAccount(uid) {
-  simulateAction('Detailed activity audit for ' + uid + ' generated.');
+  const all = (typeof getUnifiedAccounts === 'function') ? getUnifiedAccounts() : [];
+  const u = all.find(x => x.username === uid || x.id === uid);
+  if (!u) { simulateAction('Audit log generated for ' + uid); return; }
+  
+  const html = `<div class="modal-overlay" id="view-acc-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+    <div class="modal" style="max-width:450px">
+      <div style="display:flex;align-items:center;gap:15px;margin-bottom:20px">
+        <div class="avatar" style="width:60px;height:60px;background:${u.avatar_color || 'var(--color-primary)'};font-size:24px">${getInitials(u.name)}</div>
+        <div>
+          <h3 style="margin:0">${u.name}</h3>
+          <p style="margin:0;color:var(--color-text-muted);font-size:14px">${u.roleLabel || u.role}</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Institutional ID</label>
+        <p style="margin:4px 0 12px;font-family:monospace">${u.id || u.username}</p>
+        <label>Primary Email</label>
+        <p style="margin:4px 0 12px">${u.email || (u.username + '@campuscore.edu')}</p>
+        <label>System Permissions</label>
+        <p style="margin:4px 0 0;font-size:13px"><i class="fas fa-check-circle" style="color:var(--color-success)"></i> All Role-Based Permissions Active</p>
+      </div>
+      <div style="margin-top:25px">
+        <button class="btn-primary" style="width:100%" onclick="document.getElementById('view-acc-modal').remove()">Close Audit View</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 function deleteAccount(uid) {
-  if (confirm('DANGER: Delete institutional account ' + uid + '?')) {
-    simulateAction('Account ' + uid + ' moved to Removed Personnel Bin.');
+  if (confirm('DANGER: Permanently delete institutional account ' + uid + '? This action moves records to the Institutional Trash.')) {
+    const excludedUids = JSON.parse(localStorage.getItem('campuscore_excluded_uids') || '[]');
+    excludedUids.push(uid);
+    localStorage.setItem('campuscore_excluded_uids', JSON.stringify(excludedUids));
+
+    // Get basic info for the bin
+    const all = (typeof getUnifiedAccounts === 'function') ? getUnifiedAccounts() : [];
+    const target = all.find(u => u.username === uid || u.id === uid) || { name: 'Unknown', role: 'System' };
+
+    // Add to Bin
+    const bin = JSON.parse(localStorage.getItem('cc_removed_bin') || '[]');
+    bin.unshift({ id: uid, name: target.name, type: target.role, removedDate: new Date().toLocaleDateString() });
+    localStorage.setItem('cc_removed_bin', JSON.stringify(bin));
+
+    // Cleanup dynamic users
+    const dynamicUsers = JSON.parse(localStorage.getItem('campuscore_dynamic_users') || '[]');
+    const filteredDynamic = dynamicUsers.filter(u => u.username !== uid && String(u.id) !== uid);
+    localStorage.setItem('campuscore_dynamic_users', JSON.stringify(filteredDynamic));
+
+    // Cleanup Teachers if applicable
+    const teachers = JSON.parse(localStorage.getItem('campuscore_teachers') || '[]');
+    const filteredTeachers = teachers.filter(t => t.id !== uid && t.username !== uid);
+    localStorage.setItem('campuscore_teachers', JSON.stringify(filteredTeachers));
+
+    // Cleanup Student Registry if applicable
+    const excludedSids = JSON.parse(localStorage.getItem('campuscore_excluded_sids') || '[]');
+    excludedSids.push(uid);
+    localStorage.setItem('campuscore_excluded_sids', JSON.stringify(excludedSids));
+
+    simulateAction('Account ' + uid + ' has been moved to the Institutional Recycle Bin.');
+    triggerLiveReRender();
   }
 }
 
 // --- RESULTS Logic ---
 window.openPerformanceReport = function (cls, subj) {
   const m = `<div class="modal-overlay" id="perf-rpt-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
-        <div class="modal" style="max-width:800px;width:95%">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                <h3 style="margin:0">📈 Performance Analysis: Class ${cls} (${subj})</h3>
-                <button class="btn-primary" onclick="window.print()" style="background:var(--color-surface-2);color:var(--color-text);border:1px solid var(--color-border)"><i class="fas fa-print"></i> Print PDF</button>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px">
-                <div class="card" style="padding:15px;background:var(--color-surface-2)">
-                    <h4 style="margin-top:0">Class Stats</h4>
-                    <p style="font-size:13px">Assigned Students: 35<br>Avg Attendance: 92%<br>Top Mark: 98/100<br>Lowest Mark: 42/100</p>
                     <div style="margin-top:20px;padding:10px;background:var(--color-success);color:white;border-radius:6px;font-size:12px;text-align:center">Performance: ABOVE TARGET (+4%)</div>
                 </div>
                 <div style="background:var(--color-surface-2);padding:20px;border-radius:12px;height:300px;display:flex;align-items:flex-end;gap:15px;justify-content:center;border:1px solid var(--color-border)">
@@ -4000,8 +5105,23 @@ window.submitHelpReply = function (id) {
   if (!txt) return;
   simulateAction('Sending reply for ticket ' + id + '...');
   setTimeout(() => {
-    document.getElementById('helpdesk-reply-modal').remove();
-    simulateAction('Reply sent to parent.');
+    let tickets = JSON.parse(localStorage.getItem('campuscore_tickets') || '[]');
+    if (tickets.length === 0) tickets = HELPDESK_TICKETS;
+    const idx = tickets.findIndex(t => t.id === id);
+    if (idx > -1) {
+      if (!tickets[idx].replies) tickets[idx].replies = [];
+      tickets[idx].replies.push({
+        author: currentUser.name,
+        text: txt,
+        date: new Date().toLocaleString()
+      });
+      localStorage.setItem('campuscore_tickets', JSON.stringify(tickets));
+    }
+    
+    const modal = document.getElementById('helpdesk-reply-modal');
+    if (modal) modal.remove();
+    simulateAction('Reply recorded in ticket history and sent to parent.');
+    triggerLiveReRender();
   }, 800);
 };
 
@@ -4048,15 +5168,24 @@ window.importMarksFromExcel = function () {
 window.openVPEventModal = function () {
   const m = `<div class="modal-overlay" id="event-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
         <div class="modal" style="max-width:450px">
-            <h3>Add New School Event</h3>
-            <div class="form-group">
-                <label>Event Name</label><input type="text" id="ev-name" class="form-control" placeholder="e.g. Annual Sports Day">
-                <label>Date</label><input type="date" id="ev-date" class="form-control">
-                <label>Category</label>
-                <select id="ev-cat" class="form-control"><option>Academic</option><option>Sports</option><option>Cultural</option><option>Holiday</option></select>
-                <div style="display:flex;gap:10px;margin-top:20px">
-                    <button class="btn-primary" style="flex:1" onclick="saveVPEvent()">Save Event</button>
-                    <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px" onclick="document.getElementById('event-modal').remove()">Cancel</button>
+            <h3>Propose New Institutional Event</h3>
+            <div class="form-group" style="margin-top:15px">
+                <label>Event Title</label>
+                <input type="text" id="ev-name" class="form-control" placeholder="e.g. Science Fair 2026">
+                <label style="margin-top:10px">Scheduled Date</label>
+                <input type="date" id="ev-date" class="form-control">
+                <label style="margin-top:10px">Classification</label>
+                <select id="ev-cat" class="form-control">
+                  <option value="#1976d2">Academic</option>
+                  <option value="#f57c00">Sports</option>
+                  <option value="#8b5cf6">Cultural</option>
+                  <option value="#5ca870">Holiday</option>
+                </select>
+                <label style="margin-top:10px">Short Description</label>
+                <textarea id="ev-desc" class="form-control" rows="2" placeholder="Mandatory for all 9-10..."></textarea>
+                <div style="display:flex;gap:10px;margin-top:25px">
+                    <button class="btn-primary" style="flex:1" onclick="saveVPEvent()">Publish to Calendar</button>
+                    <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px;cursor:pointer" onclick="document.getElementById('event-modal').remove()">Discard</button>
                 </div>
             </div>
         </div>
@@ -4064,25 +5193,49 @@ window.openVPEventModal = function () {
   document.body.insertAdjacentHTML('beforeend', m);
 }
 
+window.openEventMasterPlan = function(title) {
+  const m = `<div class="modal-overlay" id="evt-master-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+    <div class="modal" style="max-width:500px">
+      <h3>Event Master Plan: ${title}</h3>
+      <div style="margin-top:20px">
+        <div class="activity-list">
+          <div class="activity-item"><div class="activity-dot"></div><div><strong>Phase 1: Logistics & Procurement</strong><br>Stage: Completed</div></div>
+          <div class="activity-item"><div class="activity-dot" style="background:var(--color-primary)"></div><div><strong>Phase 2: Rehearsals / Setup</strong><br>Stage: In Progress</div></div>
+          <div class="activity-item"><div class="activity-dot" style="background:var(--color-text-muted)"></div><div><strong>Phase 3: Execution</strong><br>Stage: Scheduled for 09:00 AM</div></div>
+        </div>
+        <div class="card" style="margin-top:20px;background:var(--color-surface-2)">
+           <h4 style="margin-top:0">Resource Allocation</h4>
+           <p style="font-size:13px">Assigned Staff: 12<br>Budget Status: Approved<br>Equipment: Ready (Stage/Audio)</p>
+        </div>
+      </div>
+      <div style="text-align:right;margin-top:20px">
+        <button class="btn-primary" onclick="document.getElementById('evt-master-modal').remove()">Close Plan</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', m);
+};
+
 window.saveVPEvent = function () {
   const name = document.getElementById('ev-name').value;
   const dateStr = document.getElementById('ev-date').value;
-  const cat = document.getElementById('ev-cat').value;
-  if (!name || !dateStr) { alert('Please fill in both Name and Date'); return; }
+  const color = document.getElementById('ev-cat').value;
+  const desc = document.getElementById('ev-desc').value || 'Planned Institutional Activity';
   
-  simulateAction('Writing new event to institutional calendar...');
+  if (!name || !dateStr) { alert('Please provide an event name and date.'); return; }
   
-  const newEv = { title: name, date: dateStr, desc: 'Institutional Event', color: '#1976d2' };
-  let localEvents = JSON.parse(localStorage.getItem('campuscore_events') || '[]');
-  localEvents.push(newEv);
+  const newEv = { title: name, date: dateStr, desc: desc, color: color };
+  let localEvents = JSON.parse(localStorage.getItem('campuscore_events'));
+  if (!localEvents) localEvents = EVENTS;
+  
+  localEvents.unshift(newEv);
   localStorage.setItem('campuscore_events', JSON.stringify(localEvents));
 
   document.getElementById('event-modal').remove();
-  setTimeout(() => {
-    simulateAction('Event "' + name + '" successfully added!');
-    triggerLiveReRender();
-  }, 800);
-}
+  simulateAction(`"${name}" has been added to the institutional roadmap.`);
+  triggerLiveReRender();
+  navigateTo('events');
+};
 
 /* ━━━━ INSTITUTIONAL HELP & ACTIONS ━━━━━━━━━━━━━━━━━━━━━━ */
 function helpParent(ticketId, parentName) {
@@ -4163,10 +5316,18 @@ function buildRemovedBin(user) {
 }
 
 function restoreFromBin(id) {
-  simulateAction('Restoring item ' + id + ' to original module...');
   let bin = JSON.parse(localStorage.getItem('cc_removed_bin') || '[]');
   bin = bin.filter(x => x.id !== id);
   localStorage.setItem('cc_removed_bin', JSON.stringify(bin));
+
+  // Remove from exclusion lists
+  const excludedUids = JSON.parse(localStorage.getItem('campuscore_excluded_uids') || '[]');
+  localStorage.setItem('campuscore_excluded_uids', JSON.stringify(excludedUids.filter(x => x !== id)));
+
+  const excludedSids = JSON.parse(localStorage.getItem('campuscore_excluded_sids') || '[]');
+  localStorage.setItem('campuscore_excluded_sids', JSON.stringify(excludedSids.filter(x => x !== id)));
+
+  simulateAction('Restoring account ' + id + ' to institutional directory...');
   triggerLiveReRender();
 }
 

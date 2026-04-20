@@ -285,12 +285,7 @@ function buildSidebar(user) {
   nav.innerHTML = sections.map(section => `
     <div class="menu-section-label">${section.label}</div>
     ${section.items.map(item => {
-    // Force English fallback if literal corrupted nav object text is found
-    let fallbackLabel = item.label;
-    if (fallbackLabel === 'డాష్బోర్డ్' || fallbackLabel === 'డాష్‌బోర్డ్') fallbackLabel = 'Dashboard';
-
-    const lang = localStorage.getItem('cc_sys_lang') || 'English';
-    const label = (lang === 'Telugu' && TRANSLATIONS[fallbackLabel]) ? TRANSLATIONS[fallbackLabel] : fallbackLabel;
+    const label = (typeof window.t === 'function') ? window.t(item.id) : item.label;
 
     // Inject badge for messages if not already present
     let displayBadge = item.badge;
@@ -298,7 +293,7 @@ function buildSidebar(user) {
 
     return `
         <div class="menu-item">
-          <button class="menu-link" id="nav-${item.id}" onclick="navigateTo('${item.id}')" data-en-label="${fallbackLabel}">
+          <button class="menu-link" id="nav-${item.id}" onclick="navigateTo('${item.id}')" data-en-label="${item.label}">
             <span class="menu-icon"><i class="fas ${item.icon}"></i></span>
             <span class="menu-text">${label}</span>
             ${displayBadge ? `<span class="menu-badge">${displayBadge}</span>` : ''}
@@ -324,7 +319,7 @@ if (localStorage.getItem('cc_sys_lang') === 'Telugu') {
 }
 
 // ─── Navigation ─────────────────────────────────────────────
-let currentSection = 'home';
+window.currentSection = 'home';
 function navigateTo(sectionId) {
   if (sectionId === 'logout') {
     if (typeof logout === 'function') logout();
@@ -351,7 +346,7 @@ function navigateTo(sectionId) {
   const sec = document.getElementById('section-' + sectionId);
   if (sec) {
     sec.classList.add('active');
-    currentSection = sectionId;
+    window.currentSection = sectionId;
     
     // Explicitly scroll the content area to the top
     const contentArea = document.getElementById('content-area');

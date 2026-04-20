@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    VP-FIXES.JS â€” Comprehensive VP Dashboard Button Fixes
    Fixes 5-12 + re-wires Fix 1 dead alert() calls
    ============================================================ */
@@ -780,10 +780,10 @@ function vpArchiveNoticeConfirm() {
    to buttons that still use alert() or toast-only responses.
    ============================================================ */
 function rewireVPDeadButtons() {
-  if (!currentUser || currentUser.role !== 'vice_principal') return;
+  if (!currentUser || (currentUser.role !== 'vice_principal' && currentUser.role !== 'principal')) return;
 
   // --- FIX 1: Student Issues ---
-  const issueSection = document.getElementById('section-vp_student_issues') || document.getElementById('section-student_issues');
+  const issueSection = document.getElementById('section-vp_student_issues') || document.getElementById('section-student_issues') || document.getElementById('section-vp_issues');
   if (issueSection) {
     const cards = issueSection.querySelectorAll('.card');
     cards.forEach((card, idx) => {
@@ -814,7 +814,7 @@ function rewireVPDeadButtons() {
   }
 
   // --- FIX 2: Timetable Review ---
-  const scheduleSection = document.getElementById('section-vp_schedule') || document.getElementById('section-vp_timetable');
+  const scheduleSection = document.getElementById('section-vp_schedule') || document.getElementById('section-vp_timetable') || document.getElementById('section-timetable');
   if (scheduleSection) {
     // Dropdowns
     const sels = scheduleSection.querySelectorAll('select.form-control');
@@ -890,7 +890,7 @@ function rewireVPDeadButtons() {
   }
 
   // --- FIX 4: Notices ---
-  const noticeSection = document.getElementById('section-vp_notices') || document.getElementById('section-notices');
+  const noticeSection = document.getElementById('section-vp_notices') || document.getElementById('section-notices') || document.getElementById('section-announcements');
   if(noticeSection) {
       const topBtn = noticeSection.querySelector('.btn-primary');
       if(topBtn && topBtn.textContent.includes('Create')) {
@@ -944,7 +944,7 @@ function rewireVPDeadButtons() {
   }
 
   // --- FIX 5: Attendance Filter ---
-  const attSection = document.getElementById('section-vp_attendance');
+  const attSection = document.getElementById('section-vp_attendance') || document.getElementById('section-attendance_reports');
   if (attSection) {
     const applyBtn = attSection.querySelector('.btn-primary');
     if (applyBtn && applyBtn.textContent.includes('Apply')) {
@@ -998,7 +998,7 @@ function rewireVPDeadButtons() {
   }
 
   // --- FIX 9: Class Performance ---
-  const classPerfSection = document.getElementById('section-vp_class_perf') || document.getElementById('section-vp_performance');
+  const classPerfSection = document.getElementById('section-vp_class_perf') || document.getElementById('section-vp_performance') || document.getElementById('section-class_performance');
   if (classPerfSection) {
     const tbody = classPerfSection.querySelector('tbody');
     if (tbody) {
@@ -1045,7 +1045,7 @@ function rewireVPDeadButtons() {
   }
 
   // --- FIX 11: Exams ---
-  const examSection = document.getElementById('section-vp_exams');
+  const examSection = document.getElementById('section-vp_exams') || document.getElementById('section-exam_results');
   if (examSection) {
     const btns = examSection.querySelectorAll('button');
     btns.forEach(btn => {
@@ -1061,7 +1061,7 @@ function rewireVPDeadButtons() {
   }
 
   // --- FIX 12: Reports ---
-  const reportsSection = document.getElementById('section-vp_reports');
+  const reportsSection = document.getElementById('section-vp_reports') || document.getElementById('section-reports');
   if (reportsSection) {
     const btns = reportsSection.querySelectorAll('button');
     btns.forEach(btn => {

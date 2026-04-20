@@ -9,9 +9,15 @@ function attemptLogin(username, password) {
   const normalizedUsername = String(username || '').toUpperCase();
   console.log(`[AUTH] Attempting login for: ${normalizedUsername}`);
   
-  const user = DEMO_USERS.find(u => u.username.toUpperCase() === normalizedUsername);
+  let user = DEMO_USERS.find(u => u.username.toUpperCase() === normalizedUsername);
+  
   if (!user) {
-    console.warn(`[AUTH] User not found in DEMO_USERS: ${normalizedUsername}`);
+    const dynamicUsers = JSON.parse(localStorage.getItem('campuscore_dynamic_users') || '[]');
+    user = dynamicUsers.find(u => (u.username || '').toUpperCase() === normalizedUsername);
+  }
+
+  if (!user) {
+    console.warn(`[AUTH] User not found in system: ${normalizedUsername}`);
     return { success: false };
   }
 

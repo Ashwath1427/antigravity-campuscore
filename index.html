@@ -786,6 +786,16 @@
           <div class="banner-datetime" id="banner-datetime"></div>
         </div>
         <div class="banner-right">
+          <div class="lang-selector">
+             <button class="lang-btn" id="lang-menu-btn" onclick="document.getElementById('lang-dropdown').classList.toggle('hidden')">
+               <i class="fas fa-language"></i> <span id="current-lang-label">English</span>
+             </button>
+             <div class="lang-dropdown hidden" id="lang-dropdown">
+                <button onclick="changeLanguage('en'); document.getElementById('lang-dropdown').classList.add('hidden')">English</button>
+                <button onclick="changeLanguage('te'); document.getElementById('lang-dropdown').classList.add('hidden')">తెలుగు (Telugu)</button>
+                <button onclick="changeLanguage('hi'); document.getElementById('lang-dropdown').classList.add('hidden')">हिन्दी (Hindi)</button>
+             </div>
+          </div>
           <button class="search-toggle-btn" id="search-toggle" onclick="toggleSearch()"><i class="fas fa-search"
               style="color:white"></i></button>
           <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme"><span

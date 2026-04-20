@@ -3,6 +3,63 @@
    All hardcoded demo data matching DPS Nadergul prototype
    ============================================================ */
 
+/**
+ * Universal Translation Map for CampusCore
+ * Supports: English, Telugu (te), Hindi (hi)
+ */
+const TRANSLATIONS = {
+    // Nav & Section Labels
+    'home': { en: 'Home', te: 'హోమ్', hi: 'होम' },
+    'profile': { en: 'Profile', te: 'ప్రొఫైల్', hi: 'प्रोफ़ाइल' },
+    'attendance': { en: 'Attendance', te: 'హాజరు', hi: 'उपस्थिति' },
+    'students': { en: 'Students', te: 'విద్యార్థులు', hi: 'छात्र' },
+    'teachers': { en: 'Teachers', te: 'ఉపాధ్యాయులు', hi: 'शिक्षक' },
+    'schedule': { en: 'Schedule', te: 'సమయపట్టిక', hi: 'समय सारणी' },
+    'homework': { en: 'Homework', te: 'హోంవర్క్', hi: 'गृहकार्य' },
+    'results': { en: 'Results', te: 'ఫలితాలు', hi: 'परिणाम' },
+    'fees': { en: 'Fees', te: 'ఫీజులు', hi: 'फीस' },
+    'announcements': { en: 'Notices', te: 'ప్రకటనలు', hi: 'सूचनाएं' },
+    'events': { en: 'Events', te: 'ఈవెంట్స్', hi: 'कार्यक्रम' },
+    'settings': { en: 'Settings', te: 'సెట్టింగులు', hi: 'सेटिंग्स' },
+    'messages': { en: 'Messages', te: 'సందేశాలు', hi: 'संदेश' },
+    'reports': { en: 'Reports', te: 'నివేదికలు', hi: 'रिपोर्ट' },
+    'approvals': { en: 'Approvals', te: 'ఆమోదాలు', hi: 'स्वीकृति' },
+    'logout': { en: 'Logout', te: 'లాగ్అవుట్', hi: 'लॉग आउट' },
+
+    // Dashboard Banners & Greetings
+    'welcome_back': { en: 'Welcome back', te: 'మళ్ళీ స్వాగతం', hi: 'वापस स्वागत है' },
+    'quick_view': { en: "Here's a quick view of your campus today", te: 'ఈరోజు మీ క్యాంపస్ యొక్క సారాంశం ఇక్కడ ఉంది', hi: 'आज आपके कैंपस का संक्षिप्त विवरण यहां है' },
+    'school_name': { en: 'DPS Nadergul', te: 'DPS నాడెర్గుల్', hi: 'DPS नाडेरगुल' },
+
+    // Titles & Headers
+    'quick_actions': { en: 'Quick Actions', te: 'త్వరిత చర్యలు', hi: 'त्वरित कार्रवाई' },
+    'latest_notices': { en: 'Latest Announcements', te: 'తాజా ప్రకటనలు', hi: 'नवीनतम घोषणाएं' },
+    'todays_schedule': { en: "Today's Schedule", te: 'నేటి షెడ్యూల్', hi: 'आज की समय सारणी' },
+    'upcoming_events': { en: 'Upcoming Events', te: 'రాబోయే ఈవెంట్స్', hi: 'आगामी कार्यक्रम' },
+    'attendance_summary': { en: 'Attendance Summary', te: 'హాజరు సారాంశం', hi: 'उपस्थिति सारांश' },
+    'recent_activity': { en: 'Recent Activity', te: 'ఇటీవలి కార్యకలాపాలు', hi: 'हाल की गतिविधि' },
+    
+    // Buttons & Actions
+    'view_all': { en: 'View All', te: 'అన్నీ చూడండి', hi: 'सभी देखें' },
+    'add_student': { en: 'Add Student', te: 'విద్యార్థిని చేర్చు', hi: 'छात्र जोड़ें' },
+    'edit_profile': { en: 'Edit Profile', te: 'ప్రొఫైల్ మార్చు', hi: 'प्रोफ़ाइल संपादित करें' },
+    'save_changes': { en: 'Save Changes', te: 'మార్పులను సేవ్ చేయి', hi: 'परिवर्तन सहेजें' },
+    'confirm': { en: 'Confirm', te: 'నిర్ధారించు', hi: 'पुष्टि करें' },
+    'cancel': { en: 'Cancel', te: 'రద్దు చేయి', hi: 'रद्द करें' },
+    'send': { en: 'Send Message', te: 'సందేశం పంపండి', hi: 'संदेश भेजें' },
+    'apply_filter': { en: 'Apply Filter', te: 'ఫిల్టర్ వర్తింపజేయి', hi: 'फ़िल्टर लागू करें' },
+
+    // Status & Misc
+    'present': { en: 'Present', te: 'హాజరయ్యారు', hi: 'उपस्थित' },
+    'absent': { en: 'Absent', te: 'గైర్హాజరు', hi: 'अनुपस्थित' },
+    'late': { en: 'Late', te: 'ఆలస్యం', hi: 'देर से' },
+    'on_leave': { en: 'On Leave', te: 'సెలవులో', hi: 'छुट्टी पर' },
+    'active': { en: 'Active', te: 'క్రియాశీల', hi: 'सक्रिय' },
+    'pending': { en: 'Pending', te: 'పెండింగ్', hi: 'लंबित' },
+    'published': { en: 'Published', te: 'ప్రచురించబడింది', hi: 'प्रकाशित' },
+    'archived': { en: 'Archived', te: 'ఆర్కైవ్ చేయబడింది', hi: 'संग्रहित' }
+};
+
 // ─── Demo Users (Matching prototype credentials) ────────────
 const DEMO_USERS = [
   {
@@ -662,7 +719,51 @@ const DEMO_USERS = [
 // ─── Hierarchical School Data ───────────────────────────────
 window.SCHOOL_DATA = {
   classes: {
+    "10": {
+      "A": [
+        { id: "10A01", admNo: "10A01", name: "Karan Johar", class: "10", section: "A", roll: "01", gender: "Male", dob: "05 Mar 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of Karan Johar" },
+        { id: "10A02", admNo: "10A02", name: "Ananya Sharma", class: "10", section: "A", roll: "02", gender: "Female", dob: "12 Apr 2010", attendance: 98, behavior: "Excellent", fee_status: "Paid", gpa: 9.8, parent: "Parent of Ananya Sharma" },
+        { id: "10A03", admNo: "10A03", name: "Rohan Das", class: "10", section: "A", roll: "03", gender: "Male", dob: "20 May 2010", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 9.6, parent: "Parent of Rohan Das" },
+        { id: "10A04", admNo: "10A04", name: "Priya Patel", class: "10", section: "A", roll: "04", gender: "Female", dob: "15 Jun 2010", attendance: 95, behavior: "Good", fee_status: "Paid", gpa: 9.5, parent: "Parent of Priya Patel" },
+        { id: "10A05", admNo: "10A05", name: "Vikram Singh", class: "10", section: "A", roll: "05", gender: "Male", dob: "10 Jul 2010", attendance: 45, behavior: "Needs Improvement", fee_status: "Due", gpa: 6.2, parent: "Parent of Vikram Singh" }
+      ],
+      "B": [
+        { id: "10B01", admNo: "10B01", name: "Amit Kumar", class: "10", section: "B", roll: "01", gender: "Male", dob: "05 Mar 2010", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of Amit Kumar" },
+        { id: "10B02", admNo: "10B02", name: "Suresh Raina", class: "10", section: "B", roll: "02", gender: "Male", dob: "12 Apr 2010", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Suresh Raina" },
+        { id: "10B03", admNo: "10B03", name: "Meena Gupta", class: "10", section: "B", roll: "03", gender: "Female", dob: "20 May 2010", attendance: 88, behavior: "Excellent", fee_status: "Paid", gpa: 9.1, parent: "Parent of Meena Gupta" },
+        { id: "10B04", admNo: "10B04", name: "Rajesh V", class: "10", section: "B", roll: "04", gender: "Male", dob: "15 Jun 2010", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Rajesh V" },
+        { id: "10B05", admNo: "10B05", name: "Pooja Hegde", class: "10", section: "B", roll: "05", gender: "Female", dob: "10 Jul 2010", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Pooja Hegde" }
+      ],
+      "C": [
+        { id: "10C01", admNo: "10C01", name: "Rahul G.", class: "10", section: "C", roll: "01", gender: "Male", dob: "10 Jan 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of Rahul G." },
+        { id: "10C02", admNo: "10C02", name: "Sneha P.", class: "10", section: "C", roll: "02", gender: "Female", dob: "15 Feb 2010", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of Sneha P." },
+        { id: "10C03", admNo: "10C03", name: "Tariq Ali", class: "10", section: "C", roll: "03", gender: "Male", dob: "20 Mar 2010", attendance: 85, behavior: "Fair", fee_status: "Paid", gpa: 7.2, parent: "Parent of Tariq Ali" },
+        { id: "10C04", admNo: "10C04", name: "Deepa K", class: "10", section: "C", roll: "04", gender: "Female", dob: "25 Apr 2010", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.4, parent: "Parent of Deepa K" },
+        { id: "10C05", admNo: "10C05", name: "Manish R", class: "10", section: "C", roll: "05", gender: "Male", dob: "30 May 2010", attendance: 80, behavior: "Good", fee_status: "Paid", gpa: 7.0, parent: "Parent of Manish R" }
+      ],
+      "D": [
+        { id: "10D01", admNo: "10D01", name: "Simran K.", class: "10", section: "D", roll: "01", gender: "Female", dob: "05 Jun 2010", attendance: 90, behavior: "Excellent", fee_status: "Paid", gpa: 8.1, parent: "Parent of Simran K." },
+        { id: "10D02", admNo: "10D02", name: "Varun D.", class: "10", section: "D", roll: "02", gender: "Male", dob: "12 Jul 2010", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of Varun D." },
+        { id: "10D03", admNo: "10D03", name: "Kiara A.", class: "10", section: "D", roll: "03", gender: "Female", dob: "20 Aug 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Kiara A." },
+        { id: "10D04", admNo: "10D04", name: "Sid M.", class: "10", section: "D", roll: "04", gender: "Male", dob: "15 Sep 2010", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Sid M." },
+        { id: "10D05", admNo: "10D05", name: "Alia B.", class: "10", section: "D", roll: "05", gender: "Female", dob: "10 Oct 2010", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Alia B." }
+      ]
+    },
     "9": {
+      "A": [
+        { id: "9A01", admNo: "9A01", name: "Aryan K.", class: "9", section: "A", roll: "01", gender: "Male", dob: "05 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 8.4, parent: "Parent of Aryan K." },
+        { id: "9A02", admNo: "9A02", name: "Suhana S.", class: "9", section: "A", roll: "02", gender: "Female", dob: "12 Feb 2011", attendance: 93, behavior: "Excellent", fee_status: "Paid", gpa: 9.1, parent: "Parent of Suhana S." },
+        { id: "9A03", admNo: "9A03", name: "Shanaya K.", class: "9", section: "A", roll: "03", gender: "Female", dob: "20 Mar 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Shanaya K." },
+        { id: "9A04", admNo: "9A04", name: "Abram K.", class: "9", section: "A", roll: "04", gender: "Male", dob: "15 Apr 2011", attendance: 85, behavior: "Fair", fee_status: "Paid", gpa: 7.9, parent: "Parent of Abram K." },
+        { id: "9A05", admNo: "9A05", name: "Taimur P.", class: "9", section: "A", roll: "05", gender: "Male", dob: "10 May 2011", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Taimur P." }
+      ],
+      "B": [
+        { id: "9B01", admNo: "9B01", name: "Ibrahim A.", class: "9", section: "B", roll: "01", gender: "Male", dob: "05 Jun 2011", attendance: 81, behavior: "Fair", fee_status: "Paid", gpa: 7.1, parent: "Parent of Ibrahim A." },
+        { id: "9B02", admNo: "9B02", name: "Sara A.", class: "9", section: "B", roll: "02", gender: "Female", dob: "12 Jul 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of Sara A." },
+        { id: "9B03", admNo: "9B03", name: "Janhvi K.", class: "9", section: "B", roll: "03", gender: "Female", dob: "20 Aug 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Janhvi K." },
+        { id: "9B04", admNo: "9B04", name: "Khushi K.", class: "9", section: "B", roll: "04", gender: "Female", dob: "15 Sep 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Khushi K." },
+        { id: "9B05", admNo: "9B05", name: "Ishaan K.", class: "9", section: "B", roll: "05", gender: "Male", dob: "10 Oct 2011", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Ishaan K." }
+      ],
       "C": [
         { id: "3160136", admNo: "3160136", name: "PRANEETH BHUKYA", class: "9", section: "C", roll: "01", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of PRANEETH BHUKYA" },
         { id: "3160417", admNo: "3160417", name: "SATHWIK REDDY GANTA", class: "9", section: "C", roll: "02", gender: "Male", dob: "22 Feb 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of SATHWIK REDDY GANTA" },
@@ -690,18 +791,69 @@ window.SCHOOL_DATA = {
         { id: "3230719", admNo: "3230719", name: "G MANASWINI", class: "9", section: "C", roll: "24", gender: "Female", dob: "22 Nov 2012", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of G MANASWINI" },
         { id: "3170068", admNo: "3170068", name: "SHERI RITHIK REDDY", class: "9", section: "C", roll: "25", gender: "Male", dob: "30 Dec 2012", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SHERI RITHIK REDDY" },
         { id: "3220915", admNo: "3220915", name: "BHUKYA PRANAVI", class: "9", section: "C", roll: "26", gender: "Female", dob: "14 Jan 2013", attendance: 95, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of BHUKYA PRANAVI" },
-        { id: "3190133", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY", class: "9", section: "C", roll: "27", gender: "Male", dob: "22 Feb 2013", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" },
+        { id: "3190133", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY", class: "9", section: "C", roll: "27", gender: "Male", dob: "22 Feb 2013", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" }
+      ],
+      "D": [
+        { id: "9D01", admNo: "9D01", name: "Vikram R.", class: "9", section: "D", roll: "01", gender: "Male", dob: "05 Jun 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Vikram R." },
+        { id: "9D02", admNo: "9D02", name: "Nisha R.", class: "9", section: "D", roll: "02", gender: "Female", dob: "12 Jul 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of Nisha R." },
+        { id: "9D03", admNo: "9D03", name: "Aditya S.", class: "9", section: "D", roll: "03", gender: "Male", dob: "20 Aug 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Aditya S." },
+        { id: "9D04", admNo: "9D04", name: "Riya S.", class: "9", section: "D", roll: "04", gender: "Female", dob: "15 Sep 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Riya S." },
+        { id: "9D05", admNo: "9D05", name: "Kabir S.", class: "9", section: "D", roll: "05", gender: "Male", dob: "10 Oct 2011", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Kabir S." }
       ]
     },
     "8": {
+      "A": [
+        { id: "8A01", admNo: "8A01", name: "SNITHIK VENGALA", class: "8", section: "A", roll: "01", gender: "Male", dob: "05 Mar 2012", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of SNITHIK VENGALA" },
+        { id: "8A02", admNo: "8A02", name: "Mehul K.", class: "8", section: "A", roll: "02", gender: "Male", dob: "12 Apr 2012", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Mehul K." },
+        { id: "8A03", admNo: "8A03", name: "Tanvi S.", class: "8", section: "A", roll: "03", gender: "Female", dob: "20 May 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 9.1, parent: "Parent of Tanvi S." },
+        { id: "8A04", admNo: "8A04", name: "Yash R.", class: "8", section: "A", roll: "04", gender: "Male", dob: "15 Jun 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Yash R." },
+        { id: "8A05", admNo: "8A05", name: "Kriti S.", class: "8", section: "A", roll: "05", gender: "Female", dob: "10 Jul 2012", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Kriti S." }
+      ],
       "B": [
         { id: "8B01", admNo: "8B01", name: "Rahul G.", class: "8", section: "B", roll: "01", gender: "Male", dob: "10 Jan 2012", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Rahul G." },
-        { id: "8B02", admNo: "8B02", name: "Sneha P.", class: "8", section: "B", roll: "02", gender: "Female", dob: "15 Feb 2012", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 9.1, parent: "Parent of Sneha P." }
+        { id: "8B02", admNo: "8B02", name: "Sneha P.", class: "8", section: "B", roll: "02", gender: "Female", dob: "15 Feb 2012", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 9.1, parent: "Parent of Sneha P." },
+        { id: "8B03", admNo: "8B03", name: "Aman K.", class: "8", section: "B", roll: "03", gender: "Male", dob: "20 Mar 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of Aman K." },
+        { id: "8B04", admNo: "8B04", name: "Juhi C.", class: "8", section: "B", roll: "04", gender: "Female", dob: "25 Apr 2012", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.4, parent: "Parent of Juhi C." },
+        { id: "8B05", admNo: "8B05", name: "Nitin R.", class: "8", section: "B", roll: "05", gender: "Male", dob: "30 May 2012", attendance: 80, behavior: "Good", fee_status: "Paid", gpa: 7.0, parent: "Parent of Nitin R." }
+      ],
+      "C": [
+        { id: "8C01", admNo: "8C01", name: "Deepika V.", class: "8", section: "C", roll: "01", gender: "Female", dob: "05 Jun 2012", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of Deepika V." },
+        { id: "8C02", admNo: "8C02", name: "Varun K.", class: "8", section: "C", roll: "02", gender: "Male", dob: "12 Jul 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of Varun K." },
+        { id: "8C03", admNo: "8C03", name: "Kiara S.", class: "8", section: "C", roll: "03", gender: "Female", dob: "20 Aug 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Kiara S." },
+        { id: "8C04", admNo: "8C04", name: "Sid G.", class: "8", section: "C", roll: "04", gender: "Male", dob: "15 Sep 2012", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Sid G." },
+        { id: "8C05", admNo: "8C05", name: "Alia K.", class: "8", section: "C", roll: "05", gender: "Female", dob: "10 Oct 2012", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Alia K." }
       ]
     },
-    "10": {
+    "7": {
       "A": [
-        { id: "10A01", admNo: "10A01", name: "Karan Johar", class: "10", section: "A", roll: "01", gender: "Male", dob: "05 Mar 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of Karan Johar" }
+        { id: "7A01", admNo: "7A01", name: "BHUKYA PRANAVI", class: "7", section: "A", roll: "01", gender: "Female", dob: "05 Jan 2013", attendance: 96, behavior: "Excellent", fee_status: "Paid", gpa: 9.1, parent: "Parent of BHUKYA PRANAVI" },
+        { id: "7A02", admNo: "7A02", name: "Ishaan S.", class: "7", section: "A", roll: "02", gender: "Male", dob: "12 Feb 2013", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Ishaan S." },
+        { id: "7A03", admNo: "7A03", name: "Shanaya S.", class: "7", section: "A", roll: "03", gender: "Female", dob: "20 Mar 2013", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Shanaya S." },
+        { id: "7A04", admNo: "7A04", name: "Abram S.", class: "7", section: "A", roll: "04", gender: "Male", dob: "15 Apr 2013", attendance: 85, behavior: "Fair", fee_status: "Paid", gpa: 7.9, parent: "Parent of Abram S." },
+        { id: "7A05", admNo: "7A05", name: "Taimur S.", class: "7", section: "A", roll: "05", gender: "Male", dob: "10 May 2013", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Taimur S." }
+      ],
+      "B": [
+        { id: "7B01", admNo: "7B01", name: "Arjun M.", class: "7", section: "B", roll: "01", gender: "Male", dob: "05 Jun 2013", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of Arjun M." },
+        { id: "7B02", admNo: "7B02", name: "Tara B.", class: "7", section: "B", roll: "02", gender: "Female", dob: "12 Jul 2013", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of Tara B." },
+        { id: "7B03", admNo: "7B03", name: "Kabir B.", class: "7", section: "B", roll: "03", gender: "Male", dob: "20 Aug 2013", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Kabir B." },
+        { id: "7B04", admNo: "7B04", name: "Riya B.", class: "7", section: "B", roll: "04", gender: "Female", dob: "15 Sep 2013", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Riya B." },
+        { id: "7B05", admNo: "7B05", name: "Aryan B.", class: "7", section: "B", roll: "05", gender: "Male", dob: "10 Oct 2013", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Aryan B." }
+      ]
+    },
+    "6": {
+      "A": [
+        { id: "6A01", admNo: "6A01", name: "Ravi K.", class: "6", section: "A", roll: "01", gender: "Male", dob: "05 Jan 2014", attendance: 92, behavior: "Excellent", fee_status: "Paid", gpa: 8.5, parent: "Parent of Ravi K." },
+        { id: "6A02", admNo: "6A02", name: "Mehul S.", class: "6", section: "A", roll: "02", gender: "Male", dob: "12 Feb 2014", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of Mehul S." },
+        { id: "6A03", admNo: "6A03", name: "Tanvi K.", class: "6", section: "A", roll: "03", gender: "Female", dob: "20 Mar 2014", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Tanvi K." },
+        { id: "6A04", admNo: "6A04", name: "Yash S.", class: "6", section: "A", roll: "04", gender: "Male", dob: "15 Apr 2014", attendance: 85, behavior: "Fair", fee_status: "Paid", gpa: 7.5, parent: "Parent of Yash S." },
+        { id: "6A05", admNo: "6A05", name: "Kriti K.", class: "6", section: "A", roll: "05", gender: "Female", dob: "10 May 2014", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Kriti K." }
+      ],
+      "B": [
+        { id: "6B01", admNo: "6B01", name: "Tanya S.", class: "6", section: "B", roll: "01", gender: "Female", dob: "05 Jun 2014", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Tanya S." },
+        { id: "6B02", admNo: "6B02", name: "Ishaan R.", class: "6", section: "B", roll: "02", gender: "Male", dob: "12 Jul 2014", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of Ishaan R." },
+        { id: "6B03", admNo: "6B03", name: "Sara R.", class: "6", section: "B", roll: "03", gender: "Female", dob: "20 Aug 2014", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Sara R." },
+        { id: "6B04", admNo: "6B04", name: "Kabir R.", class: "6", section: "B", roll: "04", gender: "Male", dob: "15 Sep 2014", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Kabir R." },
+        { id: "6B05", admNo: "6B05", name: "Riya R.", class: "6", section: "B", roll: "05", gender: "Female", dob: "10 Oct 2014", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Riya R." }
       ]
     }
   }
@@ -714,7 +866,7 @@ let STUDENTS = Object.values(window.SCHOOL_DATA.classes).flatMap(cls =>
 STUDENTS.map(s => { s.class = s.class + '-' + s.section; return s; }); // for legacy "9-C" format if needed
 
 // ─── Teachers ────────────────────────────────────────────────
-const TEACHERS = [
+window.TEACHERS = [
   { id: "T001", name: "Prasana Reddy", subject: "Mathematics", classes: "10-A, 9-B", exp: "8 years", phone: "+91 87654 11111", status: "Active" },
   { id: "T002", name: "Ramesh Sharma", subject: "Physics", classes: "10-A, 10-B", exp: "12 years", phone: "+91 87654 22222", status: "Active" },
   { id: "T003", name: "Anita Pillai", subject: "English Literature", classes: "8-B, 9-A", exp: "6 years", phone: "+91 87654 33333", status: "On Leave" },
@@ -748,15 +900,56 @@ const WEEKLY_SCHEDULE = {
   "02:00 PM": { Mon: "Geog", Tue: "Biology", Wed: "Comp Sci", Thu: "Games", Fri: "Values" }
 };
 
-// ─── Announcements ───────────────────────────────────────────
 const ANNOUNCEMENTS = [
-  { id: 1, title: "Annual Sports Day – April 12, 2026", date: "28 Mar 2026", author: "Vice Principal", category: "Events", priority: "high" },
-  { id: 2, title: "Mid-Term Examination Schedule Released", date: "26 Mar 2026", author: "Coordinator", category: "Academic", priority: "high" },
-  { id: 3, title: "Parent-Teacher Meeting – April 5", date: "24 Mar 2026", author: "Vice Principal", category: "Meeting", priority: "medium" },
-  { id: 4, title: "Fee Payment Deadline – March 31", date: "22 Mar 2026", author: "Accounts Dept", category: "Finance", priority: "high" },
-  { id: 5, title: "Library Hours Extended for Board Students", date: "20 Mar 2026", author: "Librarian", category: "Academic", priority: "low" },
-  { id: 6, title: "School Closed on April 14 (Ambedkar Jayanti)", date: "19 Mar 2026", author: "Admin", category: "Holiday", priority: "low" },
-  { id: 7, title: "Science Exhibition Registration Open", date: "18 Mar 2026", author: "Coordinator", category: "CCA", priority: "medium" },
+  { 
+    id: 1, 
+    title: "Annual Sports Day – April 12, 2026", 
+    title_te: "వార్షిక క్రీడా దినోత్సవం – ఏప్రిల్ 12, 2026",
+    title_hi: "वार्षिक खेल दिवस – 12 अप्रैल, 2026",
+    date: "28 Mar 2026", author: "Vice Principal", category: "Events", priority: "high" 
+  },
+  { 
+    id: 2, 
+    title: "Mid-Term Examination Schedule Released", 
+    title_te: "మిడ్-టర్మ్ పరీక్షల షెడ్యూల్ విడుదలయ్యింది",
+    title_hi: "मिड-टर्म परीक्षा कार्यक्रम जारी",
+    date: "26 Mar 2026", author: "Coordinator", category: "Academic", priority: "high" 
+  },
+  { 
+    id: 3, 
+    title: "Parent-Teacher Meeting – April 5", 
+    title_te: "తల్లిదండ్రుల-ఉపాధ్యాయుల సమావేశం – ఏప్రిల్ 5",
+    title_hi: "अभिभावक-शिक्षक बैठक – 5 अप्रैल",
+    date: "24 Mar 2026", author: "Vice Principal", category: "Meeting", priority: "medium" 
+  },
+  { 
+    id: 4, 
+    title: "Fee Payment Deadline – March 31", 
+    title_te: "ఫీజు చెల్లింపు గడువు – మార్చి 31",
+    title_hi: "फीस भुगतान की समय सीमा – 31 मार्च",
+    date: "22 Mar 2026", author: "Accounts Dept", category: "Finance", priority: "high" 
+  },
+  { 
+    id: 5, 
+    title: "Library Hours Extended for Board Students", 
+    title_te: "బోర్డు విద్యార్థుల కోసం లైబ్రరీ పని వేళలు పొడిగించబడ్డాయి",
+    title_hi: "बोर्ड के छात्रों के लिए लाइब्रेरी का समय बढ़ाया गया",
+    date: "20 Mar 2026", author: "Librarian", category: "Academic", priority: "low" 
+  },
+  { 
+    id: 6, 
+    title: "School Closed on April 14 (Ambedkar Jayanti)", 
+    title_te: "ఏప్రిల్ 14న పాఠశాల సెలవు (అంబేద్కర్ జయంతి)",
+    title_hi: "14 अप्रैल को स्कूल बंद (अम्बेडकर जयंती)",
+    date: "19 Mar 2026", author: "Admin", category: "Holiday", priority: "low" 
+  },
+  { 
+    id: 7, 
+    title: "Science Exhibition Registration Open", 
+    title_te: "సైన్స్ ఎగ్జిబిషన్ రిజిస్ట్రేషన్ ప్రారంభం",
+    title_hi: "विज्ञान प्रदर्शनी पंजीकरण खुला",
+    date: "18 Mar 2026", author: "Coordinator", category: "CCA", priority: "medium" 
+  },
 ];
 
 // ─── Homework / Assignments ──────────────────────────────────
@@ -798,20 +991,104 @@ const FEE_DATA = {
 
 // ─── Events ──────────────────────────────────────────────────
 const EVENTS = [
-  { title: "Annual Sports Day", date: "Apr 12, 2026", desc: "Inter-class athletics, team sports, and prize ceremony.", color: "#5ca870" },
-  { title: "Science Exhibition", date: "Apr 18, 2026", desc: "Students showcase innovative science projects and experiments.", color: "#1976d2" },
-  { title: "Parent-Teacher Meeting", date: "Apr 5, 2026", desc: "Quarterly academic progress discussion with parents.", color: "#f57c00" },
-  { title: "Cultural Fest – Utsav 2026", date: "May 3, 2026", desc: "Annual cultural event featuring music, dance & drama.", color: "#8b5cf6" },
-  { title: "Career Guidance Workshop", date: "May 10, 2026", desc: "Expert guidance for Class 9 & 10 on career choices.", color: "#00bcd4" },
-  { title: "Summer Vacation Begins", date: "May 20, 2026", desc: "School closes for summer break 2026.", color: "#e53935" },
+  { 
+    title: "Annual Sports Day", 
+    title_te: "వార్షిక క్రీడా దినోత్సవం",
+    title_hi: "वार्षिक खेल दिवस",
+    date: "Apr 12, 2026", 
+    desc: "Inter-class athletics, team sports, and prize ceremony.", 
+    desc_te: "తరగతుల మధ్య అథ్లెటిక్స్, జట్టు క్రీడలు మరియు బహుమతి ప్రదానోత్సవం.",
+    desc_hi: "अंतर-कक्षा एथलेटिक्स, टीम खेल और पुरस्कार समारोह।",
+    color: "#5ca870" 
+  },
+  { 
+    title: "Science Exhibition", 
+    title_te: "సైన్స్ ఎగ్జిబిషన్",
+    title_hi: "विज्ञान प्रदर्शनी",
+    date: "Apr 18, 2026", 
+    desc: "Students showcase innovative science projects and experiments.", 
+    desc_te: "విద్యార్థులు వినూత్న సైన్స్ ప్రాజెక్టులు మరియు ప్రయోగాలను ప్రదర్శిస్తారు.",
+    desc_hi: "छात्र अभिनव विज्ञान परियोजनाओं और प्रयोगों का प्रदर्शन करते हैं।",
+    color: "#1976d2" 
+  },
+  { 
+    title: "Parent-Teacher Meeting", 
+    title_te: "తల్లిదండ్రుల-ఉపాధ్యాయుల సమావేశం",
+    title_hi: "अभिभावक-शिक्षक बैठक",
+    date: "Apr 5, 2026", 
+    desc: "Quarterly academic progress discussion with parents.", 
+    desc_te: "తల్లిదండ్రులతో త్రైమాసిక విద్యా పురోగతి చర్చ.",
+    desc_hi: "अभिभावकों के साथ त्रैमासिक शैक्षणिक प्रगति चर्चा।",
+    color: "#f57c00" 
+  },
+  { 
+    title: "Cultural Fest – Utsav 2026", 
+    title_te: "సాంస్కృతిక ఉత్సవం – ఉత్సవ్ 2026",
+    title_hi: "सांस्कृतिक उत्सव – उत्सव 2026",
+    date: "May 3, 2026", 
+    desc: "Annual cultural event featuring music, dance & drama.", 
+    desc_te: "సంగీతం, నృత్యం మరియు నాటకాలతో కూడిన వార్షిక సాంస్కృతిక కార్యక్రమం.",
+    desc_hi: "संगीत, नृत्य और नाटक की विशेषता वाला वार्षिक सांस्कृतिक कार्यक्रम।",
+    color: "#8b5cf6" 
+  },
+  { 
+    title: "Career Guidance Workshop", 
+    title_te: "కెరీర్ గైడెన్స్ వర్క్‌షాప్",
+    title_hi: "कैरियर मार्गदर्शन कार्यशाला",
+    date: "May 10, 2026", 
+    desc: "Expert guidance for Class 9 & 10 on career choices.", 
+    desc_te: "కెరీర్ ఎంపికలపై 9 మరియు 10 తరగతుల విద్యార్థులకు నిపుణుల మార్గదర్శకత్వం.",
+    desc_hi: "कैरियर विकल्पों पर कक्षा 9 और 10 के लिए विशेषज्ञ मार्गदर्शन।",
+    color: "#00bcd4" 
+  },
+  { 
+    title: "Summer Vacation Begins", 
+    title_te: "వేసవి సెలవుల ప్రారంభం",
+    title_hi: "गर्मी की छुट्टियां शुरू",
+    date: "May 20, 2026", 
+    desc: "School closes for summer break 2026.", 
+    desc_te: "2026 వేసవి సెలవుల కోసం పాఠశాల మూసివేయబడుతుంది.",
+    desc_hi: "स्कूल 2026 की गर्मियों की छुट्टियों के लिए बंद होगा।",
+    color: "#e53935" 
+  },
+  { 
+    title: "Mega PTM - Term 3", 
+    title_te: "మెగా పి.టి.ఎం - టర్మ్ 3",
+    title_hi: "मेगा पीटीएम - टर्म 3",
+    date: "April 28, 2026", 
+    desc: "Interactive session for student progress review.", 
+    desc_te: "విద్యార్థి పురోగతి సమీక్ష కోసం ఇంటరాక్టివ్ సెషన్.",
+    desc_hi: "छात्र प्रगति समीक्षा के लिए इंटरैक्टिव सत्र।",
+    color: "#8b5cf6" 
+  },
+  { 
+    title: "Inter-House Sports Meet", 
+    title_te: "ఇంటర్-హౌస్ స్పోర్ట్స్ మీట్",
+    title_hi: "इंटर-हाउस स्पोर्ट्स मीट",
+    date: "May 5, 2026", 
+    desc: "Annual sports finals for all houses.", 
+    desc_te: "అన్ని హౌస్‌ల వార్షిక క్రీడల ఫైనల్స్.",
+    desc_hi: "सभी हाउसों के लिए वार्षिक खेल फाइनल।",
+    color: "#5ca870" 
+  },
+  { 
+    title: "Library Digitization Drive", 
+    title_te: "లైబ్రరీ డిజిటలైజేషన్ డ్రైవ్",
+    title_hi: "लाइब्रेरी डिजिटलीकरण अभियान",
+    date: "April 25, 2026", 
+    desc: "New e-book resources now available in portal.", 
+    desc_te: "కొత్త ఇ-బుక్ వనరులు ఇప్పుడు పోర్టల్‌లో అందుబాటులో ఉన్నాయి.",
+    desc_hi: "नए ई-बुक संसाधन अब पोर्टल में उपलब्ध हैं।",
+    color: "#f57c00" 
+  },
 ];
 
 // ─── Attendance Data ─────────────────────────────────────────
 const ATTENDANCE_SUMMARY = {
-  total_students: 540,
-  present_today: 496,
-  absent_today: 36,
-  late_today: 8,
+  total_students: 27,
+  present_today: 23,
+  absent_today: 3,
+  late_today: 1,
   weekly: [
     { day: "Mon", present: 92, total: 100 },
     { day: "Tue", present: 88, total: 100 },
@@ -874,7 +1151,8 @@ const ROLE_NAV = {
       ]
     },
     {
-      label: "Account", items: [
+      label: "System", items: [
+        { id: "registration", icon: "fa-user-plus", label: "User Registration" },
         { id: "settings", icon: "fa-cog", label: "Settings" },
       ]
     },
@@ -1012,6 +1290,11 @@ const ROLE_NAV = {
         { id: "events", icon: "fa-calendar-star", label: "Events" },
         { id: "messages", icon: "fa-envelope", label: "Messages", badge: "3" },
         { id: "helpdesk_staff", icon: "fa-headset", label: "Helpdesk Tickets" },
+      ]
+    },
+    {
+      label: "System Management", items: [
+        { id: "registration", icon: "fa-user-plus", label: "User Registration" },
         { id: "settings", icon: "fa-cog", label: "Settings" },
       ]
     },
@@ -1039,6 +1322,11 @@ const ROLE_NAV = {
         { id: "all_results", icon: "fa-file-signature", label: "All Results" },
         { id: "all_messages", icon: "fa-envelope", label: "All Messages" },
         { id: "all_helpdesk", icon: "fa-headset", label: "Full Helpdesk" },
+      ]
+    },
+    {
+      label: "System & Governance", items: [
+        { id: "registration", icon: "fa-user-plus", label: "User Registration" },
         { id: "settings", icon: "fa-cog", label: "Settings" },
       ]
     },
@@ -1145,6 +1433,13 @@ const VP_APPROVALS = [
   { id: "AP03", type: "Event Fund", desc: "₹15,000 for Science Exhibition materials", date: "Yesterday", status: "Pending" },
   { id: "AP04", type: "Result Release", desc: "Release Mid-Term results for Class 8-B", date: "Yesterday", status: "Approved" },
   { id: "AP05", type: "Notice Draft", desc: "Summer Vacation Schedule Review", date: "2 Days Ago", status: "Pending" },
+  { id: "AP06", type: "Procurement", desc: "Digital Podium purchase for Auditorium", date: "3 Days Ago", status: "Pending" },
+  { id: "AP07", type: "Staff Request", desc: "Work-from-home (Grading Day) - Ramesh Sharma", date: "4 Days Ago", status: "Pending" },
+  { id: "AP08", type: "Fee Waiver", desc: "Siddharth (9-C) - 20% scholarship application", date: "5 Days Ago", status: "Pending" },
+  { id: "AP09", type: "Field Trip", desc: "Authorization for Planetarium Visit (Class 9)", date: "Today", status: "Approved" },
+  { id: "AP10", type: "Security Patch", desc: "CCTV maintenance & vendor contract renewal", date: "Yesterday", status: "Pending" },
+  { id: "AP11", type: "ICT Upgrade", desc: "50 New high-end workstations for Lab 1", date: "1 Week Ago", status: "Approved" },
+  { id: "AP12", type: "Resource Hire", desc: "Contract for Part-time Drama Instructor", date: "Today", status: "Pending" },
 ];
 
 const VP_MESSAGES = [
@@ -1164,12 +1459,18 @@ const CLASS_PERFORMANCE = [
   { class: "10-A", teacher: "Prasana Reddy", avgAtt: 95, avgGPA: 8.9, topper: "PRANEETH BHUKYA", weak: 1, issues: 1 },
   { class: "10-B", teacher: "Ramesh Sharma", avgAtt: 92, avgGPA: 8.2, topper: "Karan Johar", weak: 3, issues: 0 },
   { class: "10-C", teacher: "Mohan Das", avgAtt: 88, avgGPA: 7.6, topper: "Rahul G.", weak: 5, issues: 2 },
+  { class: "10-D", teacher: "Aruna", avgAtt: 90, avgGPA: 8.1, topper: "Simran K.", weak: 2, issues: 1 },
   { class: "9-A", teacher: "Anita Pillai", avgAtt: 91, avgGPA: 8.4, topper: "Sneha P.", weak: 2, issues: 0 },
   { class: "9-B", teacher: "Venkat Iyer", avgAtt: 81, avgGPA: 7.1, topper: "KASULA ASHWATH", weak: 7, issues: 3 },
+  { class: "9-C", teacher: "Prasana Reddy", avgAtt: 94, avgGPA: 8.7, topper: "SATHWIK REDDY GANTA", weak: 1, issues: 1 },
+  { class: "9-D", teacher: "Sunita Verma", avgAtt: 87, avgGPA: 7.9, topper: "Vikram R.", weak: 4, issues: 2 },
   { class: "8-A", teacher: "Sunita Verma", avgAtt: 93, avgGPA: 8.0, topper: "SNITHIK VENGALA", weak: 2, issues: 1 },
   { class: "8-B", teacher: "Pooja Mehta", avgAtt: 85, avgGPA: 7.4, topper: "G MANASWINI", weak: 4, issues: 2 },
+  { class: "8-C", teacher: "Ramesh Sharma", avgAtt: 89, avgGPA: 7.8, topper: "Deepika V.", weak: 3, issues: 0 },
   { class: "7-A", teacher: "Suresh Naidu", avgAtt: 96, avgGPA: 9.1, topper: "BHUKYA PRANAVI", weak: 0, issues: 0 },
+  { class: "7-B", teacher: "Anita Pillai", avgAtt: 90, avgGPA: 8.2, topper: "Arjun M.", weak: 2, issues: 1 },
   { class: "6-A", teacher: "Prasana Reddy", avgAtt: 92, avgGPA: 8.5, topper: "Ravi K.", weak: 1, issues: 0 },
+  { class: "6-B", teacher: "Venkat Iyer", avgAtt: 88, avgGPA: 7.9, topper: "Tanya S.", weak: 3, issues: 2 },
 ];
 
 // ─── Parent Specific Mock Data ───────────────────────────────
@@ -1217,15 +1518,17 @@ const PARENT_HOMEWORK = [
   { subject: "English", title: "Essay – My Future Goals", due: "25 Mar 2026", teacher: "Anita Pillai", status: "Completed" },
   { subject: "History", title: "Timeline of Indian Independence", due: "5 Apr 2026", teacher: "Sunita Verma", status: "Pending" },
   { subject: "Comp. Sci", title: "Python Basics – Program Set 1", due: "10 Apr 2026", teacher: "Venkat Iyer", status: "Not Started" },
+  { subject: "Geography", title: "Map Pointing – South America", due: "15 Apr 2026", teacher: "Anitha (Coord)", status: "Pending" },
+  { subject: "Fine Arts", title: "Landscape Sketching", due: "22 Apr 2026", teacher: "Aruna", status: "In Progress" },
 ];
 
 const PARENT_EXAMS = [
-  { exam: "Mid-Term Examination", subject: "Mathematics", date: "14 Apr 2026", time: "9:00 AM – 12:00 PM", room: "Hall A" },
-  { exam: "Mid-Term Examination", subject: "Physics", date: "16 Apr 2026", time: "9:00 AM – 12:00 PM", room: "Hall B" },
-  { exam: "Mid-Term Examination", subject: "Chemistry", date: "18 Apr 2026", time: "9:00 AM – 12:00 PM", room: "Chem Lab" },
-  { exam: "Mid-Term Examination", subject: "English", date: "20 Apr 2026", time: "9:00 AM – 11:30 AM", room: "Hall A" },
-  { exam: "Mid-Term Examination", subject: "History", date: "22 Apr 2026", time: "9:00 AM – 11:30 AM", room: "Room 305" },
-  { exam: "Mid-Term Examination", subject: "Computer Science", date: "24 Apr 2026", time: "9:00 AM – 11:00 AM", room: "Comp Lab" },
+  { exam: "Final Evaluation (2026)", subject: "Mathematics", date: "14 May 2026", time: "9:00 AM – 12:00 PM", room: "Hall A" },
+  { exam: "Final Evaluation (2026)", subject: "Physics", date: "16 May 2026", time: "9:00 AM – 12:00 PM", room: "Hall B" },
+  { exam: "Final Evaluation (2026)", subject: "Chemistry", date: "18 May 2026", time: "9:00 AM – 12:00 PM", room: "Chem Lab" },
+  { exam: "Final Evaluation (2026)", subject: "English", date: "20 May 2026", time: "9:00 AM – 11:30 AM", room: "Hall A" },
+  { exam: "Final Evaluation (2026)", subject: "History", date: "22 May 2026", time: "9:00 AM – 11:30 AM", room: "Room 305" },
+  { exam: "Final Evaluation (2026)", subject: "Computer Science", date: "24 May 2026", time: "0:00 AM – 11:00 AM", room: "Comp Lab" },
 ];
 
 const PARENT_RESULTS = {
@@ -1376,6 +1679,53 @@ const DEFAULT_GLOBAL_ISSUES = [
       { date: "2026-03-29T11:00:00Z", actor: "Anitha", role: "Coordinator", note: "Reported altercation during PE. Immediate VP attention required." },
       { date: "2026-03-29T11:05:00Z", actor: "System", role: "System", note: "Escalated to VP" }
     ]
+  },
+  {
+    id: "ISS-1003",
+    title: "Projector failure in ICT Lab 2",
+    desc: "The main interactive projector in Lab 2 has blurred output. Practical sessions are being disrupted.",
+    status: "Open",
+    stage: "Teacher",
+    studentId: "ALL",
+    studentName: "ICT Resources",
+    class: "Multiple",
+    reporterId: "T001",
+    reporterName: "Venkat Iyer",
+    reporterRole: "Teacher",
+    category: "Facilities",
+    priority: "High",
+    severity: "Normal",
+    assignedTo: "ICT Dept",
+    attachments: [],
+    created: "2026-04-18T09:00:00Z",
+    updated: "2026-04-18T09:00:00Z",
+    timeline: [
+      { date: "2026-04-18T09:00:00Z", actor: "Venkat Iyer", role: "Teacher", note: "Issue logged during 1st period." }
+    ]
+  },
+  {
+    id: "ISS-1004",
+    title: "Bullying concern - Playground",
+    desc: "Parent reported that student was teased during lunch break regarding their academic performance.",
+    status: "Reviewing",
+    stage: "VP",
+    studentId: "3230719",
+    studentName: "G MANASWINI",
+    class: "9-C",
+    reporterId: "P3230719A",
+    reporterName: "Parent of G MANASWINI",
+    reporterRole: "Parent",
+    category: "Discipline",
+    priority: "High",
+    severity: "Critical",
+    assignedTo: "VP Suman",
+    attachments: [],
+    created: "2026-04-19T16:20:00Z",
+    updated: "2026-04-20T08:45:00Z",
+    timeline: [
+      { date: "2026-04-19T16:20:00Z", actor: "Parent of G MANASWINI", role: "Parent", note: "Concern submitted via mobile portal." },
+      { date: "2026-04-20T08:45:00Z", actor: "VP Suman", role: "VP", note: "Checking CCTV logs and interviewing floor supervisors." }
+    ]
   }
 ];
 
@@ -1435,9 +1785,55 @@ function initDataStore() {
   }
   if (!localStorage.getItem('campuscore_helpdesk_tickets')) {
     localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify([
-      { id: 'TKT-101', studentName: 'KASULA ASHWATH', subject: 'Library Book Missing', status: 'Open', priority: 'Medium', lastUpdate: '2026-04-09', assignedTo: 'Librarian' }
+      { id: 'TKT-101', studentName: 'KASULA ASHWATH', subject: 'Library Book Missing', status: 'Open', priority: 'Medium', lastUpdate: '2026-04-09', assignedTo: 'Librarian' },
+      { id: 'TKT-102', studentName: 'PRANEETH BHUKYA', subject: 'Login Issue', status: 'Open', priority: 'High', lastUpdate: '2026-04-10', assignedTo: 'IT Dept' },
+      { id: 'TKT-103', studentName: 'G MANASWINI', subject: 'Transport Fee Query', status: 'Open', priority: 'Low', lastUpdate: '2026-04-11', assignedTo: 'Accounts' }
     ]));
   }
+  window.HELPDESK_TICKETS = [
+    { id: 'TKT-101', studentName: 'KASULA ASHWATH', subject: 'Library Book Missing', status: 'Open', priority: 'Medium', lastUpdate: '2026-04-09', assignedTo: 'Librarian' },
+    { id: 'TKT-102', studentName: 'PRANEETH BHUKYA', subject: 'Login Issue', status: 'Open', priority: 'High', lastUpdate: '2026-04-10', assignedTo: 'IT Dept' },
+    { id: 'TKT-103', studentName: 'G MANASWINI', subject: 'Transport Fee Query', status: 'Open', priority: 'Low', lastUpdate: '2026-04-11', assignedTo: 'Accounts' }
+  ];
+
+  // --- UNIVERSAL STUDENT DATA SEEDING ---
+  // Ensure all 27 students have a "rich" profile by default
+  const allStudents = (Array.isArray(STUDENTS) ? STUDENTS : []);
+  allStudents.forEach(s => {
+    const key = 'campuscore_student_data_' + s.id;
+    if (!localStorage.getItem(key)) {
+      const demoData = {
+        homework: JSON.parse(JSON.stringify(PARENT_HOMEWORK)),
+        exams: JSON.parse(JSON.stringify(PARENT_EXAMS)),
+        results: JSON.parse(JSON.stringify(PARENT_RESULTS)),
+        fees: {
+          total: 85000,
+          paid: 75000,
+          pending: 10000,
+          next_due: "05 Apr 2026",
+          breakdown: [
+            { label: "Tuition Fee (Q3)", amount: 30000, status: "Paid" },
+            { label: "Transport Fee (Q3)", amount: 5000, status: "Paid" },
+            { label: "Tuition Fee (Q4)", amount: 10000, status: "Pending" }
+          ],
+          history: [
+            { id: "TXN-" + Math.floor(100000 + Math.random() * 900000), date: "15 Mar 2026", method: "Online", amount: 35000, status: "Success", receipt: "RCPT-" + Math.floor(1000 + Math.random() * 9000) }
+          ]
+        },
+        messages: [
+          { id: 'M1', sender: "Anita Pillai (Teacher)", subject: "Welcome to New Session", ts: "1 Week Ago", body: "Welcome to class! Please ensure you have all textbooks ready by Monday.", unread: false },
+          { id: 'M2', sender: "Accounts Office", subject: "Term 4 Fee Invoice", ts: "Yesterday", body: "The fee invoice for the final quarter has been generated. Please check the fees section.", unread: true }
+        ],
+        attendance_logs: [
+          { date: "15 Apr 2026", status: "Present" },
+          { date: "14 Apr 2026", status: "Present" },
+          { date: "13 Apr 2026", status: "Late" }
+        ],
+        attendancePct: Math.floor(Math.random() * (98 - 85 + 1)) + 85
+      };
+      localStorage.setItem(key, JSON.stringify(demoData));
+    }
+  });
 }
 
 function saveStudents() {
@@ -1469,5 +1865,23 @@ function saveSettings(userId, settingsObj) {
   allSet[userId] = settingsObj;
   localStorage.setItem('campuscore_settings', JSON.stringify(allSet));
 }
+
+window.registerDynamicUser = function(userData) {
+  const users = JSON.parse(localStorage.getItem('campuscore_dynamic_users') || '[]');
+  users.push(userData);
+  localStorage.setItem('campuscore_dynamic_users', JSON.stringify(users));
+  console.log(`[DATA] Registered dynamic user: ${userData.username}`);
+};
+
+window.getUnifiedAccounts = function() {
+  const dynamicUsers = JSON.parse(localStorage.getItem('campuscore_dynamic_users') || '[]');
+  const excludedUids = JSON.parse(localStorage.getItem('campuscore_excluded_uids') || '[]');
+  
+  // Merge Demo and Dynamic
+  let all = [...DEMO_USERS, ...dynamicUsers];
+  
+  // Filter out excluded (deleted)
+  return all.filter(u => !excludedUids.includes(u.username) && !excludedUids.includes(u.id));
+};
 
 initDataStore();

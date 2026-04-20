@@ -31,6 +31,13 @@ window.CAMPUSCORE_REGISTRY = {
         '3240693','3250112','3260066','3230719','3170068',
         '3220915','3190133'
       ];
+      // Append dynamic IDs
+      const dynamicIds = JSON.parse(localStorage.getItem('campuscore_dynamic_student_ids') || '[]');
+      ids = [...new Set([...ids, ...dynamicIds])];
+
+      // Filter out excluded (deleted) students
+      const excludedSids = JSON.parse(localStorage.getItem('campuscore_excluded_sids') || '[]');
+      ids = ids.filter(id => !excludedSids.includes(id));
     }
 
     return ids.map(id => {
