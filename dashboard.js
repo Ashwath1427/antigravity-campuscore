@@ -44,8 +44,8 @@ function safeRender(name, builderFunc, user) {
  */
 window.t = function(key) {
   const lang = localStorage.getItem('cc_sys_lang') || 'en';
-  if (!TRANSLATIONS[key]) return key;
-  return TRANSLATIONS[key][lang] || TRANSLATIONS[key]['en'];
+  if (!window.CORE_TRANSLATIONS || !window.CORE_TRANSLATIONS[key]) return key;
+  return window.CORE_TRANSLATIONS[key][lang] || window.CORE_TRANSLATIONS[key]['en'];
 };
 
 window.changeLanguage = function(lang) {

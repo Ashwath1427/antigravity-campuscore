@@ -387,7 +387,7 @@ function gradeColor(g) {
   if (g === 'B' || g === 'B-') return '#f57c00';
   return '#d32f2f';
 }
-const TRANSLATIONS = {
+const UI_TRANSLATIONS = {
   'Dashboard': 'డాష్బోర్డ్',
   'Fees': 'ఫీజులు',
   'Notices': 'నోటీసులు',
@@ -445,15 +445,15 @@ function applyLanguage() {
     const textNode = link.querySelector('.menu-text');
     const enLabel = link.getAttribute('data-en-label');
     if (textNode && enLabel) {
-      textNode.textContent = (isTelugu && TRANSLATIONS[enLabel]) ? TRANSLATIONS[enLabel] : enLabel;
+      textNode.textContent = (isTelugu && UI_TRANSLATIONS[enLabel]) ? UI_TRANSLATIONS[enLabel] : enLabel;
     }
   });
 
   // 2. Section Headers
   document.querySelectorAll('.menu-section-label, h2, h3').forEach(el => {
     const txt = el.textContent.trim();
-    if (isTelugu && TRANSLATIONS[txt]) {
-      el.textContent = TRANSLATIONS[txt];
+    if (isTelugu && UI_TRANSLATIONS[txt]) {
+      el.textContent = UI_TRANSLATIONS[txt];
     }
   });
 
@@ -473,8 +473,8 @@ function applyLanguage() {
     let node;
     while (node = walker.nextNode()) {
       const txt = node.nodeValue.trim();
-      if (TRANSLATIONS[txt]) {
-        node.nodeValue = TRANSLATIONS[txt];
+      if (UI_TRANSLATIONS[txt]) {
+        node.nodeValue = UI_TRANSLATIONS[txt];
       }
     }
   }

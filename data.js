@@ -7,7 +7,7 @@
  * Universal Translation Map for CampusCore
  * Supports: English, Telugu (te), Hindi (hi)
  */
-const TRANSLATIONS = {
+window.CORE_TRANSLATIONS = {
     // Nav & Section Labels
     'home': { en: 'Home', te: 'హోమ్', hi: 'होम' },
     'profile': { en: 'Profile', te: 'ప్రొఫైల్', hi: 'प्रोफ़ाइल' },
