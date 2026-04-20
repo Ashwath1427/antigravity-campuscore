@@ -4,7 +4,7 @@
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadTheme();
+  if (typeof loadTheme === 'function') loadTheme();
   setupSidebar();
   setupLoginForm();
   updateDateTime();

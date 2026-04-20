@@ -749,7 +749,7 @@ if (!window.TRANSLATIONS) {
         }
     };
 }
-const TRANSLATIONS = window.TRANSLATIONS;
+// Reference the shared translation dictionary directly to avoid duplicate declaration errors
 
 const _origApplyLang = window.applyLanguage;
 window.applyLanguage = function () {
@@ -759,7 +759,7 @@ window.applyLanguage = function () {
         return;
     }
 
-    const dict = TRANSLATIONS[lang];
+    const dict = window.TRANSLATIONS[lang];
     if (!dict) return;
 
     // Brute force DOM replace of specific strings since they aren't marked
