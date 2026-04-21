@@ -60,11 +60,18 @@ window.changeLanguage = function(lang) {
   triggerLiveReRender();
 };
 
-window.triggerLiveReRender = function () {
+window.triggerLiveReRender = function (targetSection = null) {
   if (window.currentUser) {
     buildDashboard(window.currentUser);
     // Explicitly re-apply sidebar as well to update menu tokens
     buildSidebar(window.currentUser);
+    
+    // Recovery: navigate back to where we wanted to go
+    if (targetSection) {
+      setTimeout(() => {
+        if (typeof navigateTo === 'function') navigateTo(targetSection);
+      }, 50);
+    }
   }
 };
 
@@ -183,11 +190,6 @@ function buildDashboard(user) {
     ].join('');
   }
 
-  // Restore current section visibility after re-render
-  if (window.navigateTo && window.currentSection) {
-    console.log(`[CampusCore] Restoring section state: ${window.currentSection}`);
-    window.navigateTo(window.currentSection);
-  }
 }
 
 function renderWithRoleContext(user, targetRole, renderFn) {
@@ -225,11 +227,20 @@ function buildHome(user) {
   // STATS POPULATION LOGIC
   // For VP/Admin, we use specific counts. For others, use defaults.
   if (user.role === 'vice_principal') {
+    const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: '...', present: '...', absent: '...', late: '...' };
     calculatedStats = [
-      { label: "Active Escalations", value: "...", icon: "🚨", id: "stat-escalations" },
-      { label: "Total Open Issues", value: "...", icon: "📋", id: "stat-open-issues" },
-      { label: "Low Att. Alerts", value: "...", icon: "⚠️", id: "stat-low-att" },
+      { label: "Institutional Present", value: stats.present, icon: "✅", id: "stat-present" },
+      { label: "Absent Today", value: stats.absent, icon: "❌", id: "stat-absent" },
+      { label: "Total Students", value: stats.total, icon: "🎓", id: "stat-total-students" },
       { label: "Pending Approvals", value: "...", icon: "⏱️", id: "stat-approvals" }
+    ];
+  } else if (user.role === 'apaaas' || user.role === 'principal') {
+    const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: '...', present: '...', absent: '...', late: '...' };
+    calculatedStats = [
+      { label: "Overall Attendance", value: stats.present + '/' + stats.total, icon: "📋", id: "stat-institutional-att" },
+      { label: "Low Att. Alerts", value: "3", icon: "⚠️", id: "stat-low-att" },
+      { label: "System Uptime", value: "99.9%", icon: "⚡", id: "stat-uptime" },
+      { label: "Active Notices", value: "12", icon: "📢", id: "stat-notices" }
     ];
   } else if (user.role === 'teacher') {
     calculatedStats = [
@@ -4418,31 +4429,21 @@ window.executeRegistration = function(type) {
 };
 
 window.downloadStudentBulkTemplate = function() {
-  const headers = "Name,Class,Section,RollNo,ParentName,Username,Password\n";
-  const blob = new Blob([headers], { type: 'text/csv' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.setAttribute('hidden', '');
-  a.setAttribute('href', url);
-  a.setAttribute('download', 'student_bulk_upload_template.csv');
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  simulateAction('Template downloaded: student_bulk_upload_template.csv');
+  if (window.BulkUploadProcessor) {
+    BulkUploadProcessor.downloadStudentTemplate();
+  } else {
+    simulateAction("Error: Bulk processor not loaded.");
+  }
 };
 
 window.handleBulkStudentUpload = function(event) {
   const file = event.target.files[0];
   if (!file) return;
-
-  simulateAction('Reading file: ' + file.name + '...');
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result;
-    window.processBulkStudentData(text);
-  };
-  reader.readAsText(file);
+  if (window.BulkUploadProcessor) {
+    BulkUploadProcessor.processStudents(file);
+  } else {
+    simulateAction("Error: Bulk processor not loaded.");
+  }
 };
 
 window.processBulkStudentData = function(csvText) {
@@ -4805,14 +4806,7 @@ function submitEscalation(id) {
 
 // Consolidated in window.openApprovalCommentModal below
 
-function approveApprovalItem(id) {
-  simulateAction('Request ' + id + ' approved.');
-  triggerLiveReRender();
-}
-function rejectApprovalItem(id) {
-  simulateAction('Request ' + id + ' rejected.');
-  triggerLiveReRender();
-}
+// Approvals logic (Consolidated at the end of file)
 
 // Removed duplicate buildAllAccounts block. Main component relies on the secure filtering version defined higher up.
 
@@ -5402,38 +5396,43 @@ async function initDashboardLiveStats(user) {
 
 async function fetchGlobalCounts() {
   try {
-    const { count: studentCount } = await window.supabaseClient.from('students').select('*', { count: 'exact', head: true });
+    const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: 0, present: 0, absent: 0, late: 0 };
     const { count: teacherCount } = await window.supabaseClient.from('teachers').select('*', { count: 'exact', head: true });
     
-    // Update generic stats if they are skeletons
-    updateStat('stat-generic-0', studentCount || '540+');
+    // Update generic stats (Principal/Admin fallback)
+    updateStat('stat-generic-0', stats.total || '...');
     updateStat('stat-generic-1', teacherCount || '32');
+    updateStat('stat-institutional-att', (stats.present || 0) + '/' + (stats.total || 0));
     
-    // Attempt to fill other generic stats from local context if possible
     const user = window.currentUser;
     if (user && (user.role === 'student' || user.role === 'parent')) {
       const sid = (user.role === 'parent' && window.getParentSid) ? window.getParentSid(user) : (user.childId || user.id);
       const data = window.getStudentSharedData ? window.getStudentSharedData(sid) : null;
       if (data) {
-         updateStat('stat-generic-0', data.attendancePct + '%');
-         updateStat('stat-generic-1', (data.results ? data.results.overall : 0) + '%');
-         updateStat('stat-generic-2', (data.homework ? data.homework.filter(h=>h.status==='Pending').length : 0));
-         updateStat('stat-generic-3', (data.exams ? data.exams.length : 0));
+         updateStat('p-stat-att', data.attendancePct + '%');
+         updateStat('p-stat-gpa', (data.results ? data.results.overall : 0) + '%');
+         updateStat('p-stat-hw', (data.homework ? data.homework.filter(h=>h.status==='Pending').length : 0));
+         updateStat('p-stat-exams', (data.exams ? data.exams.length : 0));
       }
     }
+    console.log('[CampusCore] Global stats synchronized with Institutional Registry');
   } catch (e) { console.error('[CampusCore] Error:', e); }
 }
 
 async function fetchVPStats() {
   try {
-    const { count: totalStudents } = await window.supabaseClient.from('students').select('*', { count: 'exact', head: true });
+    const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: 0, present: 0, absent: 0, late: 0 };
     const { count: openIssues } = await window.supabaseClient.from('issues').select('*', { count: 'exact', head: true }).eq('status', 'Open');
-    const { count: lowAtt } = await window.supabaseClient.from('students').select('*', { count: 'exact', head: true }).lt('attendance_pct', 85);
-    updateStat('stat-escalations', '2');
-    updateStat('stat-open-issues', openIssues || '0');
-    updateStat('stat-low-att', lowAtt || '0');
+    
+    updateStat('stat-present', stats.present || '0');
+    updateStat('stat-absent', stats.absent || '0');
+    updateStat('stat-total-students', stats.total || '0');
     updateStat('stat-approvals', '5');
-    console.log('[CampusCore] Loaded VP stats from Supabase');
+    
+    // Principal/Admin sync
+    updateStat('stat-institutional-att', (stats.present || 0) + '/' + (stats.total || 0));
+    
+    console.log('[CampusCore] Syncing VP/Admin stats with Institutional Registry');
   } catch (e) { console.error('[CampusCore] Error:', e); }
 }
 

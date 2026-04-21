@@ -629,9 +629,19 @@
   display: none;
   animation: fadeUp 0.35s ease;
   width: 100%;
+  padding-bottom: 40px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
 }
 .dash-section.active { 
   display: block; 
+}
+ .dash-section::-webkit-scrollbar {
+  width: 6px;
+}
+.dash-section::-webkit-scrollbar-thumb {
+  background: rgba(92, 168, 112, 0.2);
+  border-radius: 10px;
 }
 
 /* ---------- Content Layout Grids ---------- */

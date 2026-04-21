@@ -391,21 +391,9 @@ window.wfmSuspend = function (name) {
 };
 
 // ---------------------------------------------------------
-// FIX 6: SECTION STATE RETENTION (No Redirects)
+// FIX 6: SECTION STATE RETENTION (Consolidated in ui.js)
 // ---------------------------------------------------------
 window._activeSection = window._activeSection || 'home';
-
-// Intercept navigateTo from ui.js
-const origNavigateTo = window.navigateTo;
-if (origNavigateTo && !window.__global_wfm_nav) {
-    window.__global_wfm_nav = true;
-    window.navigateTo = function (sectionId) {
-        if (sectionId && sectionId !== 'logout') {
-            window._activeSection = sectionId;
-        }
-        origNavigateTo(sectionId);
-    };
-}
 
 // Function to redraw ONLY the active section safely
 window.rerenderCurrentSection = function () {

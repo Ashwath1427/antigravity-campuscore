@@ -332,12 +332,15 @@ function navigateTo(sectionId) {
   const targetSec = document.getElementById('section-' + sectionId);
   if (!targetSec && window.triggerLiveReRender) {
     console.warn(`[CampusCore] Section ${sectionId} not found, forcing re-render`);
-    window.triggerLiveReRender();
+    window.triggerLiveReRender(sectionId); 
+    return; // Stop here, re-render will re-invoke navigateTo or set active
   }
 
   document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
-  const activeNav = document.getElementById('nav-' + sectionId);
+  const activeNav = document.getElementById('nav-' + (sectionId === 'home' ? 'dashboard' : sectionId));
+  const activeNavExact = document.getElementById('nav-' + sectionId);
   if (activeNav) activeNav.classList.add('active');
+  if (activeNavExact) activeNavExact.classList.add('active');
 
   document.querySelectorAll('.dash-section').forEach(s => {
     s.classList.remove('active');

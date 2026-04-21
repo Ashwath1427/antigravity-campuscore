@@ -1078,21 +1078,10 @@ function rewireVPDeadButtons() {
 }
 
 // Re-evaluate immediate hooks
-if(window.buildDashboard) {
-    (function () {
-      const _origBuildDashboard = window.buildDashboard;
-      window.buildDashboard = function (user) {
-        _origBuildDashboard(user);
-        setTimeout(rewireVPDeadButtons, 50);
-      };
-
-      const _origNavigateTo = window.navigateTo;
-      if (_origNavigateTo && !window.__navHookedVP) {
-        window.__navHookedVP = true;
-        window.navigateTo = function (section) {
-          _origNavigateTo(section);
-          setTimeout(rewireVPDeadButtons, 50);
-        };
-      }
-    })();
+if (window.buildDashboard) {
+  const _origBuildDashboard = window.buildDashboard;
+  window.buildDashboard = function (user) {
+    _origBuildDashboard(user);
+    setTimeout(rewireVPDeadButtons, 50);
+  };
 }

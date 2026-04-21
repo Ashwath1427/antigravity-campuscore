@@ -791,7 +791,13 @@ window.SCHOOL_DATA = {
         { id: "3230719", admNo: "3230719", name: "G MANASWINI", class: "9", section: "C", roll: "24", gender: "Female", dob: "22 Nov 2012", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of G MANASWINI" },
         { id: "3170068", admNo: "3170068", name: "SHERI RITHIK REDDY", class: "9", section: "C", roll: "25", gender: "Male", dob: "30 Dec 2012", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SHERI RITHIK REDDY" },
         { id: "3220915", admNo: "3220915", name: "BHUKYA PRANAVI", class: "9", section: "C", roll: "26", gender: "Female", dob: "14 Jan 2013", attendance: 95, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of BHUKYA PRANAVI" },
-        { id: "3190133", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY", class: "9", section: "C", roll: "27", gender: "Male", dob: "22 Feb 2013", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" }
+        { id: "3190133", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY", class: "9", section: "C", roll: "27", gender: "Male", dob: "22 Feb 2013", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" },
+        // Added 5 extra per request
+        { id: "3190134", admNo: "3190134", name: "MANISH KUMAR", class: "9", section: "C", roll: "28", gender: "Male", dob: "10 Mar 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of MANISH KUMAR" },
+        { id: "3190135", admNo: "3190135", name: "KAVYA S.", class: "9", section: "C", roll: "29", gender: "Female", dob: "15 Apr 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of KAVYA S." },
+        { id: "3190136", admNo: "3190136", name: "ARJUN V.", class: "9", section: "C", roll: "30", gender: "Male", dob: "20 May 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of ARJUN V." },
+        { id: "3190137", admNo: "3190137", name: "SNEHA R.", class: "9", section: "C", roll: "31", gender: "Female", dob: "25 Jun 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.8, parent: "Parent of SNEHA R." },
+        { id: "3190138", admNo: "3190138", name: "VIKRAM P.", class: "9", section: "C", roll: "32", gender: "Male", dob: "10 Jul 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of VIKRAM P." }
       ],
       "D": [
         { id: "9D01", admNo: "9D01", name: "Vikram R.", class: "9", section: "D", roll: "01", gender: "Male", dob: "05 Jun 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Vikram R." },
@@ -822,6 +828,13 @@ window.SCHOOL_DATA = {
         { id: "8C03", admNo: "8C03", name: "Kiara S.", class: "8", section: "C", roll: "03", gender: "Female", dob: "20 Aug 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Kiara S." },
         { id: "8C04", admNo: "8C04", name: "Sid G.", class: "8", section: "C", roll: "04", gender: "Male", dob: "15 Sep 2012", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Sid G." },
         { id: "8C05", admNo: "8C05", name: "Alia K.", class: "8", section: "C", roll: "05", gender: "Female", dob: "10 Oct 2012", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Alia K." }
+      ],
+      "D": [
+        { id: "8D01", admNo: "8D01", name: "Kunal J.", class: "8", section: "D", roll: "01", gender: "Male", dob: "05 Jun 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of Kunal J." },
+        { id: "8D02", admNo: "8D02", name: "Mahesh B.", class: "8", section: "D", roll: "02", gender: "Male", dob: "12 Jul 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of Mahesh B." },
+        { id: "8D03", admNo: "8D03", name: "Nina K.", class: "8", section: "D", roll: "03", gender: "Female", dob: "20 Aug 2012", attendance: 92, behavior: "Excellent", fee_status: "Paid", gpa: 8.8, parent: "Parent of Nina K." },
+        { id: "8D04", admNo: "8D04", name: "Om P.", class: "8", section: "D", roll: "04", gender: "Male", dob: "15 Sep 2012", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of Om P." },
+        { id: "8D05", admNo: "8D05", name: "Pooja D.", class: "8", section: "D", roll: "05", gender: "Female", dob: "10 Oct 2012", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 9.1, parent: "Parent of Pooja D." }
       ]
     },
     "7": {
@@ -838,6 +851,20 @@ window.SCHOOL_DATA = {
         { id: "7B03", admNo: "7B03", name: "Kabir B.", class: "7", section: "B", roll: "03", gender: "Male", dob: "20 Aug 2013", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Kabir B." },
         { id: "7B04", admNo: "7B04", name: "Riya B.", class: "7", section: "B", roll: "04", gender: "Female", dob: "15 Sep 2013", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Riya B." },
         { id: "7B05", admNo: "7B05", name: "Aryan B.", class: "7", section: "B", roll: "05", gender: "Male", dob: "10 Oct 2013", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Aryan B." }
+      ],
+      "C": [
+        { id: "7C01", admNo: "7C01", name: "Deepak R.", class: "7", section: "C", roll: "01", gender: "Male", dob: "05 Jan 2013", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of Deepak R." },
+        { id: "7C02", admNo: "7C02", name: "Meera K.", class: "7", section: "C", roll: "02", gender: "Female", dob: "12 Feb 2013", attendance: 92, behavior: "Excellent", fee_status: "Paid", gpa: 8.8, parent: "Parent of Meera K." },
+        { id: "7C03", admNo: "7C03", name: "Nitin B.", class: "7", section: "C", roll: "03", gender: "Male", dob: "20 Mar 2013", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Nitin B." },
+        { id: "7C04", admNo: "7C04", name: "Ojas S.", class: "7", section: "C", roll: "04", gender: "Male", dob: "15 Apr 2013", attendance: 80, behavior: "Fair", fee_status: "Paid", gpa: 6.8, parent: "Parent of Ojas S." },
+        { id: "7C05", admNo: "7C05", name: "Priti G.", class: "7", section: "C", roll: "05", gender: "Female", dob: "10 May 2013", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 9.0, parent: "Parent of Priti G." }
+      ],
+      "D": [
+        { id: "7D01", admNo: "7D01", name: "Quasim A.", class: "7", section: "D", roll: "01", gender: "Male", dob: "05 Jun 2013", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of Quasim A." },
+        { id: "7D02", admNo: "7D02", name: "Rashi P.", class: "7", section: "D", roll: "02", gender: "Female", dob: "12 Jul 2013", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Rashi P." },
+        { id: "7D03", admNo: "7D03", name: "Sohal K.", class: "7", section: "D", roll: "03", gender: "Male", dob: "20 Aug 2013", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Sohal K." },
+        { id: "7D04", admNo: "7D04", name: "Tanya M.", class: "7", section: "D", roll: "04", gender: "Female", dob: "15 Sep 2013", attendance: 89, behavior: "Excellent", fee_status: "Paid", gpa: 8.2, parent: "Parent of Tanya M." },
+        { id: "7D05", admNo: "7D05", name: "Uma R.", class: "7", section: "D", roll: "05", gender: "Female", dob: "10 Oct 2013", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 9.1, parent: "Parent of Uma R." }
       ]
     },
     "6": {
@@ -854,6 +881,20 @@ window.SCHOOL_DATA = {
         { id: "6B03", admNo: "6B03", name: "Sara R.", class: "6", section: "B", roll: "03", gender: "Female", dob: "20 Aug 2014", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Sara R." },
         { id: "6B04", admNo: "6B04", name: "Kabir R.", class: "6", section: "B", roll: "04", gender: "Male", dob: "15 Sep 2014", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Kabir R." },
         { id: "6B05", admNo: "6B05", name: "Riya R.", class: "6", section: "B", roll: "05", gender: "Female", dob: "10 Oct 2014", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Riya R." }
+      ],
+      "C": [
+        { id: "6C01", admNo: "6C01", name: "Vinay K.", class: "6", section: "C", roll: "01", gender: "Male", dob: "05 Jan 2014", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of Vinay K." },
+        { id: "6C02", admNo: "6C02", name: "Wafa S.", class: "6", section: "C", roll: "02", gender: "Female", dob: "12 Feb 2014", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of Wafa S." },
+        { id: "6C03", admNo: "6C03", name: "Xavier P.", class: "6", section: "C", roll: "03", gender: "Male", dob: "20 Mar 2014", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of Xavier P." },
+        { id: "6C04", admNo: "6C04", name: "Yutika D.", class: "6", section: "C", roll: "04", gender: "Female", dob: "15 Apr 2014", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Yutika D." },
+        { id: "6C05", admNo: "6C05", name: "Zeba Q.", class: "6", section: "C", roll: "05", gender: "Female", dob: "10 May 2014", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 9.2, parent: "Parent of Zeba Q." }
+      ],
+      "D": [
+        { id: "6D01", admNo: "6D01", name: "Aman V.", class: "6", section: "D", roll: "01", gender: "Male", dob: "05 Jun 2014", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.0, parent: "Parent of Aman V." },
+        { id: "6D02", admNo: "6D02", name: "Brijesh G.", class: "6", section: "D", roll: "02", gender: "Male", dob: "12 Jul 2014", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of Brijesh G." },
+        { id: "6D03", admNo: "6D03", name: "Chitra S.", class: "6", section: "D", roll: "03", gender: "Female", dob: "20 Aug 2014", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Chitra S." },
+        { id: "6D04", admNo: "6D04", name: "Dinesh K.", class: "6", section: "D", roll: "04", gender: "Male", dob: "15 Sep 2014", attendance: 85, behavior: "Fair", fee_status: "Paid", gpa: 6.9, parent: "Parent of Dinesh K." },
+        { id: "6D05", admNo: "6D05", name: "Esha P.", class: "6", section: "D", roll: "05", gender: "Female", dob: "10 Oct 2014", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 9.3, parent: "Parent of Esha P." }
       ]
     }
   }
@@ -1467,10 +1508,15 @@ const CLASS_PERFORMANCE = [
   { class: "8-A", teacher: "Sunita Verma", avgAtt: 93, avgGPA: 8.0, topper: "SNITHIK VENGALA", weak: 2, issues: 1 },
   { class: "8-B", teacher: "Pooja Mehta", avgAtt: 85, avgGPA: 7.4, topper: "G MANASWINI", weak: 4, issues: 2 },
   { class: "8-C", teacher: "Ramesh Sharma", avgAtt: 89, avgGPA: 7.8, topper: "Deepika V.", weak: 3, issues: 0 },
+  { class: "8-D", teacher: "Mohan Das", avgAtt: 90, avgGPA: 8.1, topper: "Anjali S.", weak: 2, issues: 1 },
   { class: "7-A", teacher: "Suresh Naidu", avgAtt: 96, avgGPA: 9.1, topper: "BHUKYA PRANAVI", weak: 0, issues: 0 },
   { class: "7-B", teacher: "Anita Pillai", avgAtt: 90, avgGPA: 8.2, topper: "Arjun M.", weak: 2, issues: 1 },
+  { class: "7-C", teacher: "Pooja Mehta", avgAtt: 88, avgGPA: 7.7, topper: "Ishita R.", weak: 4, issues: 1 },
+  { class: "7-D", teacher: "Sunita Verma", avgAtt: 89, avgGPA: 7.9, topper: "Karan P.", weak: 3, issues: 0 },
   { class: "6-A", teacher: "Prasana Reddy", avgAtt: 92, avgGPA: 8.5, topper: "Ravi K.", weak: 1, issues: 0 },
   { class: "6-B", teacher: "Venkat Iyer", avgAtt: 88, avgGPA: 7.9, topper: "Tanya S.", weak: 3, issues: 2 },
+  { class: "6-C", teacher: "Anita Pillai", avgAtt: 85, avgGPA: 7.5, topper: "Nitin B.", weak: 5, issues: 1 },
+  { class: "6-D", teacher: "Ramesh Sharma", avgAtt: 91, avgGPA: 8.2, topper: "Shiva G.", weak: 2, issues: 0 },
 ];
 
 // ─── Parent Specific Mock Data ───────────────────────────────
@@ -1797,12 +1843,30 @@ function initDataStore() {
   ];
 
   // --- UNIVERSAL STUDENT DATA SEEDING ---
-  // Ensure all 27 students have a "rich" profile by default
-  const allStudents = (Array.isArray(STUDENTS) ? STUDENTS : []);
-  allStudents.forEach(s => {
+  // Ensure all students in SCHOOL_DATA have a "rich" profile by default
+  const seedStudents = [];
+  if (window.SCHOOL_DATA && window.SCHOOL_DATA.classes) {
+      Object.keys(window.SCHOOL_DATA.classes).forEach(grade => {
+          Object.keys(window.SCHOOL_DATA.classes[grade]).forEach(sec => {
+              window.SCHOOL_DATA.classes[grade][sec].forEach(s => seedStudents.push(s));
+          });
+      });
+  }
+
+  seedStudents.forEach(s => {
     const key = 'campuscore_student_data_' + s.id;
-    if (!localStorage.getItem(key)) {
+    const existingRaw = localStorage.getItem(key);
+    let existing = existingRaw ? JSON.parse(existingRaw) : null;
+    
+    // Initialize or Repair if name is missing/Unknown
+    if (!existing || existing.name === 'Unknown' || !existing.name) {
       const demoData = {
+        id: s.id,
+        name: s.name,
+        currentClass: s.class,
+        currentSection: s.section,
+        roll: s.roll,
+        admNo: s.admNo || s.id,
         homework: JSON.parse(JSON.stringify(PARENT_HOMEWORK)),
         exams: JSON.parse(JSON.stringify(PARENT_EXAMS)),
         results: JSON.parse(JSON.stringify(PARENT_RESULTS)),
@@ -1882,6 +1946,17 @@ window.getUnifiedAccounts = function() {
   
   // Filter out excluded (deleted)
   return all.filter(u => !excludedUids.includes(u.username) && !excludedUids.includes(u.id));
+};
+
+window.getInstitutionalStats = function() {
+  const all = STUDENTS;
+  const total = all.length;
+  // Dynamic partitioning for realistic dashboard numbers
+  const present = Math.floor(total * 0.92);
+  const absent = Math.floor(total * 0.05);
+  const late = total - present - absent;
+  
+  return { total, present, absent, late };
 };
 
 initDataStore();
