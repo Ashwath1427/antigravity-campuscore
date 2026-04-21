@@ -643,10 +643,23 @@ window.wfmViewDetails = function (id) {
 window.wfmParentSubmitConcern = function () {
     const txt = document.getElementById('parent-cn-text')?.value;
     if (!txt) return;
-    let d = JSON.parse(localStorage.getItem('campuscore_vp_issues'));
-    let iss = { id: 'ISS-' + (Math.floor(Math.random() * 900) + 100), student: 'KASULA ASHWATH', class: '9C', category: 'General', priority: 'Medium', desc: txt, reportedBy: 'Parent', date: new Date().toLocaleString(), stage: 'Teacher' };
 
-    // Ensure we place it gracefully
+    const userClass = window.currentUser?.childClass || '9-C';
+    const studentName = window.currentUser?.childName || 'Student';
+
+    let d = JSON.parse(localStorage.getItem('campuscore_vp_issues') || '{"mainIssues":[], "escalatedIssues":[], "resolvedIssues":[]}');
+    let iss = { 
+        id: 'ISS-' + (Math.floor(Math.random() * 900) + 100), 
+        student: studentName, 
+        class: userClass, 
+        category: 'General', 
+        priority: 'Medium', 
+        desc: txt, 
+        reportedBy: 'Parent', 
+        date: new Date().toLocaleString(), 
+        stage: 'Teacher' 
+    };
+
     if (!d.mainIssues) d.mainIssues = [];
     d.mainIssues.push(iss);
     localStorage.setItem('campuscore_vp_issues', JSON.stringify(d));

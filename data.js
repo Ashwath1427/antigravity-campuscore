@@ -791,13 +791,7 @@ window.SCHOOL_DATA = {
         { id: "3230719", admNo: "3230719", name: "G MANASWINI", class: "9", section: "C", roll: "24", gender: "Female", dob: "22 Nov 2012", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of G MANASWINI" },
         { id: "3170068", admNo: "3170068", name: "SHERI RITHIK REDDY", class: "9", section: "C", roll: "25", gender: "Male", dob: "30 Dec 2012", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SHERI RITHIK REDDY" },
         { id: "3220915", admNo: "3220915", name: "BHUKYA PRANAVI", class: "9", section: "C", roll: "26", gender: "Female", dob: "14 Jan 2013", attendance: 95, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of BHUKYA PRANAVI" },
-        { id: "3190133", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY", class: "9", section: "C", roll: "27", gender: "Male", dob: "22 Feb 2013", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" },
-        // Added 5 extra per request
-        { id: "3190134", admNo: "3190134", name: "MANISH KUMAR", class: "9", section: "C", roll: "28", gender: "Male", dob: "10 Mar 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of MANISH KUMAR" },
-        { id: "3190135", admNo: "3190135", name: "KAVYA S.", class: "9", section: "C", roll: "29", gender: "Female", dob: "15 Apr 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of KAVYA S." },
-        { id: "3190136", admNo: "3190136", name: "ARJUN V.", class: "9", section: "C", roll: "30", gender: "Male", dob: "20 May 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of ARJUN V." },
-        { id: "3190137", admNo: "3190137", name: "SNEHA R.", class: "9", section: "C", roll: "31", gender: "Female", dob: "25 Jun 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.8, parent: "Parent of SNEHA R." },
-        { id: "3190138", admNo: "3190138", name: "VIKRAM P.", class: "9", section: "C", roll: "32", gender: "Male", dob: "10 Jul 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of VIKRAM P." }
+        { id: "3190133", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY", class: "9", section: "C", roll: "27", gender: "Male", dob: "22 Feb 2013", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" }
       ],
       "D": [
         { id: "9D01", admNo: "9D01", name: "Vikram R.", class: "9", section: "D", roll: "01", gender: "Male", dob: "05 Jun 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Vikram R." },
@@ -900,11 +894,67 @@ window.SCHOOL_DATA = {
   }
 };
 
+// Programmatic Expansion to A-K Sections
+(function expandSchoolStructure() {
+  const grades = ["6", "7", "8", "9", "10"];
+  const sections = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
+  const teachers = ["Prasana Reddy", "Ramesh Sharma", "Anita Pillai", "Mohan Das", "Sunita Verma", "Venkat Iyer", "Pooja Mehta", "Suresh Naidu", "Aruna", "Deepa K", "Rajesh V"];
+
+  grades.forEach(g => {
+    if (!window.SCHOOL_DATA.classes[g]) window.SCHOOL_DATA.classes[g] = {};
+    sections.forEach((sec, idx) => {
+      // If section is empty or has < 5 students, populate with mock data
+      if (!window.SCHOOL_DATA.classes[g][sec] || window.SCHOOL_DATA.classes[g][sec].length < 2) {
+        window.SCHOOL_DATA.classes[g][sec] = Array.from({ length: 5 }, (_, i) => {
+          const id = `${g}${sec}${String(i + 1).padStart(2, '0')}`;
+          return {
+            id: id,
+            admNo: id,
+            name: `Student ${g}${sec}-${i + 1}`,
+            class: g,
+            section: sec,
+            roll: String(i + 1).padStart(2, '0'),
+            gender: i % 2 === 0 ? "Male" : "Female",
+            dob: "01 Jan 201" + (15 - parseInt(g)),
+            attendance: 75 + Math.floor(Math.random() * 20),
+            behavior: "Good",
+            fee_status: "Paid",
+            gpa: (7 + Math.random() * 2.5).toFixed(1),
+            parent: `Parent of Student ${g}${sec}-${i + 1}`
+          };
+        });
+      }
+    });
+  });
+
+  // Expand CLASS_PERFORMANCE matrix to match 
+  if (window.CLASS_PERFORMANCE) {
+    grades.forEach(g => {
+      sections.forEach((sec, idx) => {
+        const clsKey = `${g}-${sec}`;
+        if (!window.CLASS_PERFORMANCE.find(c => c.class === clsKey)) {
+          window.CLASS_PERFORMANCE.push({
+            class: clsKey,
+            teacher: teachers[idx % teachers.length],
+            avgAtt: 80 + Math.floor(Math.random() * 15),
+            avgGPA: (7.5 + Math.random() * 1.5).toFixed(1),
+            topper: `Student ${g}${sec}-1`,
+            weak: Math.floor(Math.random() * 4),
+            issues: Math.floor(Math.random() * 2)
+          });
+        }
+      });
+    });
+  }
+})();
+
 // Derived flat array for compatibility
 let STUDENTS = Object.values(window.SCHOOL_DATA.classes).flatMap(cls => 
   Object.values(cls).flatMap(sec => sec)
 );
-STUDENTS.map(s => { s.class = s.class + '-' + s.section; return s; }); // for legacy "9-C" format if needed
+STUDENTS.forEach(s => { 
+  if (!s.class.includes('-')) s.class = s.class + '-' + s.section; 
+});
 
 // ─── Teachers ────────────────────────────────────────────────
 window.TEACHERS = [

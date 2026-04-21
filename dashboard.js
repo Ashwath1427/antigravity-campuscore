@@ -930,9 +930,7 @@ function buildVPAttendance(user) {
           </select>
           <select id="att-section-filter" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
             <option value="All" ${filterSection === 'All' ? 'selected' : ''}>All Sections</option>
-            <option value="A" ${filterSection === 'A' ? 'selected' : ''}>Section A</option>
-            <option value="B" ${filterSection === 'B' ? 'selected' : ''}>Section B</option>
-            <option value="C" ${filterSection === 'C' ? 'selected' : ''}>Section C</option>
+            ${['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'].map(s => `<option value="${s}" ${filterSection === s ? 'selected' : ''}>Section ${s}</option>`).join('')}
           </select>
           <button class="btn-primary" style="padding:8px 16px" onclick="applyAttendanceFilter()"><i class="fas fa-filter"></i> Apply</button>
         </div>
@@ -1373,7 +1371,7 @@ function buildVPStudents(user) {
     </tr>`;
   }).join('');
 
-  const noRecordsMsg = (selectedClass !== 'All Classes' && selectedSection !== 'All Sections' && !(selectedClass === '9' && selectedSection === 'C')) ? `<div class="card" style="margin-top:12px"><p style="color:var(--color-text-muted)">No student records available for this class yet</p><p style="font-size:12px;color:var(--color-text-muted)">Student data for Class ${selectedClass}${selectedSection} will appear here once registered.</p></div>` : '';
+  const noRecordsMsg = data.length === 0 ? `<div class="card" style="margin-top:12px"><p style="color:var(--color-text-muted)">No student records available for this class yet</p><p style="font-size:12px;color:var(--color-text-muted)">Student data for Class ${selectedClass}${selectedSection} will appear here once registered.</p></div>` : '';
   return `<div class="dash-section" id="section-vp_students">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap"><h3>🎓 Student Analysis</h3></div>
