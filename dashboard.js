@@ -1318,17 +1318,34 @@ function buildVPStudents(user) {
   let data = students.map((s, idx) => {
     const sid = String(s.id);
     const shared = getVPStudentSharedData(sid);
-    const grade = String(s.currentClass);
-    const section = String(s.currentSection);
-    const att = Number(s.attendance);
-    const gpa = String(s.gpa);
-    const status = String(s.status);
+    
+    // Normalize grade and section for robust filtering
+    let grade = String(shared.currentClass || s.currentClass || s.class || '');
+    let section = String(shared.currentSection || s.currentSection || s.section || '');
+    
+    // Handle "9-C" composite strings by splitting them
+    if (grade.includes('-')) {
+      const parts = grade.split('-');
+      grade = parts[0];
+      if (!section) section = parts[1];
+    }
+    
+    const att = Number(shared.attendancePct || s.attendance || 0);
+    const gpa = String(shared.results ? (shared.results.overall || 0) : (s.gpa || 0));
+    const status = String(shared.status || s.status || 'Active');
+    
     return { s, idx, sid, shared, grade, section, att, gpa, status };
   });
 
-  if (selectedClass !== 'All Classes') data = data.filter(d => String(d.grade) === String(selectedClass));
-  if (selectedSection !== 'All Sections') data = data.filter(d => d.section === selectedSection);
-  if (q) data = data.filter(d => String(d.s.name).toLowerCase().includes(q) || String(d.sid).includes(q));
+  if (selectedClass !== 'All Classes') {
+    data = data.filter(d => String(d.grade) === String(selectedClass));
+  }
+  if (selectedSection !== 'All Sections') {
+    data = data.filter(d => String(d.section) === String(selectedSection));
+  }
+  if (q) {
+    data = data.filter(d => String(d.s.name).toLowerCase().includes(q) || String(d.sid).includes(q));
+  }
 
   const avgAtt = data.length ? (data.reduce((a, d) => a + d.att, 0) / data.length).toFixed(1) : '0.0';
   const avgGpa = data.length ? (data.reduce((a, d) => a + Number(d.gpa || 0), 0) / data.length).toFixed(2) : '0.00';
@@ -1337,12 +1354,12 @@ function buildVPStudents(user) {
   const promoted = data.filter(d => d.shared.promotedDate && String(d.shared.academicYear || '') === '2026-27').length;
 
   const cards = [
-    ['Total Students', data.length],
-    ['Average Attendance %', avgAtt],
+    ['Institutional Strength', students.length],
+    ['Students in View', data.length],
+    ['Avg Attendance %', avgAtt],
     ['Average GPA', avgGpa],
-    ['Attendance below 85%', lowAtt],
-    ['Active Suspensions', activeSusp],
-    ['Promoted this year', promoted],
+    ['Att. below 85%', lowAtt],
+    ['Promoted', promoted],
   ].map(([label, value]) => `<div class="stat-card"><div class="stat-value">${value}</div><div class="stat-label">${label}</div></div>`).join('');
 
   const rows = data.map((d, idx) => {
