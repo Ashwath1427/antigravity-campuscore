@@ -61,40 +61,58 @@ async function sbFetchUsers() {
   } catch (e) { console.warn('[Supabase] fetchUsers exception:', e); return null; }
 }
 
+// --- Internal Mapper für Students ---
+function _mapSbStudent(s) {
+  return {
+    id: s.id,
+    name: s.name,
+    class: s.class,
+    section: s.section,
+    rollNo: s.roll_no,
+    roll: s.roll_no, // legacy mapping
+    attendanceLogs: s.attendance_logs || [],
+    attendancePct: Number(s.attendance_pct || 0),
+    attendance: Number(s.attendance_pct || 0), // legacy mapping
+    gpa: Number(s.gpa || 0),
+    lastSyncAt: s.last_sync_at || null,
+    gender: s.gender,
+    dob: s.dob,
+    behavior: s.behavior,
+    fee_status: s.fee_status,
+    parent: s.parent_name // legacy mapping
+  };
+}
+
 // ─── Fetch students from Supabase cc_students table ──────────
 async function sbFetchStudents() {
   const sb = await getLiveClient();
   if (!sb) return null;
   try {
-    const { data, error } = await sb.from('cc_students').select('id, name, class, section, roll_no, attendance_logs, attendance_pct, gpa, last_sync_at, gender, dob, behavior, fee_status, parent_name');
-    if (error) { 
-      console.error('[Supabase] fetchStudents error:', error); 
-      throw error; 
-    }
-    // Map DB columns to app format (including dual-mapping for legacy compatibility)
-    return data.map(s => ({
-      id: s.id,
-      name: s.name,
-      class: s.class,
-      section: s.section,
-      rollNo: s.roll_no,
-      roll: s.roll_no, // legacy mapping
-      attendanceLogs: s.attendance_logs || [],
-      attendancePct: Number(s.attendance_pct || 0),
-      attendance: Number(s.attendance_pct || 0), // legacy mapping
-      gpa: Number(s.gpa || 0),
-      lastSyncAt: s.last_sync_at || null,
-      gender: s.gender,
-      dob: s.dob,
-      behavior: s.behavior,
-      fee_status: s.fee_status,
-      parent: s.parent_name // legacy mapping
-    }));
-  } catch (e) { 
-    console.error('[Supabase] fetchStudents exception:', e); 
-    throw e; 
-  }
+    const { data, error } = await sb.from('cc_students').select('*');
+    if (error) { console.error('[Supabase] fetchStudents error:', error); throw error; }
+    return data.map(_mapSbStudent);
+  } catch (e) { console.error('[Supabase] fetchStudents exception:', e); throw e; }
 }
+
+window.sbGetStudentsByClass = async function(classCode) {
+  const sb = await getLiveClient();
+  if (!sb) return null;
+  try {
+    const { data, error } = await sb.from('cc_students').select('*').eq('class', classCode);
+    if (error) { console.error('[Supabase] getStudentsByClass error:', error); throw error; }
+    return data.map(_mapSbStudent);
+  } catch (e) { console.error('[Supabase] getStudentsByClass exception:', e); throw e; }
+};
+
+window.sbGetStudentsByGrade = async function(grade) {
+  const sb = await getLiveClient();
+  if (!sb) return null;
+  try {
+    const { data, error } = await sb.from('cc_students').select('*').ilike('class', grade + '-%');
+    if (error) { console.error('[Supabase] getStudentsByGrade error:', error); throw error; }
+    return data.map(_mapSbStudent);
+  } catch (e) { console.error('[Supabase] getStudentsByGrade exception:', e); throw e; }
+};
 
 /**
  * Performs a bulk UPSERT of student attendance and performance data.
