@@ -106,6 +106,8 @@ function buildDashboard(user) {
       safeRender('Events', buildEvents, user),
       safeRender('Messages', buildVPMessages, user),
       safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
+      safeRender('Teacher Monitoring', buildVPTeachers, user),
+      safeRender('User Registration', buildRegistration, user),
       safeRender('Settings', buildSettings, user)
     ].join('');
   } else if (user.role === 'parent') {
@@ -880,27 +882,33 @@ function buildVPAttendance(user) {
   const filterClass = localStorage.getItem('att_filter_class') || 'All';
   const filterSection = localStorage.getItem('att_filter_section') || 'All';
 
-  let rawList = window.CAMPUSCORE_REGISTRY ? window.CAMPUSCORE_REGISTRY.getAllStudents() : STUDENTS;
-  let filtered = rawList.map(s => ({
-    name: s.name || 'Unknown',
-    class: s.class || `${s.currentClass || '9'}-${s.currentSection || 'A'}`,
-    attendance: Number(s.attendance || s.attendancePct || s.att || 0)
-  }));
+  let rawList = window.CAMPUSCORE_REGISTRY ? window.CAMPUSCORE_REGISTRY.getAllStudents() : (STUDENTS || []);
+  let filtered = rawList.map(s => {
+    // Prioritize s.class (e.g. '9-C') directly — avoid composing duplicates
+    let fullClass = '';
+    if (s.class && String(s.class).includes('-')) {
+      fullClass = String(s.class);
+    } else {
+      fullClass = `${s.currentClass || s.class || '9'}-${s.currentSection || s.section || 'A'}`;
+    }
+    const parts = String(fullClass).split('-');
+    return {
+      name: s.name || 'Unknown',
+      fullClass: fullClass,
+      grade: parts[0] || '',
+      section: parts[1] || '',
+      attendance: Number(s.attendance || s.attendancePct || s.att || 0)
+    };
+  });
 
   if (filterClass !== 'All') {
-    filtered = filtered.filter(s => {
-      const parts = String(s.class || '').split('-');
-      return parts[0] === filterClass;
-    });
+    filtered = filtered.filter(s => String(s.grade) === String(filterClass));
   }
   if (filterSection !== 'All') {
-    filtered = filtered.filter(s => {
-      const parts = String(s.class || '').split('-');
-      return (parts[1] || '').includes(filterSection);
-    });
+    filtered = filtered.filter(s => String(s.section) === String(filterSection));
   }
 
-  const rows = filtered.map((s, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>${s.class}</span></div></div></td><td><div class="progress-bar"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div></td><td><strong style="color:${attColor(s.attendance)}">${s.attendance}%</strong></td><td>${s.attendance >= 90 ? 'Excellent' : s.attendance >= 80 ? 'Good' : 'Low'}</td></tr>`).join('');
+  const rows = filtered.map((s, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>${s.fullClass}</span></div></div></td><td><div class="progress-bar"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div></td><td><strong style="color:${attColor(s.attendance)}">${s.attendance}%</strong></td><td>${s.attendance >= 90 ? 'Excellent' : s.attendance >= 80 ? 'Good' : 'Low'}</td></tr>`).join('');
 
   return `<div class="dash-section" id="section-vp_attendance">
     <div class="content-grid-equal" style="margin-bottom:20px">
@@ -3448,17 +3456,6 @@ function closeAssignModal(e) {
   if (el) el.remove();
 }
 
-function triggerLiveReRender() {
-  // Immediately rebuild the dashboard content without full page reload
-  console.log("Triggering live re-render to update state & badges.");
-  if (typeof currentUser !== 'undefined' && currentUser) {
-    buildDashboard(currentUser);
-    buildSidebar(currentUser); // re-calc sidebar badges too!
-    if (typeof currentSection !== 'undefined' && currentSection) {
-      navigateTo(currentSection);
-    }
-  }
-}
 
 function setVPIssueTab(tab) {
   localStorage.setItem('vp_issue_tab', tab);
@@ -3487,7 +3484,9 @@ function resolveVPIssue(id) {
     saveIssues(GLOBAL_ISSUES);
   }
   simulateAction('Issue Resolved');
+  localStorage.setItem('vp_issue_tab', 'resolved');
   triggerLiveReRender();
+  navigateTo('vp_student_issues');
 }
 
 function openMeetParentModal(studentName) {
@@ -4321,8 +4320,8 @@ function buildRegistration(user) {
             <h4 style="margin-bottom:15px;color:var(--color-primary)"><i class="fas fa-user-graduate"></i> Student Details</h4>
             <div class="form-group"><label>Student Full Name</label><input type="text" id="reg-s-name" class="form-control" placeholder="e.g. Rahul Sharma"></div>
             <div style="display:flex;gap:10px">
-              <div style="flex:1" class="form-group"><label>Class</label><select id="reg-s-class" class="form-control"><option>9</option><option>10</option><option>8</option><option>7</option></select></div>
-              <div style="flex:1" class="form-group"><label>Section</label><select id="reg-s-sec" class="form-control"><option>A</option><option>B</option><option>C</option></select></div>
+              <div style="flex:1" class="form-group"><label>Class</label><select id="reg-s-class" class="form-control"><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
+              <div style="flex:1" class="form-group"><label>Section</label><select id="reg-s-sec" class="form-control">${'ABCDEFGHIJK'.split('').map(s => `<option>${s}</option>`).join('')}</select></div>
               <div style="flex:1" class="form-group"><label>Roll No</label><input type="number" id="reg-s-roll" class="form-control" placeholder="01"></div>
             </div>
           </div>
@@ -4841,9 +4840,7 @@ function setGhostRoleContext(role) {
 }
 
 // --- HELPDESK MASTER ---
-function viewTicketDetails(id) {
-  simulateAction('Full history and logs for ' + id + ' opened.');
-}
+// viewTicketDetails: real modal implementation is at line ~4270, do not override
 function resolveTicket(id) {
   const r = prompt('Resolution message for student:');
   if (r) {
@@ -5328,14 +5325,7 @@ window.executeAdvancedResolve = function(id) {
   }, 1000);
 };
 
-function promoteStudents() {
-  if (confirm('Are you sure you want to proceed to the Promotion Wizard? This will prepare students for the next academic level (2026-2027).')) {
-    simulateAction('Promotion wizard initialized. Data integrity check in progress...');
-    setTimeout(() => {
-      alert('Promotion Readiness: 98%. Please review Class 10 board results before final lock.');
-    }, 1000);
-  }
-}
+// promoteStudents: primary implementation defined earlier in the file
 
 /* ━━━━ ADMIN BIN & UTILITIES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildRemovedBin(user) {
@@ -5374,36 +5364,8 @@ function restoreFromBin(id) {
   triggerLiveReRender();
 }
 
-function openAssignSubModal(teacher, slot) {
-  const m = `<div class="modal-overlay" id="sub-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
-        <div class="modal" style="max-width:400px">
-            <h3>Assign Substitute</h3>
-            <p style="font-size:13px;color:var(--color-text-muted);margin-bottom:15px">For <strong>${teacher}</strong> at ${slot}</p>
-            <label style="font-size:12px;margin-bottom:6px;display:block">Select Available Teacher</label>
-            <select id="sub-teacher" class="form-control" style="margin-bottom:20px"><option>Venkat Iyer</option><option>Mohan Das</option><option>Suresh Naidu</option></select>
-            <button class="btn-primary" style="width:100%" onclick="localStorage.setItem('vp_sub_assigned','true'); simulateAction('Substitute assigned!'); document.getElementById('sub-modal').remove(); triggerLiveReRender();">Confirm Assignment</button>
-        </div>
-    </div>`;
-  document.body.insertAdjacentHTML('beforeend', m);
-}
-
-function openAdjAllocModal() {
-  simulateAction('Opening Allocation Adjustment Wizard...');
-  alert('Resource Allocation Wizard: Optimized load balancing suggested for the Mathematics department. Apply?');
-}
-
-function openChangeActionPinModal() {
-  const m = `<div class="modal-overlay" id="pin-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
-        <div class="modal" style="max-width:350px">
-            <h3>Action Security PIN</h3>
-            <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:15px">Verify your identity to perform administrative overrides.</p>
-            <input type="password" maxlength="6" class="form-control" placeholder="Current PIN" style="text-align:center;letter-spacing:5px;font-size:24px;margin-bottom:10px">
-            <input type="password" maxlength="6" class="form-control" placeholder="New PIN" style="text-align:center;letter-spacing:5px;font-size:24px;margin-bottom:20px">
-            <button class="btn-primary" style="width:100%" onclick="simulateAction('Security PIN updated successfully.'); document.getElementById('pin-modal').remove()">Update PIN</button>
-        </div>
-    </div>`;
-  document.body.insertAdjacentHTML('beforeend', m);
-}
+// openAssignSubModal, openAdjAllocModal, openChangeActionPinModal:
+// Primary implementations defined earlier in the file — stubs removed to prevent overrides
 
 /**
  * --- LIVE SUPABASE INTEGRATION ---
