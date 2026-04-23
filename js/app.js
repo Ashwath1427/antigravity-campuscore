@@ -126,17 +126,11 @@ async function handleLogin() {
 }
 
 // ─── Init Dashboard ──────────────────────────────────────────
-function initDashboard(user) {
-  if(typeof loadTheme === 'function') loadTheme(user.id);
-  buildSidebar(user);
-  renderNotifications(user);
-  buildDashboard(user);
-  
-  if (user.role === 'apaaas' || user.role === 'superadmin' || user.role === 'super_admin' || String(user.username||'').toUpperCase() === 'APAAAS') {
-    navigateTo('master_dashboard');
-  } else {
-    navigateTo('home');
-  }
+function initDashboard() {
+  if(typeof loadTheme === 'function') loadTheme();
+  if (typeof buildSidebar === 'function') buildSidebar();
+  if (typeof addDatabaseManagementToMenu === 'function') addDatabaseManagementToMenu();
+  if (typeof initDashboardContent === 'function') initDashboardContent();
   
   updateDateTime();
 }
