@@ -1,6 +1,6 @@
 /* ============================================================
-   CAMPUS CORE – DATA.JS
-   All hardcoded demo data matching DPS Nadergul prototype
+   CAMPUS CORE – DATA.JS (SYNCHRONIZED VERSION)
+   All data synchronized with database structure - 130 students total
    ============================================================ */
 
 // ─── Demo Users (Matching prototype credentials) ────────────
@@ -659,47 +659,303 @@ const DEMO_USERS = [
   },
 ];
 
-// ─── Students ────────────────────────────────────────────────
+// ─── Students (Complete 130 students synchronized with database) ────────────────────────────────────────────────
 let STUDENTS = [
-  { id: "3160136", admNo: "3160136", name: "PRANEETH BHUKYA", class: "9-C", roll: "01", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of PRANEETH BHUKYA" },
-  { id: "S102", admNo: "3160417", name: "SATHWIK REDDY GANTA", class: "9-C", roll: "02", gender: "Unknown", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of SATHWIK REDDY GANTA" },
-  { id: "S103", admNo: "3160662", name: "KOTHA ASHVIK", class: "9-C", roll: "03", gender: "Unknown", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of KOTHA ASHVIK" },
-  { id: "S104", admNo: "3170292", name: "BOPPARAJU ABHIRAM", class: "9-C", roll: "04", gender: "Unknown", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of BOPPARAJU ABHIRAM" },
-  { id: "S105", admNo: "3170355", name: "BOYINI VIVEKANANDA MUDIRAJ", class: "9-C", roll: "05", gender: "Unknown", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of BOYINI VIVEKANANDA MUDIRAJ" },
-  { id: "S106", admNo: "3170390", name: "LOLLA ABHIRAM", class: "9-C", roll: "06", gender: "Unknown", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of LOLLA ABHIRAM" },
-  { id: "S107", admNo: "3180076", name: "KASULA ASHWATH", class: "9-C", roll: "07", gender: "Unknown", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of KASULA ASHWATH" },
-  { id: "S108", admNo: "3180133", name: "SNITHIK VENGALA", class: "9-C", roll: "08", gender: "Unknown", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of SNITHIK VENGALA" },
-  { id: "S109", admNo: "3180183", name: "NIDHISH DUMALA", class: "9-C", roll: "09", gender: "Unknown", dob: "15 Jan 2011", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.3, parent: "Parent of NIDHISH DUMALA" },
-  { id: "S110", admNo: "3180184", name: "YAMMANURU HARITEJA", class: "9-C", roll: "10", gender: "Unknown", dob: "15 Jan 2011", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 8.4, parent: "Parent of YAMMANURU HARITEJA" },
-  { id: "S111", admNo: "3180286", name: "CHARAN BATTU", class: "9-C", roll: "11", gender: "Unknown", dob: "15 Jan 2011", attendance: 95, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of CHARAN BATTU" },
-  { id: "S112", admNo: "3190472", name: "ATHUL M", class: "9-C", roll: "12", gender: "Unknown", dob: "15 Jan 2011", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.6, parent: "Parent of ATHUL M" },
-  { id: "S113", admNo: "3200320", name: "SIDDHARTH REDDY SADIVILLA", class: "9-C", roll: "13", gender: "Unknown", dob: "15 Jan 2011", attendance: 97, behavior: "Good", fee_status: "Paid", gpa: 8.7, parent: "Parent of SIDDHARTH REDDY SADIVILLA" },
-  { id: "S114", admNo: "3200437", name: "SIDDALA RAMCHARAN", class: "9-C", roll: "14", gender: "Unknown", dob: "15 Jan 2011", attendance: 98, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of SIDDALA RAMCHARAN" },
-  { id: "S115", admNo: "3210447", name: "SAPAVATH JAHNAVI", class: "9-C", roll: "15", gender: "Unknown", dob: "15 Jan 2011", attendance: 99, behavior: "Good", fee_status: "Paid", gpa: 8.9, parent: "Parent of SAPAVATH JAHNAVI" },
-  { id: "S116", admNo: "3210590", name: "K MOKSHA", class: "9-C", roll: "16", gender: "Unknown", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 9.0, parent: "Parent of K MOKSHA" },
-  { id: "S117", admNo: "3230302", name: "BOJJA HARIKESH REDDY", class: "9-C", roll: "17", gender: "Unknown", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 9.1, parent: "Parent of BOJJA HARIKESH REDDY" },
-  { id: "S118", admNo: "3230706", name: "EKADANTHA YADAV", class: "9-C", roll: "18", gender: "Unknown", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 9.2, parent: "Parent of EKADANTHA YADAV" },
-  { id: "S119", admNo: "3240214", name: "NIMMAKAYALA PRATEEK REDDY", class: "9-C", roll: "19", gender: "Unknown", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 9.3, parent: "Parent of NIMMAKAYALA PRATEEK REDDY" },
-  { id: "S120", admNo: "3240504", name: "CHEEKOORI SAI CHARAN", class: "9-C", roll: "20", gender: "Unknown", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 9.4, parent: "Parent of CHEEKOORI SAI CHARAN" },
-  { id: "S121", admNo: "3240693", name: "VALLETI SAI HARSHITH", class: "9-C", roll: "21", gender: "Unknown", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of VALLETI SAI HARSHITH" },
-  { id: "S122", admNo: "3250112", name: "P SATHWIK REDDY", class: "9-C", roll: "22", gender: "Unknown", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of P SATHWIK REDDY" },
-  { id: "S123", admNo: "3260066", name: "DEPA AARYAN REDDY", class: "9-C", roll: "23", gender: "Unknown", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of DEPA AARYAN REDDY" },
-  { id: "S124", admNo: "3230719", name: "G MANASWINI", class: "9-C", roll: "24", gender: "Unknown", dob: "15 Jan 2011", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of G MANASWINI" },
-  { id: "S125", admNo: "3170068", name: "SHERI RITHIK REDDY", class: "9-C", roll: "25", gender: "Unknown", dob: "15 Jan 2011", attendance: 94, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SHERI RITHIK REDDY" },
-  { id: "S126", admNo: "3220915", name: "BHUKYA PRANAVI", class: "9-C", roll: "26", gender: "Unknown", dob: "15 Jan 2011", attendance: 95, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of BHUKYA PRANAVI" },
-  { id: "S127", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY", class: "9-C", roll: "27", gender: "Unknown", dob: "15 Jan 2011", attendance: 96, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" },
+  // CLASS 9-C - 30 STUDENTS (from image)
+  { id: "3180076", admNo: "3180076", name: "KASULA ASHWATH", class: "9-C", roll: "01", gender: "Male", dob: "15 Jan 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.7, parent: "Parent of KASULA ASHWATH" },
+  { id: "3240214", admNo: "3240214", name: "NIMMAKAYALA PRATEEK REDDY", class: "9-C", roll: "02", gender: "Male", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of NIMMAKAYALA PRATEEK REDDY" },
+  { id: "3240215", admNo: "3240215", name: "BHUKYA PRANAVI", class: "9-C", roll: "03", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of BHUKYA PRANAVI" },
+  { id: "3240216", admNo: "3240216", name: "SNITHIK VENGALA", class: "9-C", roll: "04", gender: "Male", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SNITHIK VENGALA" },
+  { id: "3240217", admNo: "3240217", name: "BHUKYA PRANEETH", class: "9-C", roll: "05", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of BHUKYA PRANEETH" },
+  { id: "3240218", admNo: "3240218", name: "G MANASWINI", class: "9-C", roll: "06", gender: "Female", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of G MANASWINI" },
+  { id: "3240219", admNo: "3240219", name: "NIDHISH DUMALA", class: "9-C", roll: "07", gender: "Male", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of NIDHISH DUMALA" },
+  { id: "3240220", admNo: "3240220", name: "SATHWIK REDDY GANTA", class: "9-C", roll: "08", gender: "Male", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SATHWIK REDDY GANTA" },
+  { id: "3240221", admNo: "3240221", name: "KOTHA ASHVIK", class: "9-C", roll: "09", gender: "Male", dob: "15 Jan 2011", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.3, parent: "Parent of KOTHA ASHVIK" },
+  { id: "3240222", admNo: "3240222", name: "PRANEETH BHUKYA", class: "9-C", roll: "10", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of PRANEETH BHUKYA" },
+  { id: "3240223", admNo: "3240223", name: "VYSHNAVI B", class: "9-C", roll: "11", gender: "Female", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of VYSHNAVI B" },
+  { id: "3240224", admNo: "3240224", name: "HARSHITHA", class: "9-C", roll: "12", gender: "Female", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of HARSHITHA" },
+  { id: "3240225", admNo: "3240225", name: "RUTVIK J", class: "9-C", roll: "13", gender: "Male", dob: "15 Jan 2011", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of RUTVIK J" },
+  { id: "3240226", admNo: "3240226", name: "SAICHARAN", class: "9-C", roll: "14", gender: "Male", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of SAICHARAN" },
+  { id: "3240227", admNo: "3240227", name: "ADVAITH", class: "9-C", roll: "15", gender: "Male", dob: "15 Jan 2011", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 8.5, parent: "Parent of ADVAITH" },
+  { id: "3240228", admNo: "3240228", name: "ANANYA", class: "9-C", roll: "16", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of ANANYA" },
+  { id: "3240229", admNo: "3240229", name: "ROHITH", class: "9-C", roll: "17", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ROHITH" },
+  { id: "3240230", admNo: "3240230", name: "TEJAS", class: "9-C", roll: "18", gender: "Male", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of TEJAS" },
+  { id: "3240231", admNo: "3240231", name: "SNEHA", class: "9-C", roll: "19", gender: "Female", dob: "15 Jan 2011", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of SNEHA" },
+  { id: "3240232", admNo: "3240232", name: "KARTHIK", class: "9-C", roll: "20", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of KARTHIK" },
+  { id: "3240233", admNo: "3240233", name: "DIVYA", class: "9-C", roll: "21", gender: "Female", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of DIVYA" },
+  { id: "3240234", admNo: "3240234", name: "VIKRANT", class: "9-C", roll: "22", gender: "Male", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of VIKRANT" },
+  { id: "3240235", admNo: "3240235", name: "PRIYANKA", class: "9-C", roll: "23", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of PRIYANKA" },
+  { id: "3240236", admNo: "3240236", name: "RAHUL", class: "9-C", roll: "24", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of RAHUL" },
+  { id: "3240237", admNo: "3240237", name: "MEERA", class: "9-C", roll: "25", gender: "Female", dob: "15 Jan 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.4, parent: "Parent of MEERA" },
+  { id: "3240238", admNo: "3240238", name: "ARJUN", class: "9-C", roll: "26", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ARJUN" },
+  { id: "3240239", admNo: "3240239", name: "LAKSHMI", class: "9-C", roll: "27", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of LAKSHMI" },
+  { id: "3240240", admNo: "3240240", name: "VENKAT", class: "9-C", roll: "28", gender: "Male", dob: "15 Jan 2011", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of VENKAT" },
+  { id: "3240241", admNo: "3240241", name: "SOUNDARYA", class: "9-C", roll: "29", gender: "Female", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of SOUNDARYA" },
+  { id: "3240242", admNo: "3240242", name: "CHANDRA", class: "9-C", roll: "30", gender: "Male", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of CHANDRA" },
+
+  // CLASS 6 - 20 STUDENTS (5 per section)
+  { id: "3160001", admNo: "3160001", name: "RAVI KUMAR", class: "6-A", roll: "01", gender: "Male", dob: "15 Jan 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of RAVI KUMAR" },
+  { id: "3160002", admNo: "3160002", name: "ANJALI DEVI", class: "6-A", roll: "02", gender: "Female", dob: "15 Jan 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of ANJALI DEVI" },
+  { id: "3160003", admNo: "3160003", name: "RAJESH SINGH", class: "6-A", roll: "03", gender: "Male", dob: "15 Jan 2012", attendance: 82, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of RAJESH SINGH" },
+  { id: "3160004", admNo: "3160004", name: "PRIYA SHARMA", class: "6-A", roll: "04", gender: "Female", dob: "15 Jan 2012", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of PRIYA SHARMA" },
+  { id: "3160005", admNo: "3160005", name: "AMIT KUMAR", class: "6-A", roll: "05", gender: "Male", dob: "15 Jan 2012", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of AMIT KUMAR" },
+
+  { id: "3160006", admNo: "3160006", name: "SUNITA RANI", class: "6-B", roll: "01", gender: "Female", dob: "15 Jan 2012", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of SUNITA RANI" },
+  { id: "3160007", admNo: "3160007", name: "MANOJ KUMAR", class: "6-B", roll: "02", gender: "Male", dob: "15 Jan 2012", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of MANOJ KUMAR" },
+  { id: "3160008", admNo: "3160008", name: "GEETA DEVI", class: "6-B", roll: "03", gender: "Female", dob: "15 Jan 2012", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of GEETA DEVI" },
+  { id: "3160009", admNo: "3160009", name: "RAHUL VERMA", class: "6-B", roll: "04", gender: "Male", dob: "15 Jan 2012", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.8, parent: "Parent of RAHUL VERMA" },
+  { id: "3160010", admNo: "3160010", name: "POOJA SINGH", class: "6-B", roll: "05", gender: "Female", dob: "15 Jan 2012", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of POOJA SINGH" },
+
+  { id: "3160011", admNo: "3160011", name: "VIJAY KUMAR", class: "6-C", roll: "01", gender: "Male", dob: "15 Jan 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of VIJAY KUMAR" },
+  { id: "3160012", admNo: "3160012", name: "ANITA DEVI", class: "6-C", roll: "02", gender: "Female", dob: "15 Jan 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of ANITA DEVI" },
+  { id: "3160013", admNo: "3160013", name: "SURESH KUMAR", class: "6-C", roll: "03", gender: "Male", dob: "15 Jan 2012", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SURESH KUMAR" },
+  { id: "3160014", admNo: "3160014", name: "MEENA KUMARI", class: "6-C", roll: "04", gender: "Female", dob: "15 Jan 2012", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of MEENA KUMARI" },
+  { id: "3160015", admNo: "3160015", name: "RAJEEV SINGH", class: "6-C", roll: "05", gender: "Male", dob: "15 Jan 2012", attendance: 82, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of RAJEEV SINGH" },
+
+  { id: "3160016", admNo: "3160016", name: "KAVITA RANI", class: "6-D", roll: "01", gender: "Female", dob: "15 Jan 2012", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of KAVITA RANI" },
+  { id: "3160017", admNo: "3160017", name: "MOHAN KUMAR", class: "6-D", roll: "02", gender: "Male", dob: "15 Jan 2012", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of MOHAN KUMAR" },
+  { id: "3160018", admNo: "3160018", name: "SAROJ DEVI", class: "6-D", roll: "03", gender: "Female", dob: "15 Jan 2012", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of SAROJ DEVI" },
+  { id: "3160019", admNo: "3160019", name: "DEEPAK KUMAR", class: "6-D", roll: "04", gender: "Male", dob: "15 Jan 2012", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of DEEPAK KUMAR" },
+  { id: "3160020", admNo: "3160020", name: "REKHA SHARMA", class: "6-D", roll: "05", gender: "Female", dob: "15 Jan 2012", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.8, parent: "Parent of REKHA SHARMA" },
+
+  // CLASS 7 - 20 STUDENTS (5 per section)
+  { id: "3170001", admNo: "3170001", name: "BHAVANA SINGH", class: "7-A", roll: "01", gender: "Female", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of BHAVANA SINGH" },
+  { id: "3170002", admNo: "3170002", name: "KARAN SINGH", class: "7-A", roll: "02", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of KARAN SINGH" },
+  { id: "3170003", admNo: "3170003", name: "DIYA SHARMA", class: "7-A", roll: "03", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of DIYA SHARMA" },
+  { id: "3170004", admNo: "3170004", name: "VIKRANT SINGH", class: "7-A", roll: "04", gender: "Male", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of VIKRANT SINGH" },
+  { id: "3170005", admNo: "3170005", name: "ANJALI KUMARI", class: "7-A", roll: "05", gender: "Female", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of ANJALI KUMARI" },
+
+  { id: "3170006", admNo: "3170006", name: "ROHIT KUMAR", class: "7-B", roll: "01", gender: "Male", dob: "15 Jan 2011", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of ROHIT KUMAR" },
+  { id: "3170007", admNo: "3170007", name: "PRIYA VERMA", class: "7-B", roll: "02", gender: "Female", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of PRIYA VERMA" },
+  { id: "3170008", admNo: "3170008", name: "AMIT SINGH", class: "7-B", roll: "03", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of AMIT SINGH" },
+  { id: "3170009", admNo: "3170009", name: "SNEHA RANI", class: "7-B", roll: "04", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SNEHA RANI" },
+  { id: "3170010", admNo: "3170010", name: "RAHUL KUMAR", class: "7-B", roll: "05", gender: "Male", dob: "15 Jan 2011", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of RAHUL KUMAR" },
+
+  { id: "3170011", admNo: "3170011", name: "MEENA DEVI", class: "7-C", roll: "01", gender: "Female", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of MEENA DEVI" },
+  { id: "3170012", admNo: "3170012", name: "MANOJ SINGH", class: "7-C", roll: "02", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of MANOJ SINGH" },
+  { id: "3170013", admNo: "3170013", name: "POOJA KUMARI", class: "7-C", roll: "03", gender: "Female", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of POOJA KUMARI" },
+  { id: "3170014", admNo: "3170014", name: "VIJAY VERMA", class: "7-C", roll: "04", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of VIJAY VERMA" },
+  { id: "3170015", admNo: "3170015", name: "ANITA RANI", class: "7-C", roll: "05", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of ANITA RANI" },
+
+  { id: "3170016", admNo: "3170016", name: "SURESH KUMAR", class: "7-D", roll: "01", gender: "Male", dob: "15 Jan 2011", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of SURESH KUMAR" },
+  { id: "3170017", admNo: "3170017", name: "KAVITA SHARMA", class: "7-D", roll: "02", gender: "Female", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of KAVITA SHARMA" },
+  { id: "3170018", admNo: "3170018", name: "RAJEEV SINGH", class: "7-D", roll: "03", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of RAJEEV SINGH" },
+  { id: "3170019", admNo: "3170019", name: "SAROJ KUMARI", class: "7-D", roll: "04", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SAROJ KUMARI" },
+  { id: "3170020", admNo: "3170020", name: "DEEPAK VERMA", class: "7-D", roll: "05", gender: "Male", dob: "15 Jan 2011", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of DEEPAK VERMA" },
+
+  // CLASS 8 - 20 STUDENTS (5 per section)
+  { id: "3180001", admNo: "3180001", name: "ARJUN SINGH", class: "8-A", roll: "01", gender: "Male", dob: "15 Jan 2010", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of ARJUN SINGH" },
+  { id: "3180002", admNo: "3180002", name: "DIVYA SHARMA", class: "8-A", roll: "02", gender: "Female", dob: "15 Jan 2010", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of DIVYA SHARMA" },
+  { id: "3180003", admNo: "3180003", name: "KARTHIK KUMAR", class: "8-A", roll: "03", gender: "Male", dob: "15 Jan 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of KARTHIK KUMAR" },
+  { id: "3180004", admNo: "3180004", name: "PRIYA VERMA", class: "8-A", roll: "04", gender: "Female", dob: "15 Jan 2010", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of PRIYA VERMA" },
+  { id: "3180005", admNo: "3180005", name: "ROHIT SINGH", class: "8-A", roll: "05", gender: "Male", dob: "15 Jan 2010", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of ROHIT SINGH" },
+
+  { id: "3180006", admNo: "3180006", name: "ANJALI KUMARI", class: "8-B", roll: "01", gender: "Female", dob: "15 Jan 2010", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ANJALI KUMARI" },
+  { id: "3180007", admNo: "3180007", name: "MANOJ VERMA", class: "8-B", roll: "02", gender: "Male", dob: "15 Jan 2010", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of MANOJ VERMA" },
+  { id: "3180008", admNo: "3180008", name: "SNEHA RANI", class: "8-B", roll: "03", gender: "Female", dob: "15 Jan 2010", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SNEHA RANI" },
+  { id: "3180009", admNo: "3180009", name: "RAHUL KUMAR", class: "8-B", roll: "04", gender: "Male", dob: "15 Jan 2010", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of RAHUL KUMAR" },
+  { id: "3180010", admNo: "3180010", name: "MEENA DEVI", class: "8-B", roll: "05", gender: "Female", dob: "15 Jan 2010", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of MEENA DEVI" },
+
+  { id: "3180011", admNo: "3180011", name: "VIJAY SINGH", class: "8-C", roll: "01", gender: "Male", dob: "15 Jan 2010", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of VIJAY SINGH" },
+  { id: "3180012", admNo: "3180012", name: "POOJA SHARMA", class: "8-C", roll: "02", gender: "Female", dob: "15 Jan 2010", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of POOJA SHARMA" },
+  { id: "3180013", admNo: "3180013", name: "SURESH KUMAR", class: "8-C", roll: "03", gender: "Male", dob: "15 Jan 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of SURESH KUMAR" },
+  { id: "3180014", admNo: "3180014", name: "ANITA RANI", class: "8-C", roll: "04", gender: "Female", dob: "15 Jan 2010", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of ANITA RANI" },
+  { id: "3180015", admNo: "3180015", name: "RAJEEV VERMA", class: "8-C", roll: "05", gender: "Male", dob: "15 Jan 2010", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of RAJEEV VERMA" },
+
+  { id: "3180016", admNo: "3180016", name: "KAVITA KUMARI", class: "8-D", roll: "01", gender: "Female", dob: "15 Jan 2010", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of KAVITA KUMARI" },
+  { id: "3180017", admNo: "3180017", name: "MOHAN SINGH", class: "8-D", roll: "02", gender: "Male", dob: "15 Jan 2010", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of MOHAN SINGH" },
+  { id: "3180018", admNo: "3180018", name: "SAROJ DEVI", class: "8-D", roll: "03", gender: "Female", dob: "15 Jan 2010", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SAROJ DEVI" },
+  { id: "3180019", admNo: "3180019", name: "DEEPAK KUMAR", class: "8-D", roll: "04", gender: "Male", dob: "15 Jan 2010", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of DEEPAK KUMAR" },
+  { id: "3180020", admNo: "3180020", name: "REKHA SHARMA", class: "8-D", roll: "05", gender: "Female", dob: "15 Jan 2010", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of REKHA SHARMA" },
+
+  // CLASS 9 - 15 STUDENTS (5 per section, excluding 9-C which is above)
+  { id: "3190001", admNo: "3190001", name: "BHAVANA VERMA", class: "9-A", roll: "01", gender: "Female", dob: "15 Jan 2009", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of BHAVANA VERMA" },
+  { id: "3190002", admNo: "3190002", name: "KARAN SINGH", class: "9-A", roll: "02", gender: "Male", dob: "15 Jan 2009", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of KARAN SINGH" },
+  { id: "3190003", admNo: "3190003", name: "DIVYA KUMARI", class: "9-A", roll: "03", gender: "Female", dob: "15 Jan 2009", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of DIVYA KUMARI" },
+  { id: "3190004", admNo: "3190004", name: "VIKRANT KUMAR", class: "9-A", roll: "04", gender: "Male", dob: "15 Jan 2009", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of VIKRANT KUMAR" },
+  { id: "3190005", admNo: "3190005", name: "ANJALI RANI", class: "9-A", roll: "05", gender: "Female", dob: "15 Jan 2009", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of ANJALI RANI" },
+
+  { id: "3190006", admNo: "3190006", name: "MANOJ SHARMA", class: "9-B", roll: "01", gender: "Male", dob: "15 Jan 2009", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of MANOJ SHARMA" },
+  { id: "3190007", admNo: "3190007", name: "SNEHA VERMA", class: "9-B", roll: "02", gender: "Female", dob: "15 Jan 2009", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of SNEHA VERMA" },
+  { id: "3190008", admNo: "3190008", name: "RAHUL KUMAR", class: "9-B", roll: "03", gender: "Male", dob: "15 Jan 2009", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of RAHUL KUMAR" },
+  { id: "3190009", admNo: "3190009", name: "MEENA DEVI", class: "9-B", roll: "04", gender: "Female", dob: "15 Jan 2009", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of MEENA DEVI" },
+  { id: "3190010", admNo: "3190010", name: "VIJAY SINGH", class: "9-B", roll: "05", gender: "Male", dob: "15 Jan 2009", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of VIJAY SINGH" },
+
+  { id: "3190011", admNo: "3190011", name: "POOJA KUMARI", class: "9-D", roll: "01", gender: "Female", dob: "15 Jan 2009", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of POOJA KUMARI" },
+  { id: "3190012", admNo: "3190012", name: "SURESH VERMA", class: "9-D", roll: "02", gender: "Male", dob: "15 Jan 2009", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of SURESH VERMA" },
+  { id: "3190013", admNo: "3190013", name: "ANITA RANI", class: "9-D", roll: "03", gender: "Female", dob: "15 Jan 2009", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of ANITA RANI" },
+  { id: "3190014", admNo: "3190014", name: "RAJEEV KUMAR", class: "9-D", roll: "04", gender: "Male", dob: "15 Jan 2009", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of RAJEEV KUMAR" },
+  { id: "3190015", admNo: "3190015", name: "KAVITA SHARMA", class: "9-D", roll: "05", gender: "Female", dob: "15 Jan 2009", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of KAVITA SHARMA" },
+
+  // CLASS 10 - 20 STUDENTS (5 per section)
+  { id: "3200001", admNo: "3200001", name: "ARUN KUMAR", class: "10-A", roll: "01", gender: "Male", dob: "15 Jan 2008", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of ARUN KUMAR" },
+  { id: "3200002", admNo: "3200002", name: "DIVYA SHARMA", class: "10-A", roll: "02", gender: "Female", dob: "15 Jan 2008", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of DIVYA SHARMA" },
+  { id: "3200003", admNo: "3200003", name: "KARTHIK VERMA", class: "10-A", roll: "03", gender: "Male", dob: "15 Jan 2008", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of KARTHIK VERMA" },
+  { id: "3200004", admNo: "3200004", name: "PRIYA KUMARI", class: "10-A", roll: "04", gender: "Female", dob: "15 Jan 2008", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of PRIYA KUMARI" },
+  { id: "3200005", admNo: "3200005", name: "ROHIT SINGH", class: "10-A", roll: "05", gender: "Male", dob: "15 Jan 2008", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of ROHIT SINGH" },
+
+  { id: "3200006", admNo: "3200006", name: "ANJALI RANI", class: "10-B", roll: "01", gender: "Female", dob: "15 Jan 2008", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of ANJALI RANI" },
+  { id: "3200007", admNo: "3200007", name: "MANOJ KUMAR", class: "10-B", roll: "02", gender: "Male", dob: "15 Jan 2008", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of MANOJ KUMAR" },
+  { id: "3200008", admNo: "3200008", name: "SNEHA VERMA", class: "10-B", roll: "03", gender: "Female", dob: "15 Jan 2008", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of SNEHA VERMA" },
+  { id: "3200009", admNo: "3200009", name: "RAHUL SHARMA", class: "10-B", roll: "04", gender: "Male", dob: "15 Jan 2008", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of RAHUL SHARMA" },
+  { id: "3200010", admNo: "3200010", name: "MEENA DEVI", class: "10-B", roll: "05", gender: "Female", dob: "15 Jan 2008", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of MEENA DEVI" },
+
+  { id: "3200011", admNo: "3200011", name: "VIJAY KUMAR", class: "10-C", roll: "01", gender: "Male", dob: "15 Jan 2008", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of VIJAY KUMAR" },
+  { id: "3200012", admNo: "3200012", name: "POOJA SHARMA", class: "10-C", roll: "02", gender: "Female", dob: "15 Jan 2008", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of POOJA SHARMA" },
+  { id: "3200013", admNo: "3200013", name: "SURESH VERMA", class: "10-C", roll: "03", gender: "Male", dob: "15 Jan 2008", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of SURESH VERMA" },
+  { id: "3200014", admNo: "3200014", name: "ANITA RANI", class: "10-C", roll: "04", gender: "Female", dob: "15 Jan 2008", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of ANITA RANI" },
+  { id: "3200015", admNo: "3200015", name: "RAJEEV KUMAR", class: "10-C", roll: "05", gender: "Male", dob: "15 Jan 2008", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of RAJEEV KUMAR" },
+
+  { id: "3200016", admNo: "3200016", name: "KAVITA KUMARI", class: "10-D", roll: "01", gender: "Female", dob: "15 Jan 2008", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of KAVITA KUMARI" },
+  { id: "3200017", admNo: "3200017", name: "MOHAN SHARMA", class: "10-D", roll: "02", gender: "Male", dob: "15 Jan 2008", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of MOHAN SHARMA" },
+  { id: "3200018", admNo: "3200018", name: "SAROJ DEVI", class: "10-D", roll: "03", gender: "Female", dob: "15 Jan 2008", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of SAROJ DEVI" },
+  { id: "3200019", admNo: "3200019", name: "DEEPAK KUMAR", class: "10-D", roll: "04", gender: "Male", dob: "15 Jan 2008", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of DEEPAK KUMAR" },
+  { id: "3200020", admNo: "3200020", name: "REKHA RANI", class: "10-D", roll: "05", gender: "Female", dob: "15 Jan 2008", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of REKHA RANI" },
+
+  // ADDITIONAL 5 STUDENTS FOR EACH SECTION (10 students per section total)
+  // CLASS 6-A - Additional 5 students
+  { id: "3160021", admNo: "3160021", name: "SUNIL KUMAR", class: "6-A", roll: "06", gender: "Male", dob: "15 Jan 2012", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of SUNIL KUMAR" },
+  { id: "3160022", admNo: "3160022", name: "PRIYA SHARMA", class: "6-A", roll: "07", gender: "Female", dob: "15 Jan 2012", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of PRIYA SHARMA" },
+  { id: "3160023", admNo: "3160023", name: "RAJESH VERMA", class: "6-A", roll: "08", gender: "Male", dob: "15 Jan 2012", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of RAJESH VERMA" },
+  { id: "3160024", admNo: "3160024", name: "ANITA RANI", class: "6-A", roll: "09", gender: "Female", dob: "15 Jan 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of ANITA RANI" },
+  { id: "3160025", admNo: "3160025", name: "MOHAN SINGH", class: "6-A", roll: "10", gender: "Male", dob: "15 Jan 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of MOHAN SINGH" },
+
+  // CLASS 6-B - Additional 5 students
+  { id: "3160026", admNo: "3160026", name: "KAVITA DEVI", class: "6-B", roll: "06", gender: "Female", dob: "15 Jan 2012", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of KAVITA DEVI" },
+  { id: "3160027", admNo: "3160027", name: "VIKRAM SINGH", class: "6-B", roll: "07", gender: "Male", dob: "15 Jan 2012", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of VIKRAM SINGH" },
+  { id: "3160028", admNo: "3160028", name: "SUNITA KUMARI", class: "6-B", roll: "08", gender: "Female", dob: "15 Jan 2012", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of SUNITA KUMARI" },
+  { id: "3160029", admNo: "3160029", name: "RAHUL KUMAR", class: "6-B", roll: "09", gender: "Male", dob: "15 Jan 2012", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of RAHUL KUMAR" },
+  { id: "3160030", admNo: "3160030", name: "POOJA VERMA", class: "6-B", roll: "10", gender: "Female", dob: "15 Jan 2012", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of POOJA VERMA" },
+
+  // CLASS 6-C - Additional 5 students
+  { id: "3160031", admNo: "3160031", name: "ANIL KUMAR", class: "6-C", roll: "06", gender: "Male", dob: "15 Jan 2012", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of ANIL KUMAR" },
+  { id: "3160032", admNo: "3160032", name: "MEENA SHARMA", class: "6-C", roll: "07", gender: "Female", dob: "15 Jan 2012", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of MEENA SHARMA" },
+  { id: "3160033", admNo: "3160033", name: "SURESH VERMA", class: "6-C", roll: "08", gender: "Male", dob: "15 Jan 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of SURESH VERMA" },
+  { id: "3160034", admNo: "3160034", name: "ANITA DEVI", class: "6-C", roll: "09", gender: "Female", dob: "15 Jan 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of ANITA DEVI" },
+  { id: "3160035", admNo: "3160035", name: "RAJEEV SINGH", class: "6-C", roll: "10", gender: "Male", dob: "15 Jan 2012", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of RAJEEV SINGH" },
+
+  // CLASS 6-D - Additional 5 students
+  { id: "3160036", admNo: "3160036", name: "KAVITA SHARMA", class: "6-D", roll: "06", gender: "Female", dob: "15 Jan 2012", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of KAVITA SHARMA" },
+  { id: "3160037", admNo: "3160037", name: "MOHAN KUMAR", class: "6-D", roll: "07", gender: "Male", dob: "15 Jan 2012", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of MOHAN KUMAR" },
+  { id: "3160038", admNo: "3160038", name: "SAROJ RANI", class: "6-D", roll: "08", gender: "Female", dob: "15 Jan 2012", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of SAROJ RANI" },
+  { id: "3160039", admNo: "3160039", name: "DEEPAK VERMA", class: "6-D", roll: "09", gender: "Male", dob: "15 Jan 2012", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of DEEPAK VERMA" },
+  { id: "3160040", admNo: "3160040", name: "REKHA DEVI", class: "6-D", roll: "10", gender: "Female", dob: "15 Jan 2012", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of REKHA DEVI" },
+
+  // CLASS 7-A - Additional 5 students
+  { id: "3170021", admNo: "3170021", name: "ROHIT SINGH", class: "7-A", roll: "06", gender: "Male", dob: "15 Jan 2011", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of ROHIT SINGH" },
+  { id: "3170022", admNo: "3170022", name: "PRIYA VERMA", class: "7-A", roll: "07", gender: "Female", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of PRIYA VERMA" },
+  { id: "3170023", admNo: "3170023", name: "AMIT SINGH", class: "7-A", roll: "08", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of AMIT SINGH" },
+  { id: "3170024", admNo: "3170024", name: "SNEHA RANI", class: "7-A", roll: "09", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SNEHA RANI" },
+  { id: "3170025", admNo: "3170025", name: "RAHUL KUMAR", class: "7-A", roll: "10", gender: "Male", dob: "15 Jan 2011", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of RAHUL KUMAR" },
+
+  // CLASS 7-B - Additional 5 students
+  { id: "3170026", admNo: "3170026", name: "MEENA DEVI", class: "7-B", roll: "06", gender: "Female", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of MEENA DEVI" },
+  { id: "3170027", admNo: "3170027", name: "MANOJ SINGH", class: "7-B", roll: "07", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of MANOJ SINGH" },
+  { id: "3170028", admNo: "3170028", name: "POOJA KUMARI", class: "7-B", roll: "08", gender: "Female", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of POOJA KUMARI" },
+  { id: "3170029", admNo: "3170029", name: "VIJAY VERMA", class: "7-B", roll: "09", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of VIJAY VERMA" },
+  { id: "3170030", admNo: "3170030", name: "ANITA RANI", class: "7-B", roll: "10", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of ANITA RANI" },
+
+  // CLASS 7-C - Additional 5 students
+  { id: "3170031", admNo: "3170031", name: "SURESH KUMAR", class: "7-C", roll: "06", gender: "Male", dob: "15 Jan 2011", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of SURESH KUMAR" },
+  { id: "3170032", admNo: "3170032", name: "KAVITA SHARMA", class: "7-C", roll: "07", gender: "Female", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of KAVITA SHARMA" },
+  { id: "3170033", admNo: "3170033", name: "RAJEEV SINGH", class: "7-C", roll: "08", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of RAJEEV SINGH" },
+  { id: "3170034", admNo: "3170034", name: "SAROJ KUMARI", class: "7-C", roll: "09", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SAROJ KUMARI" },
+  { id: "3170035", admNo: "3170035", name: "DEEPAK VERMA", class: "7-C", roll: "10", gender: "Male", dob: "15 Jan 2011", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of DEEPAK VERMA" },
+
+  // CLASS 7-D - Additional 5 students
+  { id: "3170036", admNo: "3170036", name: "ARUN KUMAR", class: "7-D", roll: "06", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of ARUN KUMAR" },
+  { id: "3170037", admNo: "3170037", name: "DIVYA SHARMA", class: "7-D", roll: "07", gender: "Female", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of DIVYA SHARMA" },
+  { id: "3170038", admNo: "3170038", name: "KARTHIK KUMAR", class: "7-D", roll: "08", gender: "Male", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of KARTHIK KUMAR" },
+  { id: "3170039", admNo: "3170039", name: "PRIYA VERMA", class: "7-D", roll: "09", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of PRIYA VERMA" },
+  { id: "3170040", admNo: "3170040", name: "ROHIT SINGH", class: "7-D", roll: "10", gender: "Male", dob: "15 Jan 2011", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of ROHIT SINGH" },
+
+  // CLASS 8-A - Additional 5 students
+  { id: "3180021", admNo: "3180021", name: "ANJALI KUMARI", class: "8-A", roll: "06", gender: "Female", dob: "15 Jan 2010", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ANJALI KUMARI" },
+  { id: "3180022", admNo: "3180022", name: "MANOJ VERMA", class: "8-A", roll: "07", gender: "Male", dob: "15 Jan 2010", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of MANOJ VERMA" },
+  { id: "3180023", admNo: "3180023", name: "SNEHA RANI", class: "8-A", roll: "08", gender: "Female", dob: "15 Jan 2010", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SNEHA RANI" },
+  { id: "3180024", admNo: "3180024", name: "RAHUL KUMAR", class: "8-A", roll: "09", gender: "Male", dob: "15 Jan 2010", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of RAHUL KUMAR" },
+  { id: "3180025", admNo: "3180025", name: "MEENA DEVI", class: "8-A", roll: "10", gender: "Female", dob: "15 Jan 2010", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of MEENA DEVI" },
+
+  // CLASS 8-B - Additional 5 students
+  { id: "3180026", admNo: "3180026", name: "VIJAY SINGH", class: "8-B", roll: "06", gender: "Male", dob: "15 Jan 2010", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of VIJAY SINGH" },
+  { id: "3180027", admNo: "3180027", name: "POOJA SHARMA", class: "8-B", roll: "07", gender: "Female", dob: "15 Jan 2010", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of POOJA SHARMA" },
+  { id: "3180028", admNo: "3180028", name: "SURESH KUMAR", class: "8-B", roll: "08", gender: "Male", dob: "15 Jan 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of SURESH KUMAR" },
+  { id: "3180029", admNo: "3180029", name: "ANITA RANI", class: "8-B", roll: "09", gender: "Female", dob: "15 Jan 2010", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of ANITA RANI" },
+  { id: "3180030", admNo: "3180030", name: "RAJEEV VERMA", class: "8-B", roll: "10", gender: "Male", dob: "15 Jan 2010", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of RAJEEV VERMA" },
+
+  // CLASS 8-C - Additional 5 students
+  { id: "3180031", admNo: "3180031", name: "KAVITA KUMARI", class: "8-C", roll: "06", gender: "Female", dob: "15 Jan 2010", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of KAVITA KUMARI" },
+  { id: "3180032", admNo: "3180032", name: "MOHAN SINGH", class: "8-C", roll: "07", gender: "Male", dob: "15 Jan 2010", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of MOHAN SINGH" },
+  { id: "3180033", admNo: "3180033", name: "SAROJ DEVI", class: "8-C", roll: "08", gender: "Female", dob: "15 Jan 2010", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SAROJ DEVI" },
+  { id: "3180034", admNo: "3180034", name: "DEEPAK KUMAR", class: "8-C", roll: "09", gender: "Male", dob: "15 Jan 2010", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of DEEPAK KUMAR" },
+  { id: "3180035", admNo: "3180035", name: "REKHA SHARMA", class: "8-C", roll: "10", gender: "Female", dob: "15 Jan 2010", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of REKHA SHARMA" },
+
+  // CLASS 8-D - Additional 5 students
+  { id: "3180036", admNo: "3180036", name: "ARUN SINGH", class: "8-D", roll: "06", gender: "Male", dob: "15 Jan 2010", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of ARUN SINGH" },
+  { id: "3180037", admNo: "3180037", name: "DIVYA SHARMA", class: "8-D", roll: "07", gender: "Female", dob: "15 Jan 2010", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of DIVYA SHARMA" },
+  { id: "3180038", admNo: "3180038", name: "KARTHIK KUMAR", class: "8-D", roll: "08", gender: "Male", dob: "15 Jan 2010", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of KARTHIK KUMAR" },
+  { id: "3180039", admNo: "3180039", name: "PRIYA VERMA", class: "8-D", roll: "09", gender: "Female", dob: "15 Jan 2010", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of PRIYA VERMA" },
+  { id: "3180040", admNo: "3180040", name: "ROHIT SINGH", class: "8-D", roll: "10", gender: "Male", dob: "15 Jan 2010", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of ROHIT SINGH" },
+
+  // CLASS 9-A - Additional 5 students
+  { id: "3190016", admNo: "3190016", name: "MANOJ SHARMA", class: "9-A", roll: "06", gender: "Male", dob: "15 Jan 2009", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of MANOJ SHARMA" },
+  { id: "3190017", admNo: "3190017", name: "SNEHA VERMA", class: "9-A", roll: "07", gender: "Female", dob: "15 Jan 2009", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of SNEHA VERMA" },
+  { id: "3190018", admNo: "3190018", name: "RAHUL KUMAR", class: "9-A", roll: "08", gender: "Male", dob: "15 Jan 2009", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of RAHUL KUMAR" },
+  { id: "3190019", admNo: "3190019", name: "MEENA DEVI", class: "9-A", roll: "09", gender: "Female", dob: "15 Jan 2009", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of MEENA DEVI" },
+  { id: "3190020", admNo: "3190020", name: "VIJAY SINGH", class: "9-A", roll: "10", gender: "Male", dob: "15 Jan 2009", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of VIJAY SINGH" },
+
+  // CLASS 9-B - Additional 5 students
+  { id: "3190021", admNo: "3190021", name: "POOJA KUMARI", class: "9-B", roll: "06", gender: "Female", dob: "15 Jan 2009", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of POOJA KUMARI" },
+  { id: "3190022", admNo: "3190022", name: "SURESH VERMA", class: "9-B", roll: "07", gender: "Male", dob: "15 Jan 2009", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of SURESH VERMA" },
+  { id: "3190023", admNo: "3190023", name: "ANITA RANI", class: "9-B", roll: "08", gender: "Female", dob: "15 Jan 2009", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of ANITA RANI" },
+  { id: "3190024", admNo: "3190024", name: "RAJEEV KUMAR", class: "9-B", roll: "09", gender: "Male", dob: "15 Jan 2009", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of RAJEEV KUMAR" },
+  { id: "3190025", admNo: "3190025", name: "KAVITA SHARMA", class: "9-B", roll: "10", gender: "Female", dob: "15 Jan 2009", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of KAVITA SHARMA" },
+
+  // CLASS 9-D - Additional 5 students
+  { id: "3190026", admNo: "3190026", name: "MANOJ KUMAR", class: "9-D", roll: "06", gender: "Male", dob: "15 Jan 2009", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of MANOJ KUMAR" },
+  { id: "3190027", admNo: "3190027", name: "PRIYA VERMA", class: "9-D", roll: "07", gender: "Female", dob: "15 Jan 2009", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of PRIYA VERMA" },
+  { id: "3190028", admNo: "3190028", name: "AMIT SINGH", class: "9-D", roll: "08", gender: "Male", dob: "15 Jan 2009", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of AMIT SINGH" },
+  { id: "3190029", admNo: "3190029", name: "SNEHA RANI", class: "9-D", roll: "09", gender: "Female", dob: "15 Jan 2009", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SNEHA RANI" },
+  { id: "3190030", admNo: "3190030", name: "RAHUL SHARMA", class: "9-D", roll: "10", gender: "Male", dob: "15 Jan 2009", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 6.9, parent: "Parent of RAHUL SHARMA" },
+
+  // CLASS 10-A - Additional 5 students
+  { id: "3200021", admNo: "3200021", name: "ANJALI RANI", class: "10-A", roll: "06", gender: "Female", dob: "15 Jan 2008", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of ANJALI RANI" },
+  { id: "3200022", admNo: "3200022", name: "MANOJ KUMAR", class: "10-A", roll: "07", gender: "Male", dob: "15 Jan 2008", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of MANOJ KUMAR" },
+  { id: "3200023", admNo: "3200023", name: "SNEHA VERMA", class: "10-A", roll: "08", gender: "Female", dob: "15 Jan 2008", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of SNEHA VERMA" },
+  { id: "3200024", admNo: "3200024", name: "RAHUL SHARMA", class: "10-A", roll: "09", gender: "Male", dob: "15 Jan 2008", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of RAHUL SHARMA" },
+  { id: "3200025", admNo: "3200025", name: "MEENA DEVI", class: "10-A", roll: "10", gender: "Female", dob: "15 Jan 2008", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of MEENA DEVI" },
+
+  // CLASS 10-B - Additional 5 students
+  { id: "3200026", admNo: "3200026", name: "VIJAY KUMAR", class: "10-B", roll: "06", gender: "Male", dob: "15 Jan 2008", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of VIJAY KUMAR" },
+  { id: "3200027", admNo: "3200027", name: "POOJA SHARMA", class: "10-B", roll: "07", gender: "Female", dob: "15 Jan 2008", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of POOJA SHARMA" },
+  { id: "3200028", admNo: "3200028", name: "SURESH VERMA", class: "10-B", roll: "08", gender: "Male", dob: "15 Jan 2008", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.1, parent: "Parent of SURESH VERMA" },
+  { id: "3200029", admNo: "3200029", name: "ANITA RANI", class: "10-B", roll: "09", gender: "Female", dob: "15 Jan 2008", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of ANITA RANI" },
+  { id: "3200030", admNo: "3200030", name: "RAJEEV KUMAR", class: "10-B", roll: "10", gender: "Male", dob: "15 Jan 2008", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of RAJEEV KUMAR" },
+
+  // CLASS 10-C - Additional 5 students
+  { id: "3200031", admNo: "3200031", name: "KAVITA KUMARI", class: "10-C", roll: "06", gender: "Female", dob: "15 Jan 2008", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of KAVITA KUMARI" },
+  { id: "3200032", admNo: "3200032", name: "MOHAN SHARMA", class: "10-C", roll: "07", gender: "Male", dob: "15 Jan 2008", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of MOHAN SHARMA" },
+  { id: "3200033", admNo: "3200033", name: "SAROJ DEVI", class: "10-C", roll: "08", gender: "Female", dob: "15 Jan 2008", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of SAROJ DEVI" },
+  { id: "3200034", admNo: "3200034", name: "DEEPAK KUMAR", class: "10-C", roll: "09", gender: "Male", dob: "15 Jan 2008", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of DEEPAK KUMAR" },
+  { id: "3200035", admNo: "3200035", name: "REKHA RANI", class: "10-C", roll: "10", gender: "Female", dob: "15 Jan 2008", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of REKHA RANI" },
+
+  // CLASS 10-D - Additional 5 students
+  { id: "3200036", admNo: "3200036", name: "ARUN KUMAR", class: "10-D", roll: "06", gender: "Male", dob: "15 Jan 2008", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ARUN KUMAR" },
+  { id: "3200037", admNo: "3200037", name: "DIVYA SHARMA", class: "10-D", roll: "07", gender: "Female", dob: "15 Jan 2008", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of DIVYA SHARMA" },
+  { id: "3200038", admNo: "3200038", name: "KARTHIK VERMA", class: "10-D", roll: "08", gender: "Male", dob: "15 Jan 2008", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of KARTHIK VERMA" },
+  { id: "3200039", admNo: "3200039", name: "PRIYA KUMARI", class: "10-D", roll: "09", gender: "Female", dob: "15 Jan 2008", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of PRIYA KUMARI" },
+  { id: "3200040", admNo: "3200040", name: "ROHIT SINGH", class: "10-D", roll: "10", gender: "Male", dob: "15 Jan 2008", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of ROHIT SINGH" }
 ];
 
-// ─── Teachers ────────────────────────────────────────────────
+// ─── Teachers (7 teachers synchronized with database) ────────────────────────────────────────────────
 const TEACHERS = [
-  { id: "T001", name: "Prasana Reddy",   subject: "Mathematics",       classes: "10-A, 9-B",  exp: "8 years",  phone: "+91 87654 11111", status: "Active" },
+  { id: "T001", name: "Prasana Reddy",   subject: "Mathematics",       classes: "10-A, 9-B, 8-C",  exp: "8 years",  phone: "+91 87654 11111", status: "Active" },
   { id: "T002", name: "Ramesh Sharma",   subject: "Physics",           classes: "10-A, 10-B", exp: "12 years", phone: "+91 87654 22222", status: "Active" },
-  { id: "T003", name: "Anita Pillai",    subject: "English Literature",classes: "8-B, 9-A",   exp: "6 years",  phone: "+91 87654 33333", status: "On Leave" },
-  { id: "T004", name: "Mohan Das",       subject: "Chemistry",         classes: "10-C, 9-D", exp: "15 years", phone: "+91 87654 44444", status: "Active" },
-  { id: "T005", name: "Sunita Verma",    subject: "History",           classes: "7-A, 6-B",   exp: "9 years",  phone: "+91 87654 55555", status: "Active" },
-  { id: "T006", name: "Venkat Iyer",     subject: "Computer Science",  classes: "8-A, 9-C",   exp: "5 years",  phone: "+91 87654 66666", status: "Active" },
-  { id: "T007", name: "Pooja Mehta",     subject: "Biology",           classes: "8-E, 9-F", exp: "7 years",  phone: "+91 87654 77777", status: "Active" },
-  { id: "T008", name: "Suresh Naidu",    subject: "Physical Education",classes: "All",         exp: "11 years", phone: "+91 87654 88888", status: "Active" },
+  { id: "T003", name: "Anita Pillai",    subject: "English Literature",classes: "8-B, 9-A",   exp: "6 years",  phone: "+91 87654 33333", status: "Active" },
+  { id: "T004", name: "Mohan Das",       subject: "Chemistry",         classes: "9-C, 10-C", exp: "10 years", phone: "+91 87654 44444", status: "Active" },
+  { id: "T005", name: "Sunita Verma",    subject: "Social Studies",    classes: "8-A, 9-D", exp: "7 years",  phone: "+91 87654 55555", status: "Active" },
+  { id: "T006", name: "Venkat Iyer",     subject: "Computer Science",  classes: "9-C, 10-D", exp: "5 years",  phone: "+91 87654 66666", status: "Active" },
+  { id: "T007", name: "Pooja Mehta",     subject: "Biology",           classes: "8-C, 9-C", exp: "9 years",  phone: "+91 87654 77777", status: "Active" }
 ];
 
 // ─── Class Schedule ──────────────────────────────────────────
@@ -967,47 +1223,45 @@ const ROLE_HOME = {
     greeting: "Welcome back, Suman!",
     subtitle: "School operations, academic tracking, and staff monitoring overview.",
     stats: [
-      { label: "School Attendance", value: "92.5%", icon: "📋", color: "#4caf50" },
-      { label: "Teacher Presence",  value: "31/32", icon: "👨‍🏫", color: "#1976d2" },
-      { label: "Pending Approvals", value: "5",     icon: "✅", color: "#f57c00" },
-      { label: "Low Att. Classes",  value: "3",     icon: "📉", color: "#d32f2f" },
-      { label: "Pending Marks",     value: "2",     icon: "📝", color: "#8b5cf6" },
-      { label: "Discipline Cases",  value: "2",     icon: "⚠️", color: "#ff5722" },
-      { label: "Upcoming Exams",    value: "3",     icon: "📅", color: "#00bcd4" },
-      { label: "Active Notices",    value: "12",    icon: "📢", color: "#8b5cf6" },
+      { label: "Total Students", value: "230", icon: "👥", color: "#5ca870" },
+      { label: "Total Teachers", value: "7", icon: "👨‍🏫", color: "#1976d2" },
+      { label: "Total Classes", value: "20", icon: "🏫", color: "#ff6b6b" },
+      { label: "Avg Attendance", value: "88%", icon: "📋", color: "#ffa726" },
+      { label: "Pending Approvals", value: "5", icon: "✅", color: "#f57c00" },
+      { label: "Active Notices", value: "7", icon: "📢", color: "#8b5cf6" },
     ]
   },
   teacher: {
     greeting: "Good Morning, Prasana!",
     subtitle: "Your classes and tasks for today.",
     stats: [
-      { label: "Classes Today",     value: "4",   icon: "📚", color: "#1976d2" },
-      { label: "Pending Attendance",value: "2",   icon: "📋", color: "#f57c00" },
-      { label: "Assignments to Grade",value: "15",icon: "📝", color: "#d32f2f" },
-      { label: "Upcoming Tests",    value: "1",   icon: "📅", color: "#8b5cf6" },
-      { label: "Average Class Perf",value: "82%", icon: "🌟", color: "#5ca870" },
+      { label: "My Classes", value: "3", icon: "📚", color: "#1976d2" },
+      { label: "My Students", value: "30", icon: "👥", color: "#5ca870" },
+      { label: "Pending Attendance", value: "2", icon: "📋", color: "#f57c00" },
+      { label: "Assignments to Grade", value: "15", icon: "📝", color: "#d32f2f" },
+      { label: "Avg Class Performance", value: "82%", icon: "🌟", color: "#5ca870" },
     ]
   },
   parent: {
-    greeting: "Hello, Mr. Ashwath!",
-    subtitle: "KASULA ASHWATH · Class 9-C · DPS Nadergul",
+    greeting: "Hello, Parent!",
+    subtitle: "Your child's academic progress today.",
     stats: [
-      { label: "Attendance",       value: "94%",  icon: "📋", color: "#5ca870" },
-      { label: "Average Score",    value: "86%",  icon: "📊", color: "#1976d2" },
-      { label: "Pending Homework", value: "2",    icon: "📝", color: "#f57c00" },
-      { label: "Upcoming Exams",   value: "3",    icon: "📅", color: "#8b5cf6" },
-      { label: "Latest Grade",     value: "A",    icon: "🏅", color: "#4caf50" },
-      { label: "Fee Due",          value: "₹10K", icon: "💰", color: "#d32f2f" },
+      { label: "Current GPA", value: "8.7", icon: "📊", color: "#5ca870" },
+      { label: "Attendance", value: "94%", icon: "📋", color: "#1976d2" },
+      { label: "Pending Homework", value: "3", icon: "📝", color: "#ff6b6b" },
+      { label: "Next Exam", value: "5d", icon: "📅", color: "#ffa726" },
+      { label: "Latest Grade", value: "A", icon: "🏅", color: "#4caf50" },
     ]
   },
   coordinator: {
     greeting: "Hello, Anitha!",
     subtitle: "Academic coordination dashboard.",
     stats: [
-      { label: "Classes Managed",   value: "18", icon: "🏫", color: "#5ca870" },
-      { label: "Teaching Staff",    value: "32", icon: "👨‍🏫", color: "#1976d2" },
-      { label: "Notices Published", value: "12", icon: "📢", color: "#8b5cf6" },
-      { label: "Open Issues",      value: "5",  icon: "⚠️", color: "#f57c00" },
+      { label: "Total Students", value: "230", icon: "👥", color: "#5ca870" },
+      { label: "Total Teachers", value: "7", icon: "👨‍🏫", color: "#1976d2" },
+      { label: "Total Classes", value: "20", icon: "🏫", color: "#ff6b6b" },
+      { label: "Avg GPA", value: "7.6", icon: "📊", color: "#ffa726" },
+      { label: "Active Notices", value: "7", icon: "📢", color: "#8b5cf6" },
     ]
   },
   class_teacher: {
@@ -1024,20 +1278,31 @@ const ROLE_HOME = {
     greeting: "Good Day, Principal Sir!",
     subtitle: "Institution-wide health, performance, and strategic overview.",
     stats: [
-      { label: "Overall Attendance", value: "92.5%", icon: "📋", color: "#4caf50" },
-      { label: "Academic Standing",  value: "8.4 avg", icon: "🌟", color: "#1976d2" },
-      { label: "Teacher Fulfillment",value: "31/32", icon: "👩‍🏫", color: "#f57c00" },
-      { label: "Strategic Approvals",value: "5",     icon: "⏱️", color: "#d32f2f" },
+      { label: "Total Students", value: "130", icon: "�", color: "#5ca870" },
+      { label: "Total Teachers", value: "7", icon: "👨‍�", color: "#1976d2" },
+      { label: "Total Classes", value: "16", icon: "🏫", color: "#ff6b6b" },
+      { label: "Overall Attendance", value: "88%", icon: "�", color: "#ffa726" },
+      { label: "Strategic Approvals", value: "5", icon: "⏱️", color: "#d32f2f" },
+    ]
+  },
+  student: {
+    greeting: "Good Morning!",
+    subtitle: "Your academic dashboard.",
+    stats: [
+      { label: "Current GPA", value: "8.7", icon: "📊", color: "#5ca870" },
+      { label: "Attendance", value: "94%", icon: "📋", color: "#1976d2" },
+      { label: "Pending Homework", value: "3", icon: "📝", color: "#ff6b6b" },
+      { label: "Rank", value: "1", icon: "🏆", color: "#ffa726" },
     ]
   },
   apaaas: {
     greeting: "Welcome, SuperAdmin!",
     subtitle: "Full-system audit and administrative control center.",
     stats: [
-      { label: "Uptime Status",      value: "99.9%", icon: "⚡", color: "#4caf50" },
-      { label: "Total Students",     value: "540+",  icon: "🎓", color: "#1976d2" },
-      { label: "Active Sessions",    value: "14",    icon: "💻", color: "#f57c00" },
-      { label: "Unresolved Issues",  value: "2",     icon: "🚨", color: "#d32f2f" },
+      { label: "Total Users", value: "142", icon: "👥", color: "#5ca870" },
+      { label: "System Health", value: "Good", icon: "�", color: "#1976d2" },
+      { label: "Database", value: "Synced", icon: "�", color: "#ff6b6b" },
+      { label: "Security", value: "Active", icon: "�", color: "#ffa726" },
     ]
   }
 };
