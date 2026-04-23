@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="CampusCore – Smart School Management System for DPS Nadergul. Manage attendance, homework, exams, timetables and more." />
+  <title>CampusCore – Smart School Management System | DPS Nadergul</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/landing.css?v=3" />
+  <link rel="stylesheet" href="css/login.css?v=3" />
+  <link rel="stylesheet" href="css/dashboard.css?v=3" />
+
+<style>
+.modal-overlay {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  z-index: 9999; display: flex; justify-content: center; align-items: center;
+}
+.modal-content, .modal {
+  background: var(--color-surface); width: 100%; max-width: 500px;
+  border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  display: flex; flex-direction: column; overflow: hidden;
+  max-height: 90vh; padding: 24px; overflow-y: auto;
+}
+.modal-header {
+  padding: 20px; border-bottom: 1px solid var(--color-border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modal-header h3 { margin:0; color:var(--color-text); }
+.modal-close {
+  background: none; border: none; color: var(--color-text-muted);
+  font-size: 20px; cursor: pointer; transition: color 0.2s;
+}
+.modal-close:hover { color: var(--color-danger); }
+.modal-body {
+  padding: 20px; overflow-y: auto;
+}
+.form-group {
+  display: flex; flex-direction: column;
+}
+.form-group label {
+  font-size: 13px; font-weight: 600; color: var(--color-text); margin-bottom: 4px; margin-top: 8px;
+}
+.form-control {
+  width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--color-border);
+  background: var(--color-surface-2); color: var(--color-text); font-family: inherit;
+  margin-bottom: 8px; margin-top: 6px; outline: none; transition: border-color 0.2s;
+  font-size: 14px;
+}
+.form-control:focus { border-color: var(--color-primary); }
+</style>
+
+  <script>
+    // SELF-CLEANING SCRIPT: Clear old broken credentials from cache
+    (function() {
+      // Force dark mode as default if no preference is saved
+      const savedTheme = localStorage.getItem('cc_theme');
+      if (!savedTheme) {
+        localStorage.setItem('cc_theme', 'dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- ══════════ PAGE 1: LANDING PAGE ══════════ -->
+  <div id="landing-page" class="page active">
+    <!-- Landing Navbar -->
+    <nav class="land-nav" id="land-nav">
+      <div class="land-nav-inner">
+        <a href="#home" class="land-logo" onclick="closeMobileNav()">
+          <div class="land-logo-icon"><img src="campus-logo.png" alt="CC"
+              onerror="this.src=''; this.alt='🎓'; this.style.fontSize='18px'"></div>
+          <span>Campus<strong>Core</strong></span>
+        </a>
+        <div class="land-nav-links" id="land-nav-links">
+          <a href="#home" onclick="closeMobileNav()">Home</a>
+          <a href="#about" onclick="closeMobileNav()">About</a>
+          <a href="#features" onclick="closeMobileNav()">Features</a>
+          <a href="#portals" onclick="closeMobileNav()">Roles</a>
+          <a href="#feature-map" onclick="closeMobileNav()">Map</a>
+          <a href="#how-it-works" onclick="closeMobileNav()">How It Works</a>
+          <a href="#founders" onclick="closeMobileNav()">Founders</a>
+          <button class="land-login-btn" onclick="showPage('login');closeMobileNav()">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
+          <!-- Trouble Login helper - subtle for testing -->
+          <button onclick="if(confirm('Clear all local data and reset app?')){ localStorage.clear(); sessionStorage.clear(); location.reload(); }" style="background:none;border:none;color:var(--color-text-muted);font-size:10px;cursor:pointer;opacity:0.3" title="Troubleshoot Login">
+            <i class="fas fa-sync"></i>
+          </button>
+        </div>
+        <button class="land-hamburger" id="land-hamburger" onclick="toggleMobileNav()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="land-hero" id="home">
+      <div class="land-hero-bg"></div>
+      <div class="land-hero-content">
+        <div class="land-hero-badge">WELCOME TO</div>
+        <h1>Campus<span>Core</span></h1>
+        <p class="land-hero-tagline">Smart School Management</p>
+        <p class="land-hero-desc">A high-performance digital ecosystem for Delhi Public School Nadergul. Empowering students, parents, and educators through centralized administration and seamless communication.</p>
+        <div class="land-hero-btns">
+          <button class="land-btn-primary" onclick="showPage('login')">
+            <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+          </button>
+          <a href="#about" class="land-btn-outline">
+            Learn More
+          </a>
+        </div>
+      </div>
+      <div class="land-hero-visual">
+        <div class="land-hero-image-wrapper">
+          <div class="land-hero-image-glow"></div>
+          <div class="land-hero-image-frame">
+            <img src="dps image.jpg" alt="DPS Nadergul Campus" class="land-hero-school-img">
+            <div class="land-hero-img-overlay"></div>
+          </div>
+          <div class="land-hero-floating-badge">
+            <i class="fas fa-university"></i>
+            <span>DPS Nadergul</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="land-stats">
+      <div class="land-container">
+        <div class="stats-grid-simple">
+          <div class="stat-item">
+            <div class="stat-num">27+</div>
+            <div class="stat-label">Classes Covered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">8+</div>
+            <div class="stat-label">User Roles</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">6</div>
+            <div class="stat-label">Core Modules</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Secure Access</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="land-section" id="about">
+      <div class="land-container">
+        <div class="land-section-header">
+          <span class="land-section-badge">About Us</span>
+          <h2>What is CampusCore?</h2>
+          <p>Your All-in-One School Management Solution</p>
+        </div>
+        <div class="land-about-grid">
+          <p>CampusCore is a robust, custom-built digital platform designed specifically for Delhi Public School
+            Nadergul. It revolutionizes the way our school manages its day-to-day academic and administrative
+            operations.</p>
+          <p>By bringing attendance tracking, homework management, exam scheduling, and report card generation under one
+            unified ecosystem, CampusCore bridges the communication gap between educators, students, and parents.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="land-section land-section-alt" id="features">
+      <div class="land-container">
+        <div class="land-section-header">
+          <span class="land-section-badge">Features</span>
+          <h2>Core Capabilities</h2>
+          <p>Everything required for modern education</p>
+        </div>
+        <div class="land-features-grid">
+          <div class="land-feature-card" style="--card-accent:#5ca870">
+            <div class="lfc-icon" style="background:#5ca87015;color:#5ca870"><i class="fas fa-clipboard-check"></i>
+            </div>
+            <h4>Smart Attendance</h4>
+            <p>Real-time attendance tracking with immediate parent notifications and analytics.</p>
+          </div>
+          <div class="land-feature-card" style="--card-accent:#1976d2">
+            <div class="lfc-icon" style="background:#1976d215;color:#1976d2"><i class="fas fa-book-open"></i></div>
+            <h4>Homework Management</h4>
+            <p>Easily assign, collect, and track daily assignments. Keep parents fully updated.</p>
+          </div>
+          <div class="land-feature-card" style="--card-accent:#f57c00">
+            <div class="lfc-icon" style="background:#f57c0015;color:#f57c00"><i class="fas fa-chart-bar"></i></div>
+            <h4>Exam & Results</h4>
+            <p>Generate precise report cards, track student progress, and schedule exams instantly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Role-Based Access Section -->
+    <section class="land-section" id="portals">
+      <div class="land-container">
+        <div class="land-section-header">
+          <span class="land-section-badge">Who Uses It</span>
+          <h2>Role-Based Access</h2>
+          <p>A unified system customized for every user</p>
+        </div>
+        <div class="land-roles-grid">
+          <div class="land-role-card">
+            <div class="lrc-icon" style="background:linear-gradient(135deg,#e53935,#b71c1c)"><i
+                class="fas fa-user-shield"></i></div>
+            <h4>Principal / Higher Authority</h4>
+            <p class="role-desc">Maintains complete oversight of the institution.</p>
+            <ul class="role-feature-list">
+              <li><i class="fas fa-check"></i> Overall school overview</li>
+              <li><i class="fas fa-check"></i> Performance analytics</li>
+              <li><i class="fas fa-check"></i> High-level approvals & notices</li>
+              <li><i class="fas fa-check"></i> Academic monitoring</li>
+            </ul>
+          </div>
+          <div class="land-role-card">
+            <div class="lrc-icon" style="background:linear-gradient(135deg,#c2185b,#880e4f)"><i
+                class="fas fa-user-tie"></i></div>
+            <h4>Vice Principal (Suman)</h4>
+            <p class="role-desc">Manages day-to-day operations and staff efficiency.</p>
+            <ul class="role-feature-list">
+              <li><i class="fas fa-check"></i> Daily academic & class supervision</li>
+              <li><i class="fas fa-check"></i> Staff coordination & discipline</li>
+              <li><i class="fas fa-check"></i> Attendance review checks</li>
+              <li><i class="fas fa-check"></i> Events & notices oversight</li>
+            </ul>
+          </div>
+          <div class="land-role-card">
+            <div class="lrc-icon" style="background:linear-gradient(135deg,#1976d2,#10569e)"><i
+                class="fas fa-sitemap"></i></div>
+            <h4>Coordinator</h4>
+            <p class="role-desc">Bridges the gap between administration and academics.</p>
+            <ul class="role-feature-list">
+              <li><i class="fas fa-check"></i> Section-level operations</li>
+              <li><i class="fas fa-check"></i> Exam & timetable coordination</li>
+              <li><i class="fas fa-check"></i> Teacher & class supervision</li>
+            </ul>
+          </div>
+          <div class="land-role-card">
+            <div class="lrc-icon" style="background:linear-gradient(135deg,#5ca870,#3a8f52)"><i
+                class="fas fa-chalkboard-teacher"></i></div>
+            <h4>Teacher</h4>
+            <p class="role-desc">Drives academic progress inside and outside the classroom.</p>
+            <ul class="role-feature-list">
+              <li><i class="fas fa-check"></i> Mark class attendance</li>
+              <li><i class="fas fa-check"></i> Assign and track homework</li>
+              <li><i class="fas fa-check"></i> Upload student marks & results</li>
+              <li><i class="fas fa-check"></i> Communicate with parents</li>
+            </ul>
+          </div>
+          <div class="land-role-card">
+            <div class="lrc-icon" style="background:linear-gradient(135deg,#f57c00,#d86400)"><i
+                class="fas fa-user-friends"></i></div>
+            <h4>Parent</h4>
+            <p class="role-desc">Stays connected to their child's educational journey.</p>
+            <ul class="role-feature-list">
+              <li><i class="fas fa-check"></i> Real-time attendance updates</li>
+              <li><i class="fas fa-check"></i> View exam marks & report cards</li>
+              <li><i class="fas fa-check"></i> Pay/track fee status</li>
+              <li><i class="fas fa-check"></i> Monitor homework progress</li>
+            </ul>
+          </div>
+          <div class="land-role-card" style="border: 2px dashed #00bcd4; background: rgba(0, 188, 212, 0.05);">
+            <div class="lrc-icon" style="background:linear-gradient(135deg,#00bcd4,#00838f)"><i
+                class="fas fa-user-graduate"></i></div>
+            <h4>Student <span
+                style="font-size:10px;vertical-align:top;background:white;color:#00bcd4;padding:2px 6px;border-radius:4px;margin-left:4px">Future
+                Ready</span></h4>
+            <p class="role-desc">Takes control of their own academic responsibilities.</p>
+            <ul class="role-feature-list">
+              <li><i class="fas fa-check"></i> View own attendance</li>
+              <li><i class="fas fa-check"></i> Download exam schedules</li>
+              <li><i class="fas fa-check"></i> View homework tasks</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Mapping Section -->
+    <section class="land-section land-section-alt" id="feature-map">
+      <div class="land-container">
+        <div class="land-section-header">
+          <span class="land-section-badge">Access Map</span>
+          <h2>Features By Role</h2>
+          <p>Who can do what inside Campus Core</p>
+        </div>
+        <div class="feature-map-wrapper">
+          <table class="feature-map-table">
+            <thead>
+              <tr>
+                <th>Feature Module</th>
+                <th>Principal</th>
+                <th>Vice Principal</th>
+                <th>Coordinator</th>
+                <th>Teacher</th>
+                <th>Parent</th>
+                <th>Student</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dashboard Overview</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+              </tr>
+              <tr>
+                <td>Attendance Management</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+              </tr>
+              <tr>
+                <td>Student Records</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature">—</td>
+                <td class="no-feature">—</td>
+              </tr>
+              <tr>
+                <td>Teacher Records</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature">—</td>
+                <td class="no-feature">—</td>
+                <td class="no-feature">—</td>
+              </tr>
+              <tr>
+                <td>Class Schedule</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+              </tr>
+              <tr>
+                <td>Exam Schedule</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+              </tr>
+              <tr>
+                <td>Marks / Results</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+              </tr>
+              <tr>
+                <td>Fees Management</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature">—</td>
+                <td class="no-feature">—</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature">—</td>
+              </tr>
+              <tr>
+                <td>Announcements</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+              </tr>
+              <tr>
+                <td>Reports & Analytics</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature">—</td>
+                <td class="no-feature">—</td>
+                <td class="no-feature">—</td>
+                <td class="no-feature">—</td>
+              </tr>
+              <tr>
+                <td>Homework / Tasks</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="has-feature"><i class="fas fa-check-circle"></i></td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+                <td class="no-feature"><i class="fas fa-eye"></i> View</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section class="land-section" id="how-it-works">
+      <div class="land-container">
+        <div class="land-section-header">
+          <span class="land-section-badge">Workflow</span>
+          <h2>How Campus Core Works</h2>
+          <p>Seamlessly connecting operations across all departments</p>
+        </div>
+        <div class="how-it-works-grid">
+          <div class="how-card">
+            <div class="how-icon"><i class="fas fa-clipboard-user"></i></div>
+            <div class="how-content">
+              <h4>Attendance Flow</h4>
+              <p>Teachers mark attendance directly block-by-block. Coordinators and Vice Principal Suman review
+                anomalies, while parents instantly view their child's presence daily.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="how-content">
+              <h4>Marks & Results</h4>
+              <p>Teachers upload exam marks via secure portals. After Coordinator validation, detailed report
+                cards are generated for parents and students to access securely.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon"><i class="fas fa-bullhorn"></i></div>
+            <div class="how-content">
+              <h4>Announcements</h4>
+              <p>The Principal or VP can publish school-wide or class-specific notices. Relevant users (Parents,
+                Teachers) get instantly notified on their dashboard modules.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+            <div class="how-content">
+              <h4>Fee Processing</h4>
+              <p>Management oversees the master fee records and structures. Parents log in to track pending dues, view
+                payment histories, and understand fee breakdowns.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div class="how-content">
+              <h4>Dynamic Timetable</h4>
+              <p>School leadership and Coordinators draft the master schedules. Teachers view their class assignments, and
+                parents/students check the daily class subjects.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon"><i class="fas fa-chart-pie"></i></div>
+            <div class="how-content">
+              <h4>Advanced Reports</h4>
+              <p>High-level statistics spanning across academics and finance are accessible by the Principal and VP to monitor institution performance at a glance.</p>
+            </div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon"><i class="fas fa-book"></i></div>
+            <div class="how-content">
+              <h4>Homework Tracking</h4>
+              <p>Teachers attach daily classwork/homework tasks. Parents and students utilize this dashboard to keep
+                track of upcoming submissions and track academic rigor.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Founders Section -->
+    <section class="land-section" id="founders">
+      <div class="land-container">
+        <div class="land-section-header">
+          <span class="land-section-badge">Founders</span>
+          <h2>The Founders</h2>
+          <p>The minds behind CampusCore — built from the ground up for DPS Nadergul.</p>
+        </div>
+        <div class="leadership-author-container">
+          <!-- Ashwath -->
+          <div class="founder-card ashwath-card">
+            <div class="founder-avatar ashwath-avatar">
+              <img src="0Z6A9994.JPG" alt="Ashwath" onerror="this.src='https://ui-avatars.com/api/?name=Ashwath&background=5ca870&color=fff'">
+            </div>
+            <div class="main-badge ashwath-badge">🖥️ 30,000+ Lines of Code</div>
+            <h3>Ashwath</h3>
+            <div class="sub-badge">Full-Stack Developer</div>
+            <p>The original architect and lead developer of CampusCore. Wrote over 30,000 lines of code powering every dashboard, module, and feature across the entire platform.</p>
+          </div>
+          <!-- Saicharan -->
+          <div class="founder-card saicharan-card">
+            <div class="founder-avatar saicharan-avatar">
+              <img src="logo.png" alt="Saicharan" onerror="this.src='campus-logo.png'">
+            </div>
+            <div class="main-badge saicharan-badge">🚀 Lead Publisher & Maintainer</div>
+            <h3>Saicharan</h3>
+            <div class="sub-badge">Publisher & Maintainer</div>
+            <p>The visionary behind CampusCore's direction and launch. Leads publishing, platform maintenance, and ensures the product evolves to serve the DPS Nadergul community.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="land-cta" id="cta">
+      <div class="land-container">
+        <h2>Ready to Transform Your School?</h2>
+        <p>Access the DPS Nadergul portal and experience seamless digital school management today.</p>
+        <button class="land-btn-primary" onclick="showPage('login')">
+          <i class="fas fa-sign-in-alt"></i> Connect to Dashboard
+        </button>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="land-section" id="contact">
+      <div class="land-container">
+        <div class="land-section-header">
+          <span class="land-section-badge">Contact Us</span>
+          <h2>Get in Touch</h2>
+          <p>Have questions? We're here to help.</p>
+        </div>
+        <div class="land-contact-grid">
+          <div class="land-contact-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <h4>Our Campus</h4>
+            <p>DPS Nadergul, Balapur Mandal<br>Rangareddy, Telangana 500084</p>
+          </div>
+          <div class="land-contact-card">
+            <i class="fas fa-phone"></i>
+            <h4>Reach Us</h4>
+            <p>+91 40 2944 5566<br>Mon – Sat: 8:00 AM – 4:00 PM</p>
+          </div>
+          <div class="land-contact-card">
+            <i class="fas fa-envelope"></i>
+            <h4>Email Support</h4>
+            <p>info@dpsnadergul.edu<br>support@campuscore.com</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="land-footer">
+      <div class="land-container">
+        <div class="land-footer-grid">
+          <div class="land-footer-col">
+            <div class="land-logo">
+              <div class="land-logo-icon"><i class="fas fa-graduation-cap" style="color:white;font-size:18px"></i></div>
+              <span>Campus<strong>Core</strong></span>
+            </div>
+            <p>An intelligent, highly secure school management bridging the gap between educators and parents.</p>
+          </div>
+          <div class="land-footer-col">
+            <h4>Quick Links</h4>
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#portals">Role Portals</a>
+          </div>
+          <div class="land-footer-col">
+            <h4>Support</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Security Guidelines</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+          </div>
+          <div class="land-footer-col">
+            <h4>Connect</h4>
+            <div class="land-footer-social">
+              <a href="#"><i class="fab fa-facebook-f"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="land-footer-bar">
+          © 2026 CampusCore Systems · Designed for Delhi Public School, Nadergul · All rights reserved
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ══════════ PAGE 2: LOGIN PAGE ══════════ -->
+  <div id="login-page" class="page" style="display:none">
+    <button class="login-back-btn floating-back" onclick="showPage('landing')"><i class="fas fa-arrow-left"></i> Back to
+      Home</button>
+    <div class="login-container">
+      <div class="login-box">
+        <div class="login-box-topbar"></div>
+        <div class="login-box-content">
+          <div class="login-header">
+            <div style="display:flex; justify-content:center; margin-bottom:15px;">
+              <img src="logo.png" alt="DPS Logo" style="height:80px; width:auto; object-fit:contain;">
+            </div>
+            <h2>Welcome Back</h2>
+            <p>Sign in to access your dashboard</p>
+          </div>
+          <form id="login-form" novalidate>
+            <div class="form-group" id="fg-username">
+              <label for="login-username"><i class="fas fa-id-card"></i> User ID</label>
+              <input type="text" id="login-username" placeholder="Enter your User ID" autocomplete="username" />
+              <span class="field-error" id="username-error"></span>
+            </div>
+            <div class="form-group" id="fg-password">
+              <label for="login-password"><i class="fas fa-lock"></i> Password</label>
+              <div class="password-wrapper">
+                <input type="password" id="login-password" placeholder="Enter your password"
+                  autocomplete="current-password" />
+                <button type="button" class="toggle-password" id="toggle-pw"><i class="fas fa-eye"
+                    id="pw-icon"></i></button>
+              </div>
+              <span class="field-error" id="password-error"></span>
+            </div>
+            <div class="form-extras">
+              <label class="remember-me">
+                <input type="checkbox" id="remember-me" />
+                <span class="checkbox-custom"></span>
+                Remember me
+              </label>
+              <a href="#" class="forgot-link" onclick="showForgotMsg(event)">Forgot password?</a>
+            </div>
+            <div class="login-message" id="login-message" style="display:none">
+              <i class="fas fa-exclamation-circle" id="msg-icon"></i>
+              <span id="msg-text"></span>
+            </div>
+            <button type="submit" class="btn-login" id="btn-login">
+              <span class="btn-text">Sign In</span>
+              <i class="fas fa-arrow-right btn-arrow"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+      <p class="login-footer">© 2026 CampusCore · DPS Nadergul</p>
+    </div>
+  </div>
+
+  <!-- ══════════ PAGE 3: DASHBOARD ══════════ -->
+  <div id="dashboard-page" class="page" style="display:none">
+    <aside class="sidebar" id="sidebar">
+      <div class="logo-section">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="logo-text">
+          <h2>CampusCore</h2>
+          <p>DPS Nadergul</p>
+        </div>
+        <button class="sidebar-close" id="sidebar-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="user-block">
+        <div class="user-avatar" id="sidebar-avatar"></div>
+        <div class="user-name" id="sidebar-name">—</div>
+        <div class="user-id" id="sidebar-user-id">—</div>
+        <div class="user-role" id="sidebar-role">—</div>
+      </div>
+      <nav class="menu" id="sidebar-nav"></nav>
+      <button class="logout-btn" id="btn-logout" onclick="logout()">
+        <span class="menu-icon"><i class="fas fa-sign-out-alt"></i></span> Logout
+      </button>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="main-content" id="main-content">
+      <header class="sticky-top-banner" id="topbar">
+        <div class="banner-left">
+          <button class="hamburger-menu" id="hamburger"><span></span><span></span><span></span></button>
+          <div class="banner-datetime" id="banner-datetime"></div>
+        </div>
+        <div class="banner-right">
+          <button class="search-toggle-btn" id="search-toggle" onclick="toggleSearch()"><i class="fas fa-search"
+              style="color:white"></i></button>
+          <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme"><span
+              class="theme-icon" id="theme-icon">☀️</span></button>
+          <div class="banner-notifications">
+            <button class="notification-btn" id="notif-btn" onclick="toggleNotifications()">🔔 <span
+                class="notification-count" id="notif-badge">3</span></button>
+            <div class="notification-dropdown hidden" id="notif-dropdown">
+              <div class="notification-header"><span>Notifications</span><button class="notification-close-btn"
+                  onclick="toggleNotifications()">×</button></div>
+              <div class="notification-list" id="notif-list"></div>
+            </div>
+          </div>
+          <div class="banner-user" id="banner-user" onclick="navigateTo('profile')">
+            <div class="banner-user-avatar" id="banner-avatar"></div>
+            <div class="banner-user-info">
+              <span class="banner-user-name" id="banner-user-name">—</span>
+              <span class="banner-role-badge" id="banner-role-badge">—</span>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="search-overlay hidden" id="search-overlay">
+        <div class="search-panel">
+          <div class="search-header">
+            <i class="fas fa-search" style="color:var(--color-primary);font-size:20px"></i>
+            <input type="text" class="search-input" id="global-search"
+              placeholder="Search students, teachers, sections..." oninput="handleSearch(this.value)" />
+            <button class="search-close-btn" onclick="toggleSearch()">×</button>
+          </div>
+          <div class="search-results" id="search-results">
+            <div class="search-empty">Type to start searching...</div>
+          </div>
+        </div>
+      </div>
+      <div class="content-area" id="content-area"></div>
+    </div>
+  <!-- Supabase Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js?v=21"></script>
+  <script>
+    // Initialize Supabase sync on load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof initSupabaseData === 'function') initSupabaseData();
+    });
+  </script>
+
+  <script src="js/data.js?v=19"></script>
+  <script src="js/auth.js?v=19"></script>
+  <script src="js/ui.js?v=19"></script>
+  <script src="js/student-registry.js?v=19"></script>
+  <script src="js/dashboard.js?v=19"></script>
+  <script src="js/parent.js?v=19"></script>
+  <!-- VP Student Analysis must use window.CAMPUSCORE_REGISTRY.getAllStudents()
+     to get student list. Do NOT generate class/section independently.
+     The registry reads from campuscore_student_data_<id> localStorage keys
+     which are the single source of truth for all student data. -->
+  <script src="js/vp-fixes.js?v=19"></script>
+  <script src="js/global-fixes.js?v=19"></script>
+  <script src="js/global-fixes-enhanced.js?v=20"></script>
+  <script src="js/workflow-manager.js?v=19"></script>
+  <script src="js/student.js?v=20"></script>
+  <script src="js/teacher.js?v=20"></script>
+  <script src="js/app.js?v=20"></script>
+  <script src="js/functional-fixes.js"></script>
+  <script src="test-fixes.js"></script>
+  <script src="test-comprehensive.js"></script>
+</body>
+
+</html>
