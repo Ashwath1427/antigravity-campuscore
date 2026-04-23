@@ -166,11 +166,11 @@ function buildDashboard(user) {
       safeRender('All Attendance', buildVPAttendance, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_attendance"'),
       safeRender('All Results', buildVPClassPerf, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_results"'),
       safeRender('All Approvals', buildVPApprovals, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_approvals"'),
-      safeRender('Notices', buildAnnouncements, user),
+      safeRender('Notices', buildAnnouncements, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_notices"'),
       safeRender('Events', buildEvents, user),
       safeRender('Manage Documents', buildManageDocuments, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-manage_documents"'),
       safeRender('All Messages', buildVPMessages, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_messages"'),
-      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-full_helpdesk"'),
+      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_helpdesk"'),
       safeRender('User Registration', buildRegistration, user),
       safeRender('Settings', buildSettings, user)
     ].join('');
