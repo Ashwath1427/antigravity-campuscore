@@ -1,5 +1,5 @@
 -- ============================================================
--- CAMPUSCORE - COMPLETE DATABASE SETUP WITH ALL STUDENTS
+-- CAMPUSCORE - COMPLETE DATABASE SETUP WITH ALL 297 STUDENTS
 -- ============================================================
 
 -- STEP 1: CLEAN UP OLD TABLES
