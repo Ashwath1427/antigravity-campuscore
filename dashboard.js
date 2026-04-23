@@ -114,10 +114,21 @@ function buildDashboard(user) {
     c.innerHTML = safeRender('Parent Dashboard', window.buildParentDashboard || buildHome, user);
   } else if (user.role === 'coordinator') {
     c.innerHTML = [
-      buildCoordHome(user), buildCoordClasses(user), buildCoordIssues(user),
-      buildStaffApprovals(user), buildDocumentUploadSection(user),
-      buildVPSchedule(user), buildAnnouncements(user), buildEvents(user),
-      buildStaffHelpdesk(user), buildSettings(user)
+      safeRender('Home', buildCoordHome, user),
+      safeRender('Profile', buildProfile, user),
+      safeRender('Coord Classes', buildCoordClasses, user),
+      safeRender('Coord Issues', buildCoordIssues, user),
+      safeRender('Teachers', buildTeachers, user),
+      safeRender('Schedule', buildVPSchedule, user).replace(/id="section-vp_schedule"/, 'id="section-schedule"'),
+      safeRender('Attendance', buildVPAttendance, user).replace(/id="section-vp_attendance"/, 'id="section-attendance"'),
+      safeRender('Homework', buildTeacherHomework, user).replace(/id="section-teacher_homework"/, 'id="section-homework"'),
+      safeRender('Results', buildVPClassPerf, user).replace(/id="section-vp_class_perf"/, 'id="section-results"'),
+      safeRender('Approvals', buildStaffApprovals, user),
+      safeRender('Upload Document', buildDocumentUploadSection, user),
+      safeRender('Announcements', buildAnnouncements, user),
+      safeRender('Events', buildEvents, user),
+      safeRender('Helpdesk', buildStaffHelpdesk, user),
+      safeRender('Settings', buildSettings, user)
     ].join('');
   } else if (user.role === 'teacher') {
     c.innerHTML = [
