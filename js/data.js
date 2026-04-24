@@ -1,6 +1,6 @@
 /* ============================================================
    CAMPUS CORE – DATA.JS (SYNCHRONIZED VERSION)
-   All data synchronized with database structure - 130 students total
+   All data synchronized with database structure - 297 students total
    ============================================================ */
 
 // ─── Demo Users (Matching prototype credentials) ────────────
