@@ -28,15 +28,4 @@ function isSupabaseConfigured() {
            SUPABASE_CONFIG.ANON_KEY !== "demo-key-for-testing-purposes-only";
 }
 
-// Initializing the global supabase client if configured
-let supabase = null;
-if (typeof window.supabase !== 'undefined' && isSupabaseConfigured()) {
-    try {
-        supabase = window.supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
-        console.log("[Supabase] Client initialized successfully.");
-    } catch (e) {
-        console.error("[Supabase] Failed to initialize client:", e);
-    }
-} else {
-    console.warn("[Supabase] Client NOT initialized. Using local fallback mode.");
-}
+// Note: Supabase client initialization is handled by supabase-client.js to avoid conflicts

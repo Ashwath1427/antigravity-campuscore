@@ -144,15 +144,7 @@ function buildDashboard(user) {
   }
 }
 
-function renderWithRoleContext(user, targetRole, renderFn) {
-  const originalRole = user.role;
-  user.role = targetRole;
-  try {
-    return renderFn(user);
-  } finally {
-    user.role = originalRole;
-  }
-}
+// Duplicate renderWithRoleContext removed - using the one defined earlier
 
 function triggerLiveReRender() {
   if (typeof buildDashboard === 'function') buildDashboard(currentUser);

@@ -3,12 +3,17 @@
    Application boot, login form handler, dashboard init
    ============================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   loadTheme();
   setupSidebar();
   setupLoginForm();
   updateDateTime();
   setInterval(updateDateTime, 60000); // update time every minute
+
+  // Initialize Supabase data if available before restoring session
+  if (typeof initSupabaseData === 'function') {
+    await initSupabaseData();
+  }
 
   // Restore session on refresh
   if (restoreSession() && currentUser) {

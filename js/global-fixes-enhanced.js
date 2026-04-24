@@ -199,26 +199,7 @@ function initializeMissingData() {
 }
 
 // ─── Console error prevention ────────────────────────────────────
-window.addEventListener('error', function(e) {
-  // Filter out expected errors that don't affect functionality
-  const expectedErrors = [
-    'Cannot read propert',
-    'is not a function',
-    'undefined',
-    'null'
-  ];
-  
-  const errorMessage = e.message || '';
-  const isExpected = expectedErrors.some(err => errorMessage.includes(err));
-  
-  if (!isExpected) {
-    console.error('[Global] Unexpected error:', e);
-  }
-});
-
-window.addEventListener('unhandledrejection', function(e) {
-  console.warn('[Global] Unhandled promise rejection:', e.reason);
-});
+// Note: Error handling is now managed by error-handling.js to avoid conflicts
 
 // ─── Initialize on load ───────────────────────────────────────────
 if (document.readyState === 'loading') {
