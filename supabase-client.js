@@ -222,7 +222,7 @@ async function sbAttemptLogin(username, password) {
     return {
       id: data.id,
       username: data.username,
-      password: data.password,
+      // WARN-002 FIX: password intentionally omitted — never store raw password in session
       name: data.name,
       role: data.role,
       roleLabel: data.role_label || data.role,

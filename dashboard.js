@@ -111,6 +111,8 @@ function buildDashboard(user) {
       safeRender('Settings', buildSettings, user)
     ].join('');
   } else if (user.role === 'parent') {
+    // WARN-005 FIX: log clearly if parent.js failed to load
+    if (!window.buildParentDashboard) console.error('[CampusCore] parent.js not loaded! Falling back to buildHome.');
     c.innerHTML = safeRender('Parent Dashboard', window.buildParentDashboard || buildHome, user);
   } else if (user.role === 'coordinator') {
     c.innerHTML = [
@@ -147,6 +149,8 @@ function buildDashboard(user) {
       safeRender('Settings', buildSettings, user)
     ].join('');
   } else if (user.role === 'student') {
+    // WARN-005 FIX: log clearly if student.js failed to load
+    if (!window.buildStudentDashboard) console.error('[CampusCore] student.js not loaded! Falling back to buildHome.');
     c.innerHTML = safeRender('Student Dashboard', window.buildStudentDashboard || buildHome, user);
   } else if (user.role === 'principal' || String(user.username || '').toUpperCase() === 'PRIN001') {
     // Hardened Principal Render Logic
@@ -168,20 +172,22 @@ function buildDashboard(user) {
     ].join('');
   } else if (user.role === 'apaaas' || String(user.username || '').toUpperCase() === 'APAAAS' || user.role === 'superadmin' || user.role === 'super_admin') {
     // Hardened SuperAdmin Render Logic
+    // BUG-008 FIX: Use targeted regex that matches the specific outer section id instead of
+    // a greedy first-match regex that breaks nested section IDs.
     c.innerHTML = [
-      safeRender('Master Dashboard', buildHome, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-master_dashboard"'),
-      safeRender('Role Views', buildRoleViews, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-role_views"'),
-      safeRender('All Issues', buildAllIssuesSuperAdmin, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_issues"'),
-      safeRender('All Accounts', buildAllAccounts, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_accounts"'),
-      safeRender('Removed Bin', buildRemovedBin, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-removed_bin"'),
-      safeRender('All Attendance', buildVPAttendance, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_attendance"'),
-      safeRender('All Results', buildVPClassPerf, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_results"'),
-      safeRender('All Approvals', buildVPApprovals, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_approvals"'),
-      safeRender('Notices', buildAnnouncements, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_notices"'),
+      safeRender('Master Dashboard', buildHome, user).replace(/(<div[^>]+)id="section-home"/, '$1id="section-master_dashboard"'),
+      safeRender('Role Views', buildRoleViews, user).replace(/(<div[^>]+)id="section-role_views"/, '$1id="section-role_views"'),
+      safeRender('All Issues', buildAllIssuesSuperAdmin, user).replace(/(<div[^>]+)id="section-all_issues"/, '$1id="section-all_issues"'),
+      safeRender('All Accounts', buildAllAccounts, user).replace(/(<div[^>]+)id="section-all_accounts"/, '$1id="section-all_accounts"'),
+      safeRender('Removed Bin', buildRemovedBin, user).replace(/(<div[^>]+)id="section-removed_bin"/, '$1id="section-removed_bin"'),
+      safeRender('All Attendance', buildVPAttendance, user).replace(/(<div[^>]+)id="section-vp_attendance"/, '$1id="section-all_attendance"'),
+      safeRender('All Results', buildVPClassPerf, user).replace(/(<div[^>]+)id="section-vp_class_perf"/, '$1id="section-all_results"'),
+      safeRender('All Approvals', buildVPApprovals, user).replace(/(<div[^>]+)id="section-vp_approvals"/, '$1id="section-all_approvals"'),
+      safeRender('Notices', buildAnnouncements, user).replace(/(<div[^>]+)id="section-announcements"/, '$1id="section-all_notices"'),
       safeRender('Events', buildEvents, user),
-      safeRender('Manage Documents', buildManageDocuments, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-manage_documents"'),
-      safeRender('All Messages', buildVPMessages, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_messages"'),
-      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace(/id="section-[a-zA-Z0-9_-]+"/, 'id="section-all_helpdesk"'),
+      safeRender('Manage Documents', buildManageDocuments, user).replace(/(<div[^>]+)id="section-manage_documents"/, '$1id="section-manage_documents"'),
+      safeRender('All Messages', buildVPMessages, user).replace(/(<div[^>]+)id="section-vp_messages"/, '$1id="section-all_messages"'),
+      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace(/(<div[^>]+)id="section-helpdesk_tickets"/, '$1id="section-all_helpdesk"'),
       safeRender('User Registration', buildRegistration, user),
       safeRender('Settings', buildSettings, user)
     ].join('');
@@ -205,19 +211,12 @@ function buildDashboard(user) {
 
 }
 
-function renderWithRoleContext(user, targetRole, renderFn) {
-  const originalRole = user.role;
-  user.role = targetRole;
-  try {
-    return renderFn(user);
-  } finally {
-    user.role = originalRole;
-  }
-}
+// BUG-005 FIX: Duplicate renderWithRoleContext removed. Canonical version lives at the top of this file (line 78).
 
 
 function resetSystemLanguage() {
-  localStorage.setItem('cc_sys_lang', 'English');
+  // BUG-007 FIX: store 2-letter code 'en' instead of word 'English' to match what t() expects
+  localStorage.setItem('cc_sys_lang', 'en');
   triggerLiveReRender();
   if (typeof applyLanguage === 'function') setTimeout(applyLanguage, 50);
   simulateAction('Language reset to English');
@@ -1354,7 +1353,7 @@ function buildVPStudents(user) {
   const avgGpa = data.length ? (data.reduce((a, d) => a + Number(d.gpa || 0), 0) / data.length).toFixed(2) : '0.00';
 
   const cards = [
-    ['Institutional Strength', 297], // Always 297 as requested
+    ['Institutional Strength', (STUDENTS || []).length], // WARN-004 FIX: dynamic count instead of hardcoded 297
     ['Students in View', data.length],
     ['Avg Attendance %', avgAtt],
     ['Average GPA', avgGpa],
@@ -1592,15 +1591,17 @@ function buildVPTeachers(user) {
     <td>${t.classes}</td>
     <td>
       <div class="progress-bar" style="margin-bottom:4px">
-        <div class="progress-fill" style="width:${Math.floor(Math.random() * 20) + 80}%;background:#5ca870"></div>
+        <!-- WARN-001 FIX: deterministic width based on index instead of Math.random() -->
+        <div class="progress-fill" style="width:${85 + (i % 5) * 2}%;background:#5ca870"></div>
       </div>
-      <span style="font-size:11px;color:var(--color-text-muted)">95% Attendance</span>
+      <span style="font-size:11px;color:var(--color-text-muted)">${85 + (i % 5) * 2}% Attendance</span>
     </td>
     <td>
       <div class="progress-bar" style="margin-bottom:4px">
-        <div class="progress-fill" style="width:${Math.floor(Math.random() * 40) + 60}%;background:var(--color-primary)"></div>
+        <!-- WARN-001 FIX: deterministic syllabus coverage based on index -->
+        <div class="progress-fill" style="width:${70 + (i % 6) * 5}%;background:var(--color-primary)"></div>
       </div>
-      <span style="font-size:11px;color:var(--color-text-muted)">Syllabus coverage</span>
+      <span style="font-size:11px;color:var(--color-text-muted)">${70 + (i % 6) * 5}% Syllabus</span>
     </td>
     <td><span class="badge ${t.status === 'Active' ? 'badge-active' : 'badge-warning'}">${t.status}</span></td>
     <td>
@@ -4851,21 +4852,9 @@ function setGhostRoleContext(role) {
 }
 
 // --- HELPDESK MASTER ---
+// BUG-003 FIX: Removed the old prompt()-based resolveTicket definition.
+// The canonical window.resolveTicket (using simulateAction) is defined below and is the sole implementation.
 // viewTicketDetails: real modal implementation is at line ~4270, do not override
-function resolveTicket(id) {
-  const r = prompt('Resolution message for student:');
-  if (r) {
-    let t = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
-    const idx = t.findIndex(x => x.id === id);
-    if (idx !== -1) {
-      t[idx].status = 'Resolved';
-      t[idx].resolution = r;
-      localStorage.setItem('campuscore_helpdesk_tickets', JSON.stringify(t));
-      simulateAction('Ticket ' + id + ' marked as Resolved.');
-      triggerLiveReRender();
-    }
-  }
-}
 function closeTicket(id) {
   if (confirm('Permanently close ticket ' + id + '?')) {
     let t = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
@@ -4881,7 +4870,10 @@ function closeTicket(id) {
 
 // --- LANGUAGE MASTER ---
 function setSystemLanguage(l) {
-  localStorage.setItem('cc_sys_lang', l);
+  // BUG-007 FIX: map display name → 2-letter code so t() can match 'en'/'te'/'hi'
+  const langCodeMap = { English: 'en', Telugu: 'te', Hindi: 'hi' };
+  const code = langCodeMap[l] || l || 'en';
+  localStorage.setItem('cc_sys_lang', code);
   localStorage.setItem('campuscore_language', l);
   simulateAction('Applying ' + l + ' localization...');
   triggerLiveReRender();
@@ -4968,24 +4960,25 @@ function deleteAccount(uid) {
 
 // --- RESULTS Logic ---
 window.openPerformanceReport = function (cls, subj) {
+  // BUG-004 FIX: Added missing <div class="modal"> wrapper so content renders inside a proper card
   const m = `<div class="modal-overlay" id="perf-rpt-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
-                    <div style="margin-top:20px;padding:10px;background:var(--color-success);color:white;border-radius:6px;font-size:12px;text-align:center">Performance: ABOVE TARGET (+4%)</div>
-                </div>
-                <div style="background:var(--color-surface-2);padding:20px;border-radius:12px;height:300px;display:flex;align-items:flex-end;gap:15px;justify-content:center;border:1px solid var(--color-border)">
-                    ${[68, 74, 82, 79, 88].map((v, i) => `
-                        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
-                            <div style="font-size:11px;font-weight:700">${v}%</div>
-                            <div style="width:100%;background:var(--color-primary);height:${v}%;border-radius:6px 6px 0 0;opacity:${0.5 + (i * 0.1)}"></div>
-                            <div style="font-size:10px;color:var(--color-text-muted)">Unit ${i + 1}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            <div style="margin-top:20px;text-align:right">
-                <button class="btn-primary" onclick="document.getElementById('perf-rpt-modal').remove()">Close Analytical View</button>
-            </div>
-        </div>
-    </div>`;
+    <div class="modal" style="max-width:600px">
+      <h3>📊 Class Performance Report: ${subj || 'Subject'} — ${cls || 'Class'}</h3>
+      <div style="margin-top:20px;padding:10px;background:var(--color-success);color:white;border-radius:6px;font-size:12px;text-align:center">Performance: ABOVE TARGET (+4%)</div>
+      <div style="background:var(--color-surface-2);padding:20px;border-radius:12px;height:300px;display:flex;align-items:flex-end;gap:15px;justify-content:center;border:1px solid var(--color-border);margin-top:16px">
+        ${[68, 74, 82, 79, 88].map((v, i) => `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+            <div style="font-size:11px;font-weight:700">${v}%</div>
+            <div style="width:100%;background:var(--color-primary);height:${v}%;border-radius:6px 6px 0 0;opacity:${0.5 + (i * 0.1)}"></div>
+            <div style="font-size:10px;color:var(--color-text-muted)">Unit ${i + 1}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="margin-top:20px;text-align:right">
+        <button class="btn-primary" onclick="document.getElementById('perf-rpt-modal').remove()">Close Analytical View</button>
+      </div>
+    </div>
+  </div>`;
   document.body.insertAdjacentHTML('beforeend', m);
 }
 
@@ -5273,7 +5266,7 @@ window.saveVPEvent = function () {
   const color = document.getElementById('ev-cat').value;
   const desc = document.getElementById('ev-desc').value || 'Planned Institutional Activity';
   
-  if (!name || !dateStr) { alert('Please provide an event name and date.'); return; }
+  if (!name || !dateStr) { simulateAction('⚠️ Please provide an event name and date.'); return; } // WARN-003 FIX: replaced blocking alert() with toast
   
   const newEv = { title: name, date: dateStr, desc: desc, color: color };
   let localEvents = JSON.parse(localStorage.getItem('campuscore_events'));
@@ -5394,7 +5387,8 @@ async function initDashboardLiveStats(user) {
 async function fetchGlobalCounts() {
   try {
     const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: 0, present: 0, absent: 0, late: 0 };
-    const { count: teacherCount } = await window.supabaseClient.from('teachers').select('*', { count: 'exact', head: true });
+    // BUG-002a FIX: was from('teachers') — correct table is cc_users filtered by role='teacher'
+    const { count: teacherCount } = await window.supabaseClient.from('cc_users').select('*', { count: 'exact', head: true }).eq('role', 'teacher');
     
     // Update generic stats (Principal/Admin fallback)
     updateStat('stat-generic-0', stats.total || '...');
@@ -5419,12 +5413,13 @@ async function fetchGlobalCounts() {
 async function fetchVPStats() {
   try {
     const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: 0, present: 0, absent: 0, late: 0 };
-    const { count: openIssues } = await window.supabaseClient.from('issues').select('*', { count: 'exact', head: true }).eq('status', 'Open');
+    // BUG-002b FIX: 'issues' table doesn't exist in Supabase. Issues are localStorage-only.
+    const openIssues = (window.GLOBAL_ISSUES || []).filter(i => i.status === 'Open').length;
     
     updateStat('stat-present', stats.present || '0');
     updateStat('stat-absent', stats.absent || '0');
     updateStat('stat-total-students', stats.total || '0');
-    updateStat('stat-approvals', '5');
+    updateStat('stat-approvals', String(openIssues) || '5');
     
     // Principal/Admin sync
     updateStat('stat-institutional-att', (stats.present || 0) + '/' + (stats.total || 0));
@@ -5435,7 +5430,8 @@ async function fetchVPStats() {
 
 async function fetchTeacherStats(user) {
   try {
-    const { count: totalStudents } = await window.supabaseClient.from('students').select('*', { count: 'exact', head: true });
+    // BUG-002c FIX: was from('students') — correct table is cc_students
+    const { count: totalStudents } = await window.supabaseClient.from('cc_students').select('*', { count: 'exact', head: true });
     updateStat('stat-total-students', totalStudents || '0');
     updateStat('stat-total-classes', user.classes ? user.classes.split(',').length : '2');
     updateStat('stat-avg-att-teacher', '92%');
@@ -5448,7 +5444,8 @@ async function loadLiveAnnouncements() {
   const container = document.getElementById('home-notices-list');
   if (!container) return;
   try {
-    const { data } = await window.supabaseClient.from('announcements').select('*').order('date', { ascending: false }).limit(4);
+    // BUG-002d FIX: was from('announcements') — correct table is cc_announcements
+    const { data } = await window.supabaseClient.from('cc_announcements').select('*').order('date', { ascending: false }).limit(4);
     if (data && data.length > 0) {
       const catColors = { Events: '#5ca870', Academic: '#1976d2', Meeting: '#f57c00', Finance: '#d32f2f', Holiday: '#8b5cf6', CCA: '#00bcd4' };
       container.innerHTML = data.map(a => {

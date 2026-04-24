@@ -101,28 +101,10 @@ const DEMO_USERS = [
       { title: "Marks Uploaded", text: "Mid-term marks for Class 10A uploaded successfully", time: "1d ago", icon: "✅", color: "#5ca870" },
     ]
   },
-  {
-    id: 3,
-    username: "P3180076A",
-    password: "parent123",
-    name: "Ashwath",
-    role: "parent",
-    roleLabel: "Parent",
-    department: "Parent of KASULA ASHWATH (Class 9-C)",
-    phone: "+91 76543 21098",
-    email: "ashwath@gmail.com",
-    joined: "Apr 2024",
-    avatar_color: "#f57c00",
-    icon: "fa-user-friends",
-    childName: "KASULA ASHWATH",
-    childClass: "9-C",
-    childRoll: "07",
-    notifications: [
-      { title: "Attendance Alert", text: "KASULA ASHWATH was absent on 27 March 2026", time: "1d ago", icon: "⚠️", color: "#d32f2f" },
-      { title: "Fee Reminder", text: "April fee ₹10,000 due on 5th April", time: "2d ago", icon: "💰", color: "#f57c00" },
-      { title: "Results Published", text: "Mid-term examination results are now available", time: "3d ago", icon: "📊", color: "#5ca870" },
-    ]
-  },
+  // DATA RESET: id:3 (P_ASHWATH_TEST) permanently removed — was a legacy collision artifact.
+  // Real parent for KASULA ASHWATH → id:107, username: P3180076A / parent123
+  // PARENT LOGIN SCOPE: Only Class 9-C students (ids 101-127) have login-capable parent accounts.
+  // All other class sections have a 'parent' display field but no corresponding DEMO_USERS entry.
   {
     id: 5,
     username: "C001",
@@ -803,7 +785,7 @@ window.SCHOOL_DATA = {
     },
     "8": {
       "A": [
-        { id: "8A01", admNo: "8A01", name: "SNITHIK VENGALA", class: "8", section: "A", roll: "01", gender: "Male", dob: "05 Mar 2012", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of SNITHIK VENGALA" },
+        { id: "8A01", admNo: "8A01", name: "Akash Mehra", class: "8", section: "A", roll: "01", gender: "Male", dob: "05 Mar 2012", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of Akash Mehra" },
         { id: "8A02", admNo: "8A02", name: "Mehul K.", class: "8", section: "A", roll: "02", gender: "Male", dob: "12 Apr 2012", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Mehul K." },
         { id: "8A03", admNo: "8A03", name: "Tanvi S.", class: "8", section: "A", roll: "03", gender: "Female", dob: "20 May 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 9.1, parent: "Parent of Tanvi S." },
         { id: "8A04", admNo: "8A04", name: "Yash R.", class: "8", section: "A", roll: "04", gender: "Male", dob: "15 Jun 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of Yash R." },
@@ -833,7 +815,7 @@ window.SCHOOL_DATA = {
     },
     "7": {
       "A": [
-        { id: "7A01", admNo: "7A01", name: "BHUKYA PRANAVI", class: "7", section: "A", roll: "01", gender: "Female", dob: "05 Jan 2013", attendance: 96, behavior: "Excellent", fee_status: "Paid", gpa: 9.1, parent: "Parent of BHUKYA PRANAVI" },
+        { id: "7A01", admNo: "7A01", name: "Kavya Iyer", class: "7", section: "A", roll: "01", gender: "Female", dob: "05 Jan 2013", attendance: 96, behavior: "Excellent", fee_status: "Paid", gpa: 9.1, parent: "Parent of Kavya Iyer" },
         { id: "7A02", admNo: "7A02", name: "Ishaan S.", class: "7", section: "A", roll: "02", gender: "Male", dob: "12 Feb 2013", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.8, parent: "Parent of Ishaan S." },
         { id: "7A03", admNo: "7A03", name: "Shanaya S.", class: "7", section: "A", roll: "03", gender: "Female", dob: "20 Mar 2013", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 8.5, parent: "Parent of Shanaya S." },
         { id: "7A04", admNo: "7A04", name: "Abram S.", class: "7", section: "A", roll: "04", gender: "Male", dob: "15 Apr 2013", attendance: 85, behavior: "Fair", fee_status: "Paid", gpa: 7.9, parent: "Parent of Abram S." },
@@ -894,59 +876,76 @@ window.SCHOOL_DATA = {
   }
 };
 
-// Programmatic Expansion to A-K Sections
+// ─── Programmatic Expansion to A-K Sections ─────────────────
+// Sections A-D for each class are explicitly named above.
+// Sections E-K are generated with realistic Indian placeholder names (not "Student X-1" labels).
+// Names are deterministic — they do not change on refresh.
 (function expandSchoolStructure() {
-  const grades = ["6", "7", "8", "9", "10"];
-  const sections = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
-  const teachers = ["Prasana Reddy", "Ramesh Sharma", "Anita Pillai", "Mohan Das", "Sunita Verma", "Venkat Iyer", "Pooja Mehta", "Suresh Naidu", "Aruna", "Deepa K", "Rajesh V"];
+  const grades = ["6","7","8","9","10"];
+  const sections = ["A","B","C","D","E","F","G","H","I","J","K"];
+  // 30 first names × 20 last names = 600 unique combinations for generated sections
+  const GEN_F = ['Aryan','Priya','Rahul','Sneha','Amit','Kavya','Rohan','Ananya','Vikram','Pooja',
+    'Kiran','Divya','Suresh','Meena','Aditya','Swati','Rajesh','Nisha','Deepak','Sunita',
+    'Harish','Sonal','Ganesh','Uma','Prakash','Rekha','Krishna','Gita','Ravi','Lakshmi'];
+  const GEN_L = ['Kumar','Sharma','Reddy','Singh','Patel','Gupta','Rao','Nair','Iyer','Verma',
+    'Mehta','Shah','Das','Pillai','Naidu','Goud','Chauhan','Tiwari','Mishra','Pandey'];
 
-  grades.forEach(g => {
+  grades.forEach((g, gi) => {
     if (!window.SCHOOL_DATA.classes[g]) window.SCHOOL_DATA.classes[g] = {};
-    sections.forEach((sec, idx) => {
-      // If section is empty or has < 5 students, populate with mock data
+    sections.forEach((sec, si) => {
       if (!window.SCHOOL_DATA.classes[g][sec] || window.SCHOOL_DATA.classes[g][sec].length < 2) {
         window.SCHOOL_DATA.classes[g][sec] = Array.from({ length: 5 }, (_, i) => {
+          const ni = gi * 55 + si * 5 + i; // unique deterministic index per student
+          const firstName = GEN_F[ni % GEN_F.length];
+          const lastName  = GEN_L[(ni * 7 + 3) % GEN_L.length];
+          const fullName  = firstName + ' ' + lastName;
           const id = `${g}${sec}${String(i + 1).padStart(2, '0')}`;
           return {
-            id: id,
-            admNo: id,
-            name: `Student ${g}${sec}-${i + 1}`,
-            class: g,
-            section: sec,
+            id, admNo: id,
+            name: fullName,
+            class: g, section: sec,
             roll: String(i + 1).padStart(2, '0'),
-            gender: i % 2 === 0 ? "Male" : "Female",
-            dob: "01 Jan 201" + (15 - parseInt(g)),
-            attendance: 75 + Math.floor(Math.random() * 20),
-            behavior: "Good",
-            fee_status: "Paid",
-            gpa: (7 + Math.random() * 2.5).toFixed(1),
-            parent: `Parent of Student ${g}${sec}-${i + 1}`
+            gender: i % 2 === 0 ? 'Male' : 'Female',
+            dob: '01 Jan 201' + (15 - parseInt(g)),
+            attendance: 78 + (ni * 13) % 18,   // deterministic range 78-95
+            behavior: 'Good',
+            fee_status: 'Paid',
+            gpa: ((70 + (ni * 7 + 11) % 26) / 10).toFixed(1), // deterministic range 7.0-9.5
+            parent: 'Parent of ' + fullName
           };
         });
       }
     });
   });
 
-  // Expand CLASS_PERFORMANCE matrix to match 
+  // Expand CLASS_PERFORMANCE matrix — toppers derived from actual student data
   if (window.CLASS_PERFORMANCE) {
-    grades.forEach(g => {
-      sections.forEach((sec, idx) => {
+    const CP_TEACHERS = ['Prasana Reddy','Ramesh Sharma','Anita Pillai','Mohan Das','Sunita Verma',
+      'Venkat Iyer','Pooja Mehta','Suresh Naidu','Aruna Krishnan','Deepa Rani','Prasana Reddy'];
+    grades.forEach((g, gi) => {
+      sections.forEach((sec, si) => {
         const clsKey = `${g}-${sec}`;
         if (!window.CLASS_PERFORMANCE.find(c => c.class === clsKey)) {
+          const ni = gi * 11 + si;
+          const secStudents = window.SCHOOL_DATA.classes[g] && window.SCHOOL_DATA.classes[g][sec];
+          const topper = secStudents
+            ? secStudents.reduce((a, b) => (+a.gpa >= +b.gpa ? a : b)).name
+            : 'Unknown';
           window.CLASS_PERFORMANCE.push({
             class: clsKey,
-            teacher: teachers[idx % teachers.length],
-            avgAtt: 80 + Math.floor(Math.random() * 15),
-            avgGPA: (7.5 + Math.random() * 1.5).toFixed(1),
-            topper: `Student ${g}${sec}-1`,
-            weak: Math.floor(Math.random() * 4),
-            issues: Math.floor(Math.random() * 2)
+            teacher: CP_TEACHERS[si % CP_TEACHERS.length],
+            avgAtt: 78 + (ni * 13) % 17,
+            avgGPA: ((75 + (ni * 7 + 11) % 20) / 10).toFixed(1),
+            topper,
+            weak: (ni * 3) % 5,
+            issues: (ni * 5) % 3
           });
         }
       });
     });
   }
 })();
+
 
 // Derived flat array for compatibility
 let STUDENTS = Object.values(window.SCHOOL_DATA.classes).flatMap(cls => 
@@ -958,15 +957,18 @@ STUDENTS.forEach(s => {
 
 // ─── Teachers ────────────────────────────────────────────────
 window.TEACHERS = [
-  { id: "T001", name: "Prasana Reddy", subject: "Mathematics", classes: "10-A, 9-B", exp: "8 years", phone: "+91 87654 11111", status: "Active" },
-  { id: "T002", name: "Ramesh Sharma", subject: "Physics", classes: "10-A, 10-B", exp: "12 years", phone: "+91 87654 22222", status: "Active" },
-  { id: "T003", name: "Anita Pillai", subject: "English Literature", classes: "8-B, 9-A", exp: "6 years", phone: "+91 87654 33333", status: "On Leave" },
-  { id: "T004", name: "Mohan Das", subject: "Chemistry", classes: "10-C, 9-D", exp: "15 years", phone: "+91 87654 44444", status: "Active" },
-  { id: "T005", name: "Sunita Verma", subject: "History", classes: "7-A, 6-B", exp: "9 years", phone: "+91 87654 55555", status: "Active" },
-  { id: "T006", name: "Venkat Iyer", subject: "Computer Science", classes: "8-A, 9-C", exp: "5 years", phone: "+91 87654 66666", status: "Active" },
-  { id: "T007", name: "Pooja Mehta", subject: "Biology", classes: "8-E, 9-F", exp: "7 years", phone: "+91 87654 77777", status: "Active" },
-  { id: "T008", name: "Suresh Naidu", subject: "Physical Education", classes: "All", exp: "11 years", phone: "+91 87654 88888", status: "Active" },
+  { id: "T001", name: "Prasana Reddy",  subject: "Mathematics",       classes: "10-A, 9-C",     exp: "8 years",  phone: "+91 87654 11111", status: "Active",   email: "prasana@dpsnadergul.edu",  avatar_color: "#5ca870" },
+  { id: "T002", name: "Ramesh Sharma",  subject: "Physics",           classes: "10-A, 10-B",    exp: "12 years", phone: "+91 87654 22222", status: "Active",   email: "ramesh@dpsnadergul.edu",   avatar_color: "#1976d2" },
+  { id: "T003", name: "Anita Pillai",   subject: "English Literature", classes: "8-B, 9-A",      exp: "6 years",  phone: "+91 87654 33333", status: "On Leave", email: "anita@dpsnadergul.edu",    avatar_color: "#8b5cf6" },
+  { id: "T004", name: "Mohan Das",      subject: "Chemistry",         classes: "10-C, 9-D",     exp: "15 years", phone: "+91 87654 44444", status: "Active",   email: "mohan@dpsnadergul.edu",    avatar_color: "#f57c00" },
+  { id: "T005", name: "Sunita Verma",   subject: "History",           classes: "7-A, 6-B",      exp: "9 years",  phone: "+91 87654 55555", status: "Active",   email: "sunita@dpsnadergul.edu",   avatar_color: "#00bcd4" },
+  { id: "T006", name: "Venkat Iyer",    subject: "Computer Science",  classes: "8-A, 9-C",      exp: "5 years",  phone: "+91 87654 66666", status: "Active",   email: "venkat@dpsnadergul.edu",   avatar_color: "#e53935" },
+  { id: "T007", name: "Pooja Mehta",    subject: "Biology",           classes: "9-B, 8-C",      exp: "7 years",  phone: "+91 87654 77777", status: "Active",   email: "pooja@dpsnadergul.edu",    avatar_color: "#4caf50" },
+  { id: "T008", name: "Suresh Naidu",   subject: "Physical Education", classes: "All Classes",   exp: "11 years", phone: "+91 87654 88888", status: "Active",   email: "suresh@dpsnadergul.edu",   avatar_color: "#ff5722" },
+  { id: "T009", name: "Aruna Krishnan", subject: "Social Studies",    classes: "10-D, 7-B",     exp: "10 years", phone: "+91 87654 99999", status: "Active",   email: "aruna@dpsnadergul.edu",    avatar_color: "#9c27b0" },
+  { id: "T010", name: "Deepa Rani",     subject: "Telugu Language",   classes: "6-A, 7-C",      exp: "14 years", phone: "+91 87654 10000", status: "Active",   email: "deepa@dpsnadergul.edu",    avatar_color: "#607d8b" },
 ];
+
 
 // ─── Class Schedule ──────────────────────────────────────────
 const SCHEDULE = [
@@ -1175,11 +1177,13 @@ const EVENTS = [
 ];
 
 // ─── Attendance Data ─────────────────────────────────────────
+// total_students, present_today, absent_today, late_today are set dynamically in initDataStore()
+// after STUDENTS flat array is built from SCHOOL_DATA, so counts always match reality.
 const ATTENDANCE_SUMMARY = {
-  total_students: 27,
-  present_today: 23,
-  absent_today: 3,
-  late_today: 1,
+  total_students: 0,
+  present_today: 0,
+  absent_today: 0,
+  late_today: 0,
   weekly: [
     { day: "Mon", present: 92, total: 100 },
     { day: "Tue", present: 88, total: 100 },
@@ -1508,7 +1512,7 @@ const ROLE_HOME = {
     subtitle: "Full-system audit and administrative control center.",
     stats: [
       { label: "Uptime Status", value: "99.9%", icon: "⚡", color: "#4caf50" },
-      { label: "Total Students", value: "540+", icon: "🎓", color: "#1976d2" },
+      { label: "Total Students", value: "...", icon: "🎓", color: "#1976d2", id: "stat-total-students-admin" },
       { label: "Active Sessions", value: "14", icon: "💻", color: "#f57c00" },
       { label: "Unresolved Issues", value: "2", icon: "🚨", color: "#d32f2f" },
     ]
@@ -1547,27 +1551,28 @@ const DISCIPLINE_CASES = [
 ];
 
 const CLASS_PERFORMANCE = [
-  { class: "10-A", teacher: "Prasana Reddy", avgAtt: 95, avgGPA: 8.9, topper: "PRANEETH BHUKYA", weak: 1, issues: 1 },
-  { class: "10-B", teacher: "Ramesh Sharma", avgAtt: 92, avgGPA: 8.2, topper: "Karan Johar", weak: 3, issues: 0 },
-  { class: "10-C", teacher: "Mohan Das", avgAtt: 88, avgGPA: 7.6, topper: "Rahul G.", weak: 5, issues: 2 },
-  { class: "10-D", teacher: "Aruna", avgAtt: 90, avgGPA: 8.1, topper: "Simran K.", weak: 2, issues: 1 },
-  { class: "9-A", teacher: "Anita Pillai", avgAtt: 91, avgGPA: 8.4, topper: "Sneha P.", weak: 2, issues: 0 },
-  { class: "9-B", teacher: "Venkat Iyer", avgAtt: 81, avgGPA: 7.1, topper: "KASULA ASHWATH", weak: 7, issues: 3 },
-  { class: "9-C", teacher: "Prasana Reddy", avgAtt: 94, avgGPA: 8.7, topper: "SATHWIK REDDY GANTA", weak: 1, issues: 1 },
-  { class: "9-D", teacher: "Sunita Verma", avgAtt: 87, avgGPA: 7.9, topper: "Vikram R.", weak: 4, issues: 2 },
-  { class: "8-A", teacher: "Sunita Verma", avgAtt: 93, avgGPA: 8.0, topper: "SNITHIK VENGALA", weak: 2, issues: 1 },
-  { class: "8-B", teacher: "Pooja Mehta", avgAtt: 85, avgGPA: 7.4, topper: "G MANASWINI", weak: 4, issues: 2 },
-  { class: "8-C", teacher: "Ramesh Sharma", avgAtt: 89, avgGPA: 7.8, topper: "Deepika V.", weak: 3, issues: 0 },
-  { class: "8-D", teacher: "Mohan Das", avgAtt: 90, avgGPA: 8.1, topper: "Anjali S.", weak: 2, issues: 1 },
-  { class: "7-A", teacher: "Suresh Naidu", avgAtt: 96, avgGPA: 9.1, topper: "BHUKYA PRANAVI", weak: 0, issues: 0 },
-  { class: "7-B", teacher: "Anita Pillai", avgAtt: 90, avgGPA: 8.2, topper: "Arjun M.", weak: 2, issues: 1 },
-  { class: "7-C", teacher: "Pooja Mehta", avgAtt: 88, avgGPA: 7.7, topper: "Ishita R.", weak: 4, issues: 1 },
-  { class: "7-D", teacher: "Sunita Verma", avgAtt: 89, avgGPA: 7.9, topper: "Karan P.", weak: 3, issues: 0 },
-  { class: "6-A", teacher: "Prasana Reddy", avgAtt: 92, avgGPA: 8.5, topper: "Ravi K.", weak: 1, issues: 0 },
-  { class: "6-B", teacher: "Venkat Iyer", avgAtt: 88, avgGPA: 7.9, topper: "Tanya S.", weak: 3, issues: 2 },
-  { class: "6-C", teacher: "Anita Pillai", avgAtt: 85, avgGPA: 7.5, topper: "Nitin B.", weak: 5, issues: 1 },
-  { class: "6-D", teacher: "Ramesh Sharma", avgAtt: 91, avgGPA: 8.2, topper: "Shiva G.", weak: 2, issues: 0 },
+  { class: "10-A", teacher: "Prasana Reddy",   avgAtt: 95, avgGPA: 8.9, topper: "Ananya Sharma",        weak: 1, issues: 1 },
+  { class: "10-B", teacher: "Ramesh Sharma",   avgAtt: 92, avgGPA: 8.2, topper: "Meena Gupta",           weak: 3, issues: 0 },
+  { class: "10-C", teacher: "Mohan Das",       avgAtt: 88, avgGPA: 7.6, topper: "Alia B.",               weak: 5, issues: 2 },
+  { class: "10-D", teacher: "Aruna Krishnan",  avgAtt: 90, avgGPA: 8.1, topper: "Alia B.",               weak: 2, issues: 1 },
+  { class: "9-A",  teacher: "Anita Pillai",    avgAtt: 91, avgGPA: 8.4, topper: "Suhana S.",             weak: 2, issues: 0 },
+  { class: "9-B",  teacher: "Pooja Mehta",     avgAtt: 81, avgGPA: 7.1, topper: "Ishaan K.",             weak: 7, issues: 3 },
+  { class: "9-C",  teacher: "Prasana Reddy",   avgAtt: 94, avgGPA: 8.7, topper: "CHEEKOORI SAI CHARAN",  weak: 1, issues: 2 },
+  { class: "9-D",  teacher: "Mohan Das",       avgAtt: 87, avgGPA: 7.9, topper: "Kabir S.",              weak: 4, issues: 2 },
+  { class: "8-A",  teacher: "Venkat Iyer",     avgAtt: 93, avgGPA: 8.0, topper: "Tanvi S.",              weak: 2, issues: 1 },
+  { class: "8-B",  teacher: "Anita Pillai",    avgAtt: 85, avgGPA: 7.4, topper: "Sneha P.",              weak: 4, issues: 2 },
+  { class: "8-C",  teacher: "Pooja Mehta",     avgAtt: 89, avgGPA: 7.8, topper: "Alia K.",               weak: 3, issues: 0 },
+  { class: "8-D",  teacher: "Ramesh Sharma",   avgAtt: 90, avgGPA: 8.1, topper: "Pooja D.",              weak: 2, issues: 1 },
+  { class: "7-A",  teacher: "Sunita Verma",    avgAtt: 96, avgGPA: 9.1, topper: "Kavya Iyer",            weak: 0, issues: 0 },
+  { class: "7-B",  teacher: "Aruna Krishnan",  avgAtt: 90, avgGPA: 8.2, topper: "Aryan B.",              weak: 2, issues: 1 },
+  { class: "7-C",  teacher: "Deepa Rani",      avgAtt: 88, avgGPA: 7.7, topper: "Priti G.",              weak: 4, issues: 1 },
+  { class: "7-D",  teacher: "Suresh Naidu",    avgAtt: 89, avgGPA: 7.9, topper: "Uma R.",                weak: 3, issues: 0 },
+  { class: "6-A",  teacher: "Deepa Rani",      avgAtt: 92, avgGPA: 8.5, topper: "Kriti K.",              weak: 1, issues: 0 },
+  { class: "6-B",  teacher: "Sunita Verma",    avgAtt: 88, avgGPA: 7.9, topper: "Riya R.",               weak: 3, issues: 2 },
+  { class: "6-C",  teacher: "Venkat Iyer",     avgAtt: 85, avgGPA: 7.5, topper: "Zeba Q.",               weak: 5, issues: 1 },
+  { class: "6-D",  teacher: "Suresh Naidu",    avgAtt: 91, avgGPA: 8.2, topper: "Esha P.",               weak: 2, issues: 0 },
 ];
+
 
 // ─── Parent Specific Mock Data ───────────────────────────────
 const PARENT_CHILD = {
@@ -1931,7 +1936,7 @@ function initDataStore() {
             { label: "Tuition Fee (Q4)", amount: 10000, status: "Pending" }
           ],
           history: [
-            { id: "TXN-" + Math.floor(100000 + Math.random() * 900000), date: "15 Mar 2026", method: "Online", amount: 35000, status: "Success", receipt: "RCPT-" + Math.floor(1000 + Math.random() * 9000) }
+            { id: "TXN-" + (100000 + String(s.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) * 997 % 900000), date: "15 Mar 2026", method: "Online", amount: 35000, status: "Success", receipt: "RCPT-" + (1000 + String(s.id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) * 7 % 9000) }
           ]
         },
         messages: [
@@ -1943,15 +1948,32 @@ function initDataStore() {
           { date: "14 Apr 2026", status: "Present" },
           { date: "13 Apr 2026", status: "Late" }
         ],
-        attendancePct: Math.floor(Math.random() * (98 - 85 + 1)) + 85
+        attendancePct: 85 + (String(s.id).split('').reduce((a,c) => a + c.charCodeAt(0), 0)) % 13
       };
       localStorage.setItem(key, JSON.stringify(demoData));
     }
   });
+  // Sync all computed counts (ATTENDANCE_SUMMARY, admin stat card) after STUDENTS is settled
+  syncComputedStats();
 }
 
 function saveStudents() {
   localStorage.setItem('campuscore_students', JSON.stringify(STUDENTS));
+}
+
+// ─── Sync computed stats that depend on STUDENTS.length ───────
+function syncComputedStats() {
+  // ATTENDANCE_SUMMARY: set from actual student count
+  ATTENDANCE_SUMMARY.total_students = STUDENTS.length;
+  ATTENDANCE_SUMMARY.present_today  = Math.round(STUDENTS.length * 0.925);
+  ATTENDANCE_SUMMARY.absent_today   = Math.round(STUDENTS.length * 0.050);
+  ATTENDANCE_SUMMARY.late_today     = STUDENTS.length - ATTENDANCE_SUMMARY.present_today - ATTENDANCE_SUMMARY.absent_today;
+  // VP weekly totals scale to institution size
+  ATTENDANCE_SUMMARY.weekly.forEach(d => { d.total = STUDENTS.length; d.present = Math.round(STUDENTS.length * (d.present / 100)); });
+  // SuperAdmin dashboard stat card
+  const adminStat = (ROLE_HOME.apaaas || ROLE_HOME.super_admin || {}).stats || [];
+  const tsStat = adminStat.find(s => s.id === 'stat-total-students-admin');
+  if (tsStat) tsStat.value = String(STUDENTS.length);
 }
 
 
@@ -2001,12 +2023,88 @@ window.getUnifiedAccounts = function() {
 window.getInstitutionalStats = function() {
   const all = STUDENTS;
   const total = all.length;
-  // Dynamic partitioning for realistic dashboard numbers
   const present = Math.floor(total * 0.92);
   const absent = Math.floor(total * 0.05);
   const late = total - present - absent;
-  
   return { total, present, absent, late };
 };
+
+/* ================================================================
+   CAMPUSCORE ─ POST-BUILD INTEGRITY CHECK
+   Run window.runIntegrityCheck() in the browser console any time
+   to verify the dataset is self-consistent.
+   ================================================================
+   PARENT LOGIN SCOPE (enforced by design):
+   ───────────────────────────
+   Only Class 9-C students (27 students, DEMO_USERS ids 101–127)
+   have login-capable parent accounts in DEMO_USERS.
+   Credentials: username = P{studentId}A, password = parent123
+   Students in all other classes have a 'parent' display field
+   on their SCHOOL_DATA record but NO corresponding login entry.
+   This is intentional — adding full parent logins for 297 students
+   would create 297 dummy accounts with no differentiated data.
+   To test any parent flow, use one of the 9-C parent accounts.
+================================================================ */
+window.runIntegrityCheck = function() {
+  const log = { passed: [], failed: [] };
+  const ok   = m => log.passed.push('✅ ' + m);
+  const fail = m => log.failed.push('❌ ' + m);
+
+  // 1. Unique DEMO_USERS usernames
+  const uns = DEMO_USERS.map(u => u.username);
+  const dupU = uns.filter((u, i) => uns.indexOf(u) !== i);
+  dupU.length ? fail('Duplicate DEMO_USER usernames: ' + dupU) : ok('DEMO_USERS usernames unique (' + DEMO_USERS.length + ' users)');
+
+  // 2. P_ASHWATH_TEST absent
+  DEMO_USERS.some(u => u.username === 'P_ASHWATH_TEST')
+    ? fail('Stale P_ASHWATH_TEST still present in DEMO_USERS')
+    : ok('P_ASHWATH_TEST removed ✓');
+
+  // 3. Unique student IDs
+  const sids = STUDENTS.map(s => String(s.id));
+  const dupS = sids.filter((id, i) => sids.indexOf(id) !== i);
+  dupS.length ? fail('Duplicate student IDs: ' + dupS.slice(0,5).join(',')) : ok('Student IDs unique (' + STUDENTS.length + ' students)');
+
+  // 4. Parent → student reference validity
+  const sidSet = new Set(sids);
+  const parents = DEMO_USERS.filter(u => u.role === 'parent');
+  const badP = parents.filter(p => p.childId && !sidSet.has(String(p.childId)));
+  badP.length
+    ? fail('Broken parent→student links: ' + badP.map(p => p.username + '→' + p.childId).join(', '))
+    : ok('All ' + parents.length + ' parent→student links valid (all in 9-C)');
+
+  // 5. CLASS_PERFORMANCE toppers exist in correct class
+  const badToppers = CLASS_PERFORMANCE.filter(cp => {
+    const [g, s] = cp.class.split('-');
+    const sec = window.SCHOOL_DATA.classes[g] && window.SCHOOL_DATA.classes[g][s];
+    return sec && !sec.some(st => st.name === cp.topper);
+  });
+  badToppers.length
+    ? fail('Toppers not in their class: ' + badToppers.map(c => c.class + ':' + c.topper).join(', '))
+    : ok('All CLASS_PERFORMANCE toppers valid');
+
+  // 6. ATTENDANCE_SUMMARY reconciled with STUDENTS.length
+  ATTENDANCE_SUMMARY.total_students === STUDENTS.length
+    ? ok('ATTENDANCE_SUMMARY.total_students = ' + STUDENTS.length + ' ✓')
+    : fail('ATTENDANCE_SUMMARY.total_students (' + ATTENDANCE_SUMMARY.total_students + ') ≠ STUDENTS.length (' + STUDENTS.length + ')');
+
+  // 7. No stale "Student X-1" generated names
+  const stale = STUDENTS.filter(s => /^Student \d+[A-K]-\d+$/.test(s.name)).length;
+  stale ? fail('Stale \'Student X-1\' names still present: ' + stale) : ok('No stale generated placeholder names');
+
+  // 8. TEACHERS count
+  ok('TEACHERS: ' + (window.TEACHERS || []).length + ' teachers loaded');
+
+  console.group('[CampusCore] Integrity Check');
+  log.passed.forEach(m => console.log(m));
+  log.failed.forEach(m => console.error(m));
+  console.log(log.failed.length === 0 ? '🎉 All checks passed!' : '⚠️ ' + log.failed.length + ' check(s) failed');
+  console.groupEnd();
+  return log;
+};
+
+// Auto-run silently on load (results visible in console)
+console.log('[CampusCore] Data loaded. Run window.runIntegrityCheck() to validate dataset.');
+
 
 initDataStore();

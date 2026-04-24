@@ -3,12 +3,18 @@
    Application boot, login form handler, dashboard init
    ============================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   if (typeof loadTheme === 'function') loadTheme();
   setupSidebar();
   setupLoginForm();
   updateDateTime();
   setInterval(updateDateTime, 60000); // update time every minute
+
+  // BUG-009 FIX: Pre-load live Supabase data BEFORE restoring session so the
+  // dashboard always renders with fresh data instead of stale local arrays.
+  if (typeof initSupabaseData === 'function') {
+    try { await initSupabaseData(); } catch (e) { console.warn('[CampusCore] initSupabaseData failed, using local data:', e); }
+  }
 
   // Restore session on refresh
   if (restoreSession() && currentUser) {
