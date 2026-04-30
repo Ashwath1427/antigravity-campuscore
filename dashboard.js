@@ -241,10 +241,10 @@ function buildHome(user) {
   if (user.role === 'vice_principal') {
     const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: '...', present: '...', absent: '...', late: '...' };
     calculatedStats = [
-      { label: "Institutional Present", value: stats.present, icon: "✅", id: "stat-present" },
-      { label: "Absent Today", value: stats.absent, icon: "❌", id: "stat-absent" },
-      { label: "Total Students", value: stats.total, icon: "🎓", id: "stat-total-students" },
-      { label: "Pending Approvals", value: "...", icon: "⏱️", id: "stat-approvals" }
+      { label: "Institutional Present", value: stats.present, icon: "✅", id: "stat-present", glowClass: "cc-glow-green" },
+      { label: "Absent Today", value: stats.absent, icon: "❌", id: "stat-absent", glowClass: "cc-glow-red" },
+      { label: "Total Students", value: stats.total, icon: "🎓", id: "stat-total-students", glowClass: "cc-glow-blue" },
+      { label: "Pending Approvals", value: "...", icon: "⏱️", id: "stat-approvals", glowClass: "cc-glow-purple" }
     ];
   } else if (user.role === 'apaaas' || user.role === 'principal') {
     const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: '...', present: '...', absent: '...', late: '...' };
@@ -278,7 +278,7 @@ function buildHome(user) {
 
   // KPI Stats
   const stats = calculatedStats.map(s => `
-    <div class="stat-card">
+    <div class="stat-card ${s.glowClass ? `cc-glow-card ${s.glowClass}` : ''}">
       <div class="stat-card-icon">${s.icon}</div>
       <div class="stat-value ${s.value === '...' ? 'skeleton' : ''}" id="${s.id || ''}">${s.value}</div>
       <div class="stat-label">${s.label}</div>
@@ -413,6 +413,26 @@ function buildHome(user) {
 
     <div class="card"><h3>⚡ Quick Actions</h3><div class="quick-actions">${quickActions}</div></div>
 
+    ${['vice_principal', 'principal', 'apaaas', 'super_admin'].includes(user.role) ? `
+    <div class="cc-calendar-card" id="bento-calendar">
+      <div class="cc-calendar-card__left">
+        <h2 class="cc-calendar-card__title">Schedule Overview</h2>
+        <p class="cc-calendar-card__subtitle">Quick view of this month's key dates, exams, and institutional events.</p>
+        <button class="cc-calendar-card__button" onclick="navigateTo('events')">View full calendar</button>
+      </div>
+      <div class="cc-calendar-card__right">
+        <div class="cc-calendar-card__header">
+          <span class="cc-calendar-card__month" id="bento-cal-month">Loading...</span>
+          <span class="cc-calendar-card__divider"></span>
+          <span class="cc-calendar-card__meta">Monthly Preview</span>
+        </div>
+        <div class="cc-calendar-card__grid" id="bento-cal-grid">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+    </div>
+    ` : ''}
+
     <div class="content-grid">
       <div class="card"><h3>📢 Latest Announcements</h3><ul class="activity-list">${notices}</ul>
         <div style="text-align:center;margin-top:12px"><button class="btn-primary" onclick="navigateTo('announcements')">View All Notices</button></div>
@@ -441,6 +461,30 @@ function buildHome(user) {
       </div>
       <div class="card"><h3>🔔 Pending Items</h3><div class="pending-grid">${pending}</div></div>
     </div>
+
+    ${['vice_principal', 'principal', 'apaaas', 'super_admin'].includes(user.role) ? `
+    <div class="cc-dock-container">
+      <div class="cc-dock cc-dock--admin">
+        ${(qaMap[user.role] || []).map(item => `
+          <div class="cc-dock__item" onclick="${item.target === '_promote' ? 'promoteStudents()' : `navigateTo('${item.target}')`}" data-title="${item.label}">
+            <i class="fas ${item.icon}" style="color: ${item.color}"></i>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+
+    ${['apaaas', 'super_admin'].includes(user.role) ? `
+    <div class="cc-admin-dock-wrapper">
+      <div id="cc-admin-dock" class="cc-admin-dock">
+        <button class="cc-admin-dock__item" data-dock-action="view-logs" title="View Logs"><i class="fas fa-terminal"></i></button>
+        <button class="cc-admin-dock__item" data-dock-action="toggle-labs" title="Toggle Labs"><i class="fas fa-flask"></i></button>
+        <button class="cc-admin-dock__item" data-dock-action="debug-overlay" title="Debug Overlay"><i class="fas fa-bug"></i></button>
+        <button class="cc-admin-dock__item" data-dock-action="force-resync" title="Force Resync"><i class="fas fa-sync"></i></button>
+        <button class="cc-admin-dock__item" data-dock-action="show-metrics" title="Show Metrics"><i class="fas fa-chart-line"></i></button>
+      </div>
+    </div>
+    ` : ''}
 
     <div class="dash-footer">CampusCore v2.0 · DPS Nadergul · Last synced: Just now</div>
   </div>`;

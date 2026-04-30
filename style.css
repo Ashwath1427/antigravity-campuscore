@@ -867,3 +867,374 @@ a:hover {
   transform: translateY(0);
   opacity: 1;
 }
+
+/* ==========================================
+   Glow Card Styles (Spotlight Hover)
+   ========================================== */
+.cc-glow-card {
+  --x: 50;
+  --y: 50;
+  --base: 220; /* fallback hue */
+  position: relative;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hue variations */
+.cc-glow-blue { --base: 220; }
+.cc-glow-purple { --base: 280; }
+.cc-glow-green { --base: 140; }
+.cc-glow-red { --base: 0; }
+.cc-glow-orange { --base: 30; }
+
+.cc-glow-card:hover {
+  /* We overlay a radial gradient spotlight over the normal surface background */
+  background: 
+    radial-gradient(
+      250px circle at calc(var(--x) * 1px) calc(var(--y) * 1px),
+      hsl(var(--base), 80%, 50%, 0.15),
+      transparent 80%
+    ),
+    linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-2) 100%);
+  border-color: transparent; /* hide original border to let ::after glow shine */
+}
+
+/* The glowing border mask */
+.cc-glow-card::after {
+  content: "";
+  position: absolute;
+  inset: -2px; /* stat-card has 2px border */
+  z-index: 10;
+  border-radius: inherit;
+  background: radial-gradient(
+    300px circle at calc(var(--x) * 1px) calc(var(--y) * 1px),
+    hsl(var(--base), 80%, 55%, 0.7),
+    transparent 80%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  /* Mask trick to only paint the border area */
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px;
+}
+
+.cc-glow-card:hover::after {
+  opacity: 1;
+}
+
+/* ==========================================
+   Admin Dock Styles (Mac-style Hover)
+   ========================================== */
+.cc-dock-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  margin-top: 20px;
+}
+
+.cc-dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 100;
+}
+
+[data-theme="dark"] .cc-dock {
+  background: rgba(30, 36, 40, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cc-dock__item {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s, transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Will be dynamically scaled via inline --dock-scale variable from JS */
+  transform: scale(var(--dock-scale, 1)) translateY(calc((1 - var(--dock-scale, 1)) * 24px));
+  transform-origin: bottom center;
+}
+
+.cc-dock__item:hover {
+  background: var(--color-surface-2);
+}
+
+.cc-dock__item i {
+  pointer-events: none; /* Let the container handle mouse events cleanly */
+}
+
+/* Tooltip on hover */
+.cc-dock__item::after {
+  content: attr(data-title);
+  position: absolute;
+  top: -36px;
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.cc-dock__item:hover::after {
+  opacity: 1;
+}
+
+/* Responsiveness: disable animation on small screens */
+@media (max-width: 768px) {
+  .cc-dock-container {
+    display: none; /* Hide entirely on mobile to keep layout clean, per constraints */
+  }
+}
+
+/* ==========================================
+   APAAAS Admin Dock (MacOS Style Hidden Tools)
+   ========================================== */
+.cc-admin-dock-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  margin-top: 10px;
+}
+
+.cc-admin-dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 12px 20px;
+  background: rgba(15, 31, 20, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 150;
+}
+
+.cc-admin-dock__item {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s, box-shadow 0.2s;
+  /* Scaled via JS */
+  transform-origin: bottom center;
+}
+
+.cc-admin-dock__item:hover {
+  background: linear-gradient(135deg, rgba(92,168,112,0.6), rgba(92,168,112,0.3));
+  box-shadow: 0 8px 24px rgba(92, 168, 112, 0.4);
+}
+
+.cc-admin-dock__item i {
+  pointer-events: none;
+}
+
+.cc-admin-dock__item::after {
+  content: attr(title);
+  position: absolute;
+  top: -38px;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.cc-admin-dock__item:hover::after {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .cc-admin-dock-wrapper {
+    display: none; /* Hide admin dock on mobile for cleaner layout */
+  }
+}
+
+/* ==========================================
+   Bento Calendar Card (Dashboard Widget)
+   ========================================== */
+.cc-calendar-card {
+  display: flex;
+  flex-direction: row;
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(92, 168, 112, 0.2);
+  border-radius: 24px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  gap: 32px;
+  align-items: center;
+}
+
+[data-theme="dark"] .cc-calendar-card {
+  background: linear-gradient(135deg, rgba(30,36,40,0.8) 0%, rgba(30,36,40,0.4) 100%);
+  border-color: rgba(255,255,255,0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.cc-calendar-card__left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cc-calendar-card__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cc-calendar-card__subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.cc-calendar-card__button {
+  align-self: flex-start;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.cc-calendar-card__button:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.cc-calendar-card__right {
+  flex: 1.2;
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.cc-calendar-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cc-calendar-card__month {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.cc-calendar-card__divider {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-border);
+}
+
+.cc-calendar-card__meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.cc-calendar-card__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.cc-calendar-card__day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  border-radius: 8px;
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.cc-calendar-card__day:not(:empty):not(.cc-calendar-card__day--header):hover {
+  background: var(--color-surface-2);
+  cursor: pointer;
+}
+
+.cc-calendar-card__day--header {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.cc-calendar-card__day--highlight {
+  background: var(--color-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 10px rgba(92,168,112,0.3);
+}
+
+@media (max-width: 768px) {
+  .cc-calendar-card {
+    flex-direction: column;
+    padding: 24px;
+  }
+  .cc-calendar-card__right {
+    width: 100%;
+  }
+}
