@@ -1,0 +1,116 @@
+/* ============================================================
+   CAMPUS CORE – MAC DOCK CSS
+   Floating, animated dock for Admin (APAAAS) role
+   ============================================================ */
+
+.mac-dock-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    z-index: 10000;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mac-dock-container.visible {
+    transform: translateX(-50%) translateY(0);
+}
+
+.mac-dock {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .mac-dock {
+    background: rgba(30, 36, 40, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dock-item {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: var(--color-surface);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dock-item:hover {
+    width: 70px;
+    height: 70px;
+    font-size: 32px;
+    margin: 0 10px -10px 10px;
+}
+
+.dock-item i {
+    transition: transform 0.3s ease;
+}
+
+.dock-item:hover i {
+    transform: scale(1.1);
+}
+
+.dock-item::after {
+    content: attr(data-label);
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: transform 0.2s ease;
+}
+
+.dock-item:hover::after {
+    transform: translateX(-50%) scale(1);
+}
+
+.dock-separator {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 5px;
+    align-self: center;
+}
+
+/* Specific item colors */
+.dock-item.admin { color: #fbc02d; }
+.dock-item.notices { color: #5ca870; }
+.dock-item.help { color: #1976d2; }
+.dock-item.settings { color: #78909c; }
+.dock-item.home { color: #e53935; }
+
+/* Active dot */
+.dock-item.active::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--color-primary);
+}

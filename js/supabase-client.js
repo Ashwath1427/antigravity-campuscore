@@ -51,9 +51,15 @@ async function initSupabaseData() {
 
         // 1. Sync Students
         if (studentsRes.data) {
-            window.STUDENTS = studentsRes.data;
+            // Map snake_case database columns to camelCase JS properties
+            window.STUDENTS = studentsRes.data.map(s => ({
+                ...s,
+                admNo: s.adm_no || s.admNo,
+                parentName: s.parent || s.parent_name || s.parentName
+            }));
             console.log(`[Supabase] Loaded ${window.STUDENTS.length} students`);
         }
+
 
         // 2. Sync Announcements
         if (announcementsRes.data) {
@@ -99,8 +105,13 @@ async function supabaseLogin(username, password) {
 
         // Simple password check (matching seed pattern)
         if (data.password === password) {
-            return { success: true, user: data };
+            const mappedUser = {
+                ...data,
+                roleLabel: data.role_label || data.roleLabel
+            };
+            return { success: true, user: mappedUser };
         } else {
+
             return { success: false, message: "Invalid credentials" };
         }
     } catch (e) {
