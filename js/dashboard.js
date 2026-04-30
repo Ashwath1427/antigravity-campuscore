@@ -164,6 +164,19 @@ function buildDashboard(user) {
       safeRender('Settings', buildSettings, user),
     ].join('');
   }
+
+  // CRITICAL: Verify content was rendered - if empty, inject fallback
+  if (!c.innerHTML || c.innerHTML.trim() === '') {
+    console.error('[Dashboard] Content area is empty after render for role:', user.role);
+    c.innerHTML = `
+      <div class="dash-section" style="padding:40px;text-align:center">
+        <div style="font-size:48px;margin-bottom:20px;color:var(--color-primary)"><i class="fas fa-exclamation-circle"></i></div>
+        <h2 style="color:var(--color-text);margin-bottom:10px">Dashboard Content Not Available</h2>
+        <p style="color:var(--color-text-muted);margin-bottom:20px">The dashboard content could not be loaded. This may be due to a temporary connection issue.</p>
+        <button class="btn-primary" onclick="location.reload()">Reload Page</button>
+      </div>
+    `;
+  }
 }
 
 // Duplicate renderWithRoleContext removed - using the one defined earlier
