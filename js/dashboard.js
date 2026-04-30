@@ -127,6 +127,16 @@ function buildDashboard(user) {
       buildAdminDock(user)
     ].join('');
     setTimeout(translateSuperAdminUI, 0);
+  } else if (user.role === 'mac_admin' || String(user.username || '').toUpperCase() === 'APASAA') {
+    // Mac Admin Dashboard - Full Mac-style Experience
+    c.innerHTML = [
+      safeRender('Mac Dashboard', buildMacDashboard, user),
+      safeRender('System Monitor', buildSystemMonitor, user),
+      safeRender('Mac Controls', buildMacControls, user),
+      safeRender('Style Lab', buildStyleLab, user),
+      safeRender('Settings', buildSettings, user),
+      buildMacAdminDock(user)
+    ].join('');
   } else {
     c.innerHTML = [
       safeRender('Home', buildHome, user),
@@ -3701,6 +3711,347 @@ window.saveVPEvent = function () {
     triggerLiveReRender();
   }, 800);
 }
+
+/* ============================================================
+   MAC ADMIN DASHBOARD FUNCTIONS
+   ============================================================ */
+function buildMacDashboard(user) {
+  const cfg = ROLE_HOME[user.role] || ROLE_HOME[user.role.toLowerCase().replace(' ', '_')] || {
+    greeting: `Welcome, ${user.name}!`,
+    subtitle: "Mac-style dashboard",
+    stats: []
+  };
+
+  const greeting = getGreeting();
+  const dateStr = getFormattedDate();
+  const firstName = user.name.split(' ')[0];
+
+  let calculatedStats = cfg.stats || [];
+  if (user.role === 'mac_admin') {
+    calculatedStats = [
+      { label: "Mac Features", value: "100%", icon: "🍎", glowClass: "cc-glow-blue" },
+      { label: "Glow Effects", value: "Active", icon: "✨", glowClass: "cc-glow-purple" },
+      { label: "Dock Items", value: "5", icon: "🎯", glowClass: "cc-glow-orange" },
+      { label: "Performance", value: "Optimized", icon: "⚡", glowClass: "cc-glow-green" }
+    ];
+  }
+
+  // Mac-style Welcome Banner
+  const welcome = `
+    <div class="cc-mac-welcome-banner">
+      <div class="cc-mac-welcome-greeting">${greeting}, ${firstName}! 🍎</div>
+      <div class="cc-mac-welcome-sub">${user.roleLabel} Dashboard · Full Mac-style interface with enhanced animations</div>
+      <div class="cc-mac-welcome-date"><i class="far fa-calendar-alt"></i> ${dateStr}</div>
+      <div class="cc-mac-welcome-school">🏫 Delhi Public School, Nadergul · Mac Edition</div>
+    </div>`;
+
+  // Mac-style KPI Stats with Glow
+  const stats = calculatedStats.map(s => `
+    <div class="stat-card ${s.glowClass || ''} cc-mac-stat-card">
+      <div class="stat-card-icon cc-mac-icon">${s.icon}</div>
+      <div class="stat-value cc-mac-value">${s.value}</div>
+      <div class="stat-label cc-mac-label">${s.label}</div>
+    </div>`).join('');
+
+  return `
+  <div class="dash-section active" id="section-mac-dashboard">
+    ${welcome}
+    <div class="cc-mac-stats-grid">${stats}</div>
+    ${buildBentoCalendar()}
+    <div class="content-grid-equal">
+      <div class="card cc-mac-card">
+        <h3>🍎 Mac Features Status</h3>
+        <div class="cc-mac-features">
+          <div class="cc-mac-feature-item">
+            <i class="fas fa-check-circle cc-mac-check"></i>
+            <span>Glow Cards Active</span>
+          </div>
+          <div class="cc-mac-feature-item">
+            <i class="fas fa-check-circle cc-mac-check"></i>
+            <span>Admin Dock Enhanced</span>
+          </div>
+          <div class="cc-mac-feature-item">
+            <i class="fas fa-check-circle cc-mac-check"></i>
+            <span>Bento Calendar</span>
+          </div>
+          <div class="cc-mac-feature-item">
+            <i class="fas fa-check-circle cc-mac-check"></i>
+            <span>Mac Animations</span>
+          </div>
+        </div>
+      </div>
+      <div class="card cc-mac-card">
+        <h3>⚡ System Performance</h3>
+        <div class="cc-mac-performance">
+          <div class="cc-mac-perf-item">
+            <span>UI Response</span>
+            <div class="cc-mac-perf-bar">
+              <div class="cc-mac-perf-fill" style="width: 95%"></div>
+            </div>
+            <span>95%</span>
+          </div>
+          <div class="cc-mac-perf-item">
+            <span>Animation FPS</span>
+            <div class="cc-mac-perf-bar">
+              <div class="cc-mac-perf-fill" style="width: 60%"></div>
+            </div>
+            <span>60 FPS</span>
+          </div>
+          <div class="cc-mac-perf-item">
+            <span>Memory Usage</span>
+            <div class="cc-mac-perf-bar">
+              <div class="cc-mac-perf-fill" style="width: 45%"></div>
+            </div>
+            <span>45%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-footer cc-mac-footer">CampusCore Mac Edition v2.0 · DPS Nadergul · Last synced: Just now</div>
+  </div>`;
+}
+
+function buildSystemMonitor(user) {
+  return `
+    <div class="dash-section" id="section-system-monitor">
+      <div class="card cc-mac-card">
+        <h3>🖥️ System Monitor</h3>
+        <div class="cc-mac-monitor-grid">
+          <div class="cc-mac-monitor-item">
+            <div class="cc-mac-monitor-title">Active Users</div>
+            <div class="cc-mac-monitor-value">297</div>
+            <div class="cc-mac-monitor-change">+12%</div>
+          </div>
+          <div class="cc-mac-monitor-item">
+            <div class="cc-mac-monitor-title">Server Load</div>
+            <div class="cc-mac-monitor-value">23%</div>
+            <div class="cc-mac-monitor-change">-5%</div>
+          </div>
+          <div class="cc-mac-monitor-item">
+            <div class="cc-mac-monitor-title">Response Time</div>
+            <div class="cc-mac-monitor-value">45ms</div>
+            <div class="cc-mac-monitor-change">-10ms</div>
+          </div>
+          <div class="cc-mac-monitor-item">
+            <div class="cc-mac-monitor-title">Error Rate</div>
+            <div class="cc-mac-monitor-value">0.1%</div>
+            <div class="cc-mac-monitor-change">-0.2%</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildMacControls(user) {
+  return `
+    <div class="dash-section" id="section-mac-controls">
+      <div class="card cc-mac-card">
+        <h3>🎮 Mac Controls</h3>
+        <div class="cc-mac-controls-grid">
+          <button class="cc-mac-control-btn" onclick="toggleMacGlow()">
+            <i class="fas fa-lightbulb"></i>
+            <span>Toggle Glow</span>
+          </button>
+          <button class="cc-mac-control-btn" onclick="toggleMacDock()">
+            <i class="fas fa-anchor"></i>
+            <span>Toggle Dock</span>
+          </button>
+          <button class="cc-mac-control-btn" onclick="toggleMacAnimations()">
+            <i class="fas fa-magic"></i>
+            <span>Animations</span>
+          </button>
+          <button class="cc-mac-control-btn" onclick="resetMacTheme()">
+            <i class="fas fa-undo"></i>
+            <span>Reset Theme</span>
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildStyleLab(user) {
+  return `
+    <div class="dash-section" id="section-style-lab">
+      <div class="card cc-mac-card">
+        <h3>🎨 Style Lab</h3>
+        <div class="cc-mac-style-grid">
+          <div class="cc-mac-style-item">
+            <label>Glow Intensity</label>
+            <input type="range" min="0" max="100" value="70" class="cc-mac-slider" onchange="adjustGlowIntensity(this.value)">
+          </div>
+          <div class="cc-mac-style-item">
+            <label>Animation Speed</label>
+            <input type="range" min="0" max="100" value="50" class="cc-mac-slider" onchange="adjustAnimationSpeed(this.value)">
+          </div>
+          <div class="cc-mac-style-item">
+            <label>Border Radius</label>
+            <input type="range" min="0" max="50" value="12" class="cc-mac-slider" onchange="adjustBorderRadius(this.value)">
+          </div>
+          <div class="cc-mac-style-item">
+            <label>Blur Amount</label>
+            <input type="range" min="0" max="50" value="20" class="cc-mac-slider" onchange="adjustBlurAmount(this.value)">
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildMacAdminDock(user) {
+  return `
+    <div class="cc-admin-dock-wrapper cc-mac-dock-wrapper">
+      <div class="cc-admin-dock cc-mac-admin-dock">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-settings" title="Mac Settings">
+          <i class="fas fa-cog"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-themes" title="Mac Themes">
+          <i class="fas fa-palette"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-effects" title="Mac Effects">
+          <i class="fas fa-sparkles"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-debug" title="Mac Debug">
+          <i class="fas fa-bug"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-launchpad" title="Mac Launchpad">
+          <i class="fas fa-rocket"></i>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   MAC JAVASCRIPT FUNCTIONS
+   ============================================================ */
+
+// Mac Control Functions
+window.toggleMacGlow = function() {
+  const glowCards = document.querySelectorAll('.cc-glow-card');
+  glowCards.forEach(card => {
+    card.style.display = card.style.display === 'none' ? 'block' : 'none';
+  });
+  simulateAction('Mac glow effects toggled');
+};
+
+window.toggleMacDock = function() {
+  const dock = document.querySelector('.cc-mac-dock-wrapper');
+  if (dock) {
+    dock.style.display = dock.style.display === 'none' ? 'block' : 'none';
+  }
+  simulateAction('Mac admin dock toggled');
+};
+
+window.toggleMacAnimations = function() {
+  const animatedElements = document.querySelectorAll('.cc-mac-stat-card, .cc-mac-dock-item');
+  animatedElements.forEach(el => {
+    el.style.transition = el.style.transition === 'none' ? 'all 0.3s ease' : 'none';
+  });
+  simulateAction('Mac animations toggled');
+};
+
+window.resetMacTheme = function() {
+  location.reload();
+};
+
+// Style Lab Functions
+window.adjustGlowIntensity = function(value) {
+  const root = document.documentElement;
+  root.style.setProperty('--mac-glow-intensity', value + '%');
+  simulateAction(`Glow intensity adjusted to ${value}%`);
+};
+
+window.adjustAnimationSpeed = function(value) {
+  const duration = (100 - value) / 100; // Inverse relationship
+  const animatedElements = document.querySelectorAll('.cc-mac-stat-card, .cc-mac-dock-item');
+  animatedElements.forEach(el => {
+    el.style.transitionDuration = duration + 's';
+  });
+  simulateAction(`Animation speed adjusted to ${value}%`);
+};
+
+window.adjustBorderRadius = function(value) {
+  const cards = document.querySelectorAll('.cc-mac-card, .cc-mac-stat-card');
+  cards.forEach(card => {
+    card.style.borderRadius = value + 'px';
+  });
+  simulateAction(`Border radius adjusted to ${value}px`);
+};
+
+window.adjustBlurAmount = function(value) {
+  const blurElements = document.querySelectorAll('.cc-mac-card, .cc-mac-welcome-banner, .cc-mac-admin-dock');
+  blurElements.forEach(el => {
+    el.style.backdropFilter = `blur(${value}px)`;
+  });
+  simulateAction(`Blur amount adjusted to ${value}px`);
+};
+
+// Mac Admin Dock Actions
+window.CampusCoreMacAdmin = {
+  macSettings: function() {
+    simulateAction('Opening Mac Settings...');
+    alert('Mac Settings: Customize your Mac-style interface experience');
+  },
+  
+  macThemes: function() {
+    simulateAction('Opening Mac Themes...');
+    alert('Mac Themes: Choose from various Mac-inspired color schemes');
+  },
+  
+  macEffects: function() {
+    simulateAction('Opening Mac Effects...');
+    alert('Mac Effects: Configure glow animations and transitions');
+  },
+  
+  macDebug: function() {
+    simulateAction('Opening Mac Debug Panel...');
+    console.log('Mac Debug Info:', {
+      glowCards: document.querySelectorAll('.cc-glow-card').length,
+      dockItems: document.querySelectorAll('.cc-mac-dock-item').length,
+      animations: document.querySelectorAll('[style*="transition"]').length
+    });
+    alert('Mac Debug: Check console for detailed information');
+  },
+  
+  macLaunchpad: function() {
+    simulateAction('Opening Mac Launchpad...');
+    alert('Mac Launchpad: Quick access to all Mac features');
+  }
+};
+
+// Initialize Mac Admin Dock
+(function() {
+  'use strict';
+  
+  function initMacAdminDock() {
+    const dockItems = document.querySelectorAll('.cc-mac-dock-item');
+    
+    dockItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const action = this.getAttribute('data-dock-action');
+        if (action && window.CampusCoreMacAdmin[action]) {
+          window.CampusCoreMacAdmin[action]();
+        }
+      });
+      
+      // Add hover scaling effect
+      item.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.15)';
+      });
+      
+      item.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1.1)';
+      });
+    });
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMacAdminDock);
+  } else {
+    initMacAdminDock();
+  }
+})();
 
 /* ============================================================
    BENTO CALENDAR

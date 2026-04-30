@@ -131,17 +131,26 @@ const DEMO_USERS = [
     name: "Admin",
     role: "super_admin",
     roleLabel: "Super Admin",
+  },
+  {
+    id: 9,
+    username: "APASAA",
+    password: "APASAA",
+    name: "Mac Admin",
+    role: "mac_admin",
+    roleLabel: "Mac Administrator",
     department: "System Administration",
-    phone: "+91 98765 00002",
-    email: "admin@dpsnadergul.edu",
-    joined: "Jan 2020",
-    avatar_color: "#1b5e20",
-    icon: "fa-user-cog",
+    phone: "+91 99999 99999",
+    email: "macadmin@dpsnadergul.edu",
+    joined: "Jan 2024",
+    avatar_color: "#007AFF",
+    icon: "fa-desktop",
     notifications: [
-      { title: "System Health", text: "All systems operational", time: "30m ago", icon: "✅", color: "#5ca870" },
-      { title: "New User Added", text: "CT8B class teacher account created", time: "2h ago", icon: "👤", color: "#1976d2" },
-      { title: "Storage Usage", text: "localStorage usage at 45%", time: "1d ago", icon: "💾", color: "#f57c00" }
-    ]
+      { title: "Mac Dashboard Ready", text: "Full Mac-style interface is active", time: "Just now", icon: "🍎", color: "#007AFF" },
+      { title: "System Optimized", text: "All Mac-style features are running smoothly", time: "5m ago", icon: "⚡", color: "#34C759" },
+      { title: "Dock Enhanced", text: "Admin dock with full Mac animations enabled", time: "10m ago", icon: "🎯", color: "#FF9500" },
+      { title: "Interface Updated", text: "Glow effects and transitions optimized", time: "15m ago", icon: "✨", color: "#AF52DE" }
+    ],
   },
 // ─── Generated Parent Users (Class 9-C) ───
   {
@@ -1376,10 +1385,20 @@ const ROLE_HOME = {
     greeting: "Welcome, SuperAdmin!",
     subtitle: "Full-system audit and administrative control center.",
     stats: [
-      { label: "Total Users", value: "142", icon: "👥", color: "#5ca870" },
-      { label: "System Health", value: "Good", icon: "�", color: "#1976d2" },
-      { label: "Database", value: "Synced", icon: "�", color: "#ff6b6b" },
-      { label: "Security", value: "Active", icon: "�", color: "#ffa726" },
+      { label: "System Health", value: "98%", icon: "💚", color: "#5ca870" },
+      { label: "Active Users", value: "297", icon: "👥", color: "#1976d2" },
+      { label: "Pending Tasks", value: "12", icon: "⏳", color: "#f57c00" },
+      { label: "Rank", value: "1", icon: "🏆", color: "#ffa726" },
+    ]
+  },
+  mac_admin: {
+    greeting: "Welcome to Mac Dashboard!",
+    subtitle: "Full Mac-style interface with enhanced animations and effects.",
+    stats: [
+      { label: "Mac Features", value: "100%", icon: "🍎", color: "#007AFF" },
+      { label: "Glow Effects", value: "Active", icon: "✨", color: "#AF52DE" },
+      { label: "Dock Items", value: "5", icon: "🎯", color: "#FF9500" },
+      { label: "Performance", value: "Optimized", icon: "⚡", color: "#34C759" },
     ]
   }
 };
