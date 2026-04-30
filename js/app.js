@@ -4,23 +4,35 @@
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  loadTheme();
-  setupSidebar();
-  setupLoginForm();
-  updateDateTime();
-  setInterval(updateDateTime, 60000); // update time every minute
+  try {
+    loadTheme();
+    setupSidebar();
+    setupLoginForm();
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // update time every minute
 
-  // Initialize Supabase data if available before restoring session
-  if (typeof initSupabaseData === 'function') {
-    await initSupabaseData();
-  }
+    // Initialize Supabase data if available before restoring session
+    // Make this non-fatal - if Supabase fails, continue with offline mode
+    if (typeof initSupabaseData === 'function') {
+      try {
+        await initSupabaseData();
+      } catch (supabaseError) {
+        console.warn('[App] Supabase initialization failed, continuing in offline mode:', supabaseError);
+        window.offlineMode = true;
+      }
+    }
 
-  // Restore session on refresh
-  if (restoreSession() && currentUser) {
-    initDashboard(currentUser);
-    showPage('dashboard');
-  } else {
-    // Show landing page by default for unauthenticated users
+    // Restore session on refresh
+    if (restoreSession() && currentUser) {
+      initDashboard(currentUser);
+      showPage('dashboard');
+    } else {
+      // Show landing page by default for unauthenticated users
+      showPage('landing');
+    }
+  } catch (error) {
+    console.error('[App] Critical error during initialization:', error);
+    // Ensure landing page is shown even if initialization fails
     showPage('landing');
   }
 });

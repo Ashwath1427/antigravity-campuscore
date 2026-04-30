@@ -172,6 +172,22 @@ function triggerLiveReRender() {
   if (typeof buildDashboard === 'function') buildDashboard(currentUser);
 }
 
+/**
+ * BRIDGE: Entry point for app.js to trigger dashboard construction.
+ */
+function initDashboardContent(user) {
+  console.log('[Dashboard] Initializing content for:', user.name);
+  buildDashboard(user);
+  
+  // Re-trigger component initializers
+  if (window.CampusCoreGlowCards && typeof window.CampusCoreGlowCards.init === 'function') {
+    window.CampusCoreGlowCards.init();
+  }
+  if (typeof renderBentoCalendar === 'function') {
+    renderBentoCalendar();
+  }
+}
+
 function resetSystemLanguage() {
   localStorage.removeItem('cc_sys_lang');
   localStorage.setItem('cc_sys_lang', 'English');
@@ -4260,13 +4276,16 @@ function buildAdminDock(user) {
     glowCards = [];
   }
   
-  // Initialize when DOM is ready
+  // Initialize when DOM is ready or immediately if already loaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGlowCards);
   } else {
     // Re-initialize when DOM changes (for dynamic content)
-    const observer = new MutationObserver(() => {
-      initGlowCards();
+    const observer = new MutationObserver((mutations) => {
+      // Only re-init if new elements were added
+      if (mutations.some(m => m.addedNodes.length > 0)) {
+        initGlowCards();
+      }
     });
     
     observer.observe(document.body, {
@@ -4274,7 +4293,7 @@ function buildAdminDock(user) {
       subtree: true
     });
     
-    // Try immediate initialization
+    // Immediate initialization
     initGlowCards();
   }
   
@@ -4603,14 +4622,16 @@ function buildAdminDock(user) {
     calendarGrid.innerHTML = html;
   }
   
-  // Initialize calendar when DOM is ready
+  // Initialize calendar when DOM is ready or immediately if already loaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderBentoCalendar);
   } else {
     // Re-initialize when DOM changes (for dynamic content)
-    const observer = new MutationObserver(() => {
-      if (!document.getElementById('cc-calendar-grid')) {
-        setTimeout(renderBentoCalendar, 100); // Small delay for DOM to settle
+    const observer = new MutationObserver((mutations) => {
+      if (mutations.some(m => m.addedNodes.length > 0)) {
+        if (document.getElementById('cc-calendar-grid')) {
+          renderBentoCalendar();
+        }
       }
     });
     
@@ -4619,7 +4640,10 @@ function buildAdminDock(user) {
       subtree: true
     });
     
-    // Try immediate initialization
+    // Immediate initialization
     renderBentoCalendar();
   }
+  
+  // Expose to window for manual re-triggers
+  window.renderBentoCalendar = renderBentoCalendar;
 })();
