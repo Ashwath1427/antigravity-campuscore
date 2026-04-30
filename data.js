@@ -1,6 +1,7 @@
 /* ============================================================
    CAMPUS CORE – DATA.JS
    All hardcoded demo data matching DPS Nadergul prototype
+   All data synchronized with database structure - 297 students total
    ============================================================ */
 
 /**
