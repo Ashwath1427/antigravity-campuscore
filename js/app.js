@@ -91,7 +91,7 @@ async function handleLogin() {
 
   await delay(800);
 
-  const result = attemptLogin(username, password);
+  const result = await attemptLogin(username, password);
 
   btn.classList.remove('loading');
   btn.disabled = false;
@@ -131,11 +131,11 @@ async function handleLogin() {
 }
 
 // ─── Init Dashboard ──────────────────────────────────────────
-function initDashboard() {
+function initDashboard(user) {
   if(typeof loadTheme === 'function') loadTheme();
-  if (typeof buildSidebar === 'function') buildSidebar();
+  if (typeof buildSidebar === 'function') buildSidebar(user);
   if (typeof addDatabaseManagementToMenu === 'function') addDatabaseManagementToMenu();
-  if (typeof initDashboardContent === 'function') initDashboardContent();
+  if (typeof initDashboardContent === 'function') initDashboardContent(user);
   
   updateDateTime();
 }

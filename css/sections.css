@@ -1,1 +1,62 @@
-/* TODO: Placeholder */
+/* ============================================================
+   CAMPUS CORE – DASHBOARD SECTIONS
+   Layout and specific styling for dashboard modules
+   ============================================================ */
+
+.dash-section {
+  display: none;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.dash-section.active {
+  display: block;
+}
+
+/* Common Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+/* Grid Layouts for Sections */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.content-grid-equal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* Data Tables within Sections */
+.section-table-wrapper {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* Section specific enhancements */
+#section-home {
+  /* Home specific styles */
+}
+
+#section-profile {
+  /* Profile specific styles */
+}

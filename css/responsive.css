@@ -1,1 +1,55 @@
-/* TODO: Placeholder */
+/* ============================================================
+   CAMPUS CORE – RESPONSIVE DESIGN SYSTEM
+   General media queries for tablets and desktops
+   ============================================================ */
+
+/* Large Desktops and Monitors */
+@media (min-width: 1400px) {
+  .land-container, .main-content {
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+}
+
+/* Medium Tablets (Portrait) */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .land-hero-content h1 {
+    font-size: 3rem;
+  }
+}
+
+/* Small Tablets and Large Phones */
+@media (max-width: 850px) {
+  .main-content {
+    margin-left: 0; /* Sidebar will be overlay */
+  }
+
+  .banner-user-info {
+    display: none; /* Hide extra info on smaller headers */
+  }
+}
+
+/* Print Styles */
+@media print {
+  .sidebar, .topbar, .cc-mac-dock-wrapper, .theme-toggle-btn, .search-toggle {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+}

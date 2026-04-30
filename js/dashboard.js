@@ -3747,7 +3747,7 @@ function buildMacDashboard(user) {
 
   // Mac-style KPI Stats with Glow
   const stats = calculatedStats.map(s => `
-    <div class="stat-card ${s.glowClass || ''} cc-mac-stat-card">
+    <div class="stat-card cc-glow-card ${s.glowClass || ''} cc-mac-stat-card">
       <div class="stat-card-icon cc-mac-icon">${s.icon}</div>
       <div class="stat-value cc-mac-value">${s.value}</div>
       <div class="stat-label cc-mac-label">${s.label}</div>
@@ -3900,19 +3900,19 @@ function buildMacAdminDock(user) {
   return `
     <div class="cc-admin-dock-wrapper cc-mac-dock-wrapper">
       <div class="cc-admin-dock cc-mac-admin-dock">
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-settings" title="Mac Settings">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macSettings" title="Mac Settings">
           <i class="fas fa-cog"></i>
         </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-themes" title="Mac Themes">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macThemes" title="Mac Themes">
           <i class="fas fa-palette"></i>
         </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-effects" title="Mac Effects">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macEffects" title="Mac Effects">
           <i class="fas fa-sparkles"></i>
         </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-debug" title="Mac Debug">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macDebug" title="Mac Debug">
           <i class="fas fa-bug"></i>
         </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-launchpad" title="Mac Launchpad">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macLaunchpad" title="Mac Launchpad">
           <i class="fas fa-rocket"></i>
         </button>
       </div>
@@ -4086,19 +4086,19 @@ function buildAdminDock(user) {
   return `
     <div class="cc-admin-dock-wrapper">
       <div class="cc-admin-dock">
-        <button class="cc-admin-dock__item" data-dock-action="view-logs" title="View System Logs">
+        <button class="cc-admin-dock__item" data-dock-action="viewLogs" title="View System Logs">
           <i class="fas fa-file-alt"></i>
         </button>
-        <button class="cc-admin-dock__item" data-dock-action="toggle-labs" title="Toggle Lab Features">
+        <button class="cc-admin-dock__item" data-dock-action="toggleLabs" title="Toggle Lab Features">
           <i class="fas fa-flask"></i>
         </button>
-        <button class="cc-admin-dock__item" data-dock-action="debug-overlay" title="Debug Overlay">
+        <button class="cc-admin-dock__item" data-dock-action="debugOverlay" title="Debug Overlay">
           <i class="fas fa-bug"></i>
         </button>
-        <button class="cc-admin-dock__item" data-dock-action="force-resync" title="Force Data Resync">
+        <button class="cc-admin-dock__item" data-dock-action="forceResync" title="Force Data Resync">
           <i class="fas fa-sync-alt"></i>
         </button>
-        <button class="cc-admin-dock__item" data-dock-action="show-metrics" title="Show Metrics">
+        <button class="cc-admin-dock__item" data-dock-action="showMetrics" title="Show Metrics">
           <i class="fas fa-chart-line"></i>
         </button>
       </div>
@@ -4187,6 +4187,17 @@ function buildAdminDock(user) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGlowCards);
   } else {
+    // Re-initialize when DOM changes (for dynamic content)
+    const observer = new MutationObserver(() => {
+      initGlowCards();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    // Try immediate initialization
     initGlowCards();
   }
   

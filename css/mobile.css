@@ -1,1 +1,101 @@
-/* TODO: Placeholder */
+/* ============================================================
+   CAMPUS CORE – MOBILE SPECIFIC FIXES
+   Resolves overflow and layout issues on small screens
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* Prevent horizontal overflow */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Dashboard content area padding */
+  .content-area {
+    padding: 12px !important;
+  }
+
+  /* Force single column layout for all grids */
+  .stats-grid, 
+  .attendance-grid, 
+  .content-grid, 
+  .content-grid-equal,
+  .cc-mac-stats-grid,
+  .cc-mac-controls-grid,
+  .cc-mac-monitor-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Fix card sizing */
+  .card, .cc-mac-card, .stat-card {
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Table responsiveness - wrap or scroll */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+  }
+
+  /* Hamburger menu visibility fix */
+  .hamburger-menu {
+    display: flex !important;
+    z-index: 1001;
+  }
+
+  /* Sidebar transition */
+  .sidebar {
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Mac Admin Dock mobile optimizations */
+  .cc-mac-dock-wrapper {
+    bottom: 10px !important;
+    width: 90% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: block !important; /* Overriding previous display:none if needed */
+  }
+
+  .cc-mac-admin-dock {
+    padding: 6px !important;
+    gap: 4px !important;
+    justify-content: center;
+  }
+
+  .cc-mac-dock-item {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 16px !important;
+  }
+
+  /* Welcome Banner Font Sizing */
+  .cc-mac-welcome-greeting {
+    font-size: 20px !important;
+  }
+
+  .cc-mac-welcome-sub {
+    font-size: 12px !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .stat-value {
+    font-size: 28px !important;
+  }
+  
+  .banner-datetime {
+    display: none; /* Hide date on very small screens to save space */
+  }
+}
