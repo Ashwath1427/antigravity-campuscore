@@ -123,7 +123,8 @@ function buildDashboard(user) {
       safeRender('All Results', buildVPExams, user).replace('id="section-vp_exams"', 'id="section-all_results"'),
       safeRender('All Messages', buildVPMessages, user).replace('id="section-vp_messages"', 'id="section-all_messages"'),
       safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace('id="section-helpdesk_staff"', 'id="section-all_helpdesk"'),
-      safeRender('Settings', buildSettings, user)
+      safeRender('Settings', buildSettings, user),
+      buildAdminDock(user)
     ].join('');
     setTimeout(translateSuperAdminUI, 0);
   } else {
@@ -176,10 +177,10 @@ function buildHome(user) {
     const escalated = GLOBAL_ISSUES.filter(i => i.stage === 'VP' && i.status !== 'Resolved' && i.status !== 'Closed').length;
 
     calculatedStats = [
-      { label: "Active Escalations", value: escalated.toString(), icon: "🚨" },
-      { label: "Total Open Issues", value: totalIssues.toString(), icon: "📋" },
-      { label: "Low Att. Alerts", value: "3", icon: "⚠️" },
-      { label: "Pending Approvals", value: "5", icon: "⏱️" }
+      { label: "Active Escalations", value: escalated.toString(), icon: "🚨", glowClass: "cc-glow-red" },
+      { label: "Total Open Issues", value: totalIssues.toString(), icon: "📋", glowClass: "cc-glow-orange" },
+      { label: "Low Att. Alerts", value: "3", icon: "⚠️", glowClass: "cc-glow-yellow" },
+      { label: "Pending Approvals", value: "5", icon: "⏱️", glowClass: "cc-glow-blue" }
     ];
   }
 
@@ -195,7 +196,7 @@ function buildHome(user) {
 
   // KPI Stats
   const stats = calculatedStats.map(s => `
-    <div class="stat-card">
+    <div class="stat-card ${s.glowClass || ''}">
       <div class="stat-card-icon">${s.icon}</div>
       <div class="stat-value">${s.value}</div>
       <div class="stat-label">${s.label}</div>
@@ -332,6 +333,8 @@ function buildHome(user) {
     <div class="stats-grid">${stats}</div>
 
     <div class="card"><h3>⚡ Quick Actions</h3><div class="quick-actions">${quickActions}</div></div>
+
+    ${(user.role === 'vice_principal' || user.role === 'principal' || user.role === 'apaaas' || user.role === 'super_admin') ? buildBentoCalendar() : ''}
 
     <div class="content-grid">
       <div class="card"><h3>📢 Latest Announcements</h3><ul class="activity-list">${notices}</ul>
@@ -3698,3 +3701,486 @@ window.saveVPEvent = function () {
     triggerLiveReRender();
   }, 800);
 }
+
+/* ============================================================
+   BENTO CALENDAR
+   ============================================================ */
+function buildBentoCalendar() {
+  const now = new Date();
+  const currentMonth = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  
+  return `
+    <div class="cc-calendar-card">
+      <div class="cc-calendar-card__left">
+        <h2>Upcoming Events & Schedule</h2>
+        <p>Quick view of this month.</p>
+        <button class="cc-calendar-card__button" onclick="navigateTo('events')">View full calendar</button>
+      </div>
+      <div class="cc-calendar-card__right">
+        <div class="cc-calendar-card__header">
+          <span class="cc-calendar-card__month">${currentMonth}</span>
+          <span class="cc-calendar-card__divider"></span>
+          <span class="cc-calendar-card__meta">Key days this month</span>
+        </div>
+        <div class="cc-calendar-card__grid" id="cc-calendar-grid"></div>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   MACOS-STYLE ADMIN DOCK
+   ============================================================ */
+function buildAdminDock(user) {
+  return `
+    <div class="cc-admin-dock-wrapper">
+      <div class="cc-admin-dock">
+        <button class="cc-admin-dock__item" data-dock-action="view-logs" title="View System Logs">
+          <i class="fas fa-file-alt"></i>
+        </button>
+        <button class="cc-admin-dock__item" data-dock-action="toggle-labs" title="Toggle Lab Features">
+          <i class="fas fa-flask"></i>
+        </button>
+        <button class="cc-admin-dock__item" data-dock-action="debug-overlay" title="Debug Overlay">
+          <i class="fas fa-bug"></i>
+        </button>
+        <button class="cc-admin-dock__item" data-dock-action="force-resync" title="Force Data Resync">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+        <button class="cc-admin-dock__item" data-dock-action="show-metrics" title="Show Metrics">
+          <i class="fas fa-chart-line"></i>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   MAC-STYLE GLOW CARDS - JAVASCRIPT
+   ============================================================ */
+(function() {
+  'use strict';
+  
+  let rafId = null;
+  let glowCards = [];
+  
+  /**
+   * Initialize glow cards functionality
+   */
+  function initGlowCards() {
+    glowCards = document.querySelectorAll('.cc-glow-card');
+    
+    if (glowCards.length === 0) {
+      return; // No glow cards found, exit early
+    }
+    
+    // Add pointer move listener to document
+    document.addEventListener('pointermove', handlePointerMove, { passive: true });
+    
+    // Initialize CSS variables
+    glowCards.forEach(card => {
+      card.style.setProperty('--x', '50%');
+      card.style.setProperty('--y', '50%');
+      card.style.setProperty('--xp', '0.5');
+      card.style.setProperty('--yp', '0.5');
+    });
+  }
+  
+  /**
+   * Handle pointer movement for glow effect
+   */
+  function handlePointerMove(event) {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+    
+    rafId = requestAnimationFrame(() => {
+      const clientX = event.clientX;
+      const clientY = event.clientY;
+      
+      glowCards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        
+        // Calculate position relative to card
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        
+        // Calculate normalized position (0..1)
+        const xp = x / rect.width;
+        const yp = y / rect.height;
+        
+        // Update CSS variables
+        card.style.setProperty('--x', `${x}px`);
+        card.style.setProperty('--y', `${y}px`);
+        card.style.setProperty('--xp', xp);
+        card.style.setProperty('--yp', yp);
+      });
+      
+      rafId = null;
+    });
+  }
+  
+  /**
+   * Clean up event listeners
+   */
+  function cleanupGlowCards() {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    document.removeEventListener('pointermove', handlePointerMove);
+    glowCards = [];
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGlowCards);
+  } else {
+    initGlowCards();
+  }
+  
+  // Export for potential external use
+  window.CampusCoreGlowCards = {
+    init: initGlowCards,
+    cleanup: cleanupGlowCards
+  };
+})();
+
+/* ============================================================
+   MACOS-STYLE ADMIN DOCK - JAVASCRIPT
+   ============================================================ */
+(function() {
+  'use strict';
+  
+  let dockElement = null;
+  let dockItems = [];
+  let rafId = null;
+  
+  /**
+   * Admin dock functionality namespace
+   */
+  window.CampusCoreAdminDock = {
+    toggleLabs: function() {
+      console.log('[Admin Dock] Toggle Lab Features');
+      simulateAction('Lab features toggled');
+      // You can add actual lab feature toggling logic here
+    },
+    
+    viewLogs: function() {
+      console.log('[Admin Dock] View System Logs');
+      const logs = [
+        `[${new Date().toISOString()}] System initialized successfully`,
+        `[${new Date().toISOString()}] Dashboard loaded for APAAAS`,
+        `[${new Date().toISOString()}] Admin dock initialized`,
+        `[${new Date().toISOString()}] Glow cards active: ${document.querySelectorAll('.cc-glow-card').length}`
+      ];
+      
+      const modal = `
+        <div class="modal-overlay" style="display:flex" onclick="if(event.target===this) this.remove()">
+          <div class="modal" style="max-width:600px;max-height:80vh;overflow-y:auto">
+            <h3>📋 System Logs</h3>
+            <div style="background:var(--color-surface-2);padding:15px;border-radius:8px;font-family:monospace;font-size:12px;line-height:1.4">
+              ${logs.join('<br>')}
+            </div>
+            <button class="btn-primary" style="margin-top:15px;width:100%" onclick="this.closest('.modal-overlay').remove()">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modal);
+    },
+    
+    debugOverlay: function() {
+      console.log('[Admin Dock] Debug Overlay');
+      const overlay = document.createElement('div');
+      overlay.id = 'cc-debug-overlay';
+      overlay.style.cssText = `
+        position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white;
+        padding: 10px; border-radius: 8px; font-family: monospace; font-size: 12px;
+        z-index: 9999; max-width: 300px;
+      `;
+      overlay.innerHTML = `
+        <div>DEBUG OVERLAY</div>
+        <div>Users: ${typeof DEMO_USERS !== 'undefined' ? DEMO_USERS.length : 'N/A'}</div>
+        <div>Students: ${typeof STUDENTS !== 'undefined' ? STUDENTS.length : 'N/A'}</div>
+        <div>Teachers: ${typeof TEACHERS !== 'undefined' ? TEACHERS.length : 'N/A'}</div>
+        <div>Issues: ${typeof GLOBAL_ISSUES !== 'undefined' ? GLOBAL_ISSUES.length : 'N/A'}</div>
+        <div>Role: ${typeof currentUser !== 'undefined' ? currentUser.role : 'N/A'}</div>
+        <button onclick="this.parentElement.remove()" style="margin-top:5px;padding:2px 8px;font-size:10px">X</button>
+      `;
+      document.body.appendChild(overlay);
+      setTimeout(() => overlay.remove(), 10000);
+    },
+    
+    forceResync: function() {
+      console.log('[Admin Dock] Force Data Resync');
+      simulateAction('Forcing data synchronization...');
+      if (typeof syncComputedStats === 'function') {
+        syncComputedStats();
+      }
+      if (typeof runIntegrityCheck === 'function') {
+        const issues = runIntegrityCheck();
+        if (issues.length === 0) {
+          simulateAction('Data sync completed successfully');
+        } else {
+          simulateAction(`Data sync completed with ${issues.length} issues`);
+        }
+      } else {
+        simulateAction('Data sync completed');
+      }
+    },
+    
+    showMetrics: function() {
+      console.log('[Admin Dock] Show Metrics');
+      const metrics = {
+        totalUsers: typeof DEMO_USERS !== 'undefined' ? DEMO_USERS.length : 0,
+        totalStudents: typeof STUDENTS !== 'undefined' ? STUDENTS.length : 0,
+        totalTeachers: typeof TEACHERS !== 'undefined' ? TEACHERS.length : 0,
+        totalIssues: typeof GLOBAL_ISSUES !== 'undefined' ? GLOBAL_ISSUES.length : 0,
+        resolvedIssues: typeof GLOBAL_ISSUES !== 'undefined' ? GLOBAL_ISSUES.filter(i => i.status === 'Resolved').length : 0,
+        openIssues: typeof GLOBAL_ISSUES !== 'undefined' ? GLOBAL_ISSUES.filter(i => i.status !== 'Resolved').length : 0
+      };
+      
+      const modal = `
+        <div class="modal-overlay" style="display:flex" onclick="if(event.target===this) this.remove()">
+          <div class="modal" style="max-width:500px">
+            <h3>📊 System Metrics</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px">
+              <div class="card" style="text-align:center;padding:20px">
+                <div style="font-size:24px;font-weight:bold;color:var(--color-primary)">${metrics.totalUsers}</div>
+                <div style="font-size:12px;color:var(--color-text-muted)">Total Users</div>
+              </div>
+              <div class="card" style="text-align:center;padding:20px">
+                <div style="font-size:24px;font-weight:bold;color:var(--color-success)">${metrics.totalStudents}</div>
+                <div style="font-size:12px;color:var(--color-text-muted)">Students</div>
+              </div>
+              <div class="card" style="text-align:center;padding:20px">
+                <div style="font-size:24px;font-weight:bold;color:var(--color-warning)">${metrics.totalTeachers}</div>
+                <div style="font-size:12px;color:var(--color-text-muted)">Teachers</div>
+              </div>
+              <div class="card" style="text-align:center;padding:20px">
+                <div style="font-size:24px;font-weight:bold;color:var(--color-danger)">${metrics.openIssues}</div>
+                <div style="font-size:12px;color:var(--color-text-muted)">Open Issues</div>
+              </div>
+            </div>
+            <button class="btn-primary" style="margin-top:20px;width:100%" onclick="this.closest('.modal-overlay').remove()">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modal);
+    }
+  };
+  
+  /**
+   * Initialize admin dock functionality
+   */
+  function initAdminDock() {
+    dockElement = document.querySelector('.cc-admin-dock');
+    if (!dockElement) {
+      return; // No dock found, exit early
+    }
+    
+    dockItems = dockElement.querySelectorAll('.cc-admin-dock__item');
+    
+    // Add mouse move listener for Mac-style scaling
+    dockElement.addEventListener('mousemove', handleDockMouseMove, { passive: true });
+    dockElement.addEventListener('mouseleave', handleDockMouseLeave);
+    
+    // Add click handlers
+    dockItems.forEach(item => {
+      item.addEventListener('click', handleDockItemClick);
+    });
+  }
+  
+  /**
+   * Handle mouse movement for Mac-style scaling
+   */
+  function handleDockMouseMove(event) {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+    
+    rafId = requestAnimationFrame(() => {
+      const mouseX = event.clientX;
+      const dockRect = dockElement.getBoundingClientRect();
+      
+      dockItems.forEach((item, index) => {
+        const itemRect = item.getBoundingClientRect();
+        const itemCenterX = itemRect.left + itemRect.width / 2;
+        const distance = Math.abs(mouseX - itemCenterX);
+        
+        // Calculate scale factor (closer = bigger)
+        const maxDistance = 100; // pixels
+        const scaleFactor = distance < maxDistance ? 
+          1 + (1 - distance / maxDistance) * 0.5 : 1; // Scale from 1.0 to 1.5
+        
+        // Apply transform and z-index
+        item.style.transform = `scale(${scaleFactor})`;
+        item.style.zIndex = Math.floor(scaleFactor * 10);
+      });
+      
+      rafId = null;
+    });
+  }
+  
+  /**
+   * Handle mouse leave - reset all items
+   */
+  function handleDockMouseLeave() {
+    dockItems.forEach(item => {
+      item.style.transform = 'scale(1)';
+      item.style.zIndex = '1';
+    });
+  }
+  
+  /**
+   * Handle dock item clicks
+   */
+  function handleDockItemClick(event) {
+    const action = event.currentTarget.getAttribute('data-dock-action');
+    if (action && window.CampusCoreAdminDock[action]) {
+      window.CampusCoreAdminDock[action]();
+    }
+  }
+  
+  /**
+   * Clean up event listeners
+   */
+  function cleanupAdminDock() {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    
+    if (dockElement) {
+      dockElement.removeEventListener('mousemove', handleDockMouseMove);
+      dockElement.removeEventListener('mouseleave', handleDockMouseLeave);
+    }
+    
+    dockItems.forEach(item => {
+      item.removeEventListener('click', handleDockItemClick);
+    });
+    
+    dockElement = null;
+    dockItems = [];
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdminDock);
+  } else {
+    // Re-initialize when DOM changes (for dynamic content)
+    const observer = new MutationObserver(() => {
+      if (!dockElement) {
+        initAdminDock();
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    // Try immediate initialization
+    initAdminDock();
+  }
+})();
+
+/* ============================================================
+   BENTO CALENDAR - JAVASCRIPT
+   ============================================================ */
+(function() {
+  'use strict';
+  
+  /**
+   * Render bento calendar with current month data
+   */
+  function renderBentoCalendar() {
+    const calendarGrid = document.getElementById('cc-calendar-grid');
+    if (!calendarGrid) {
+      return; // Calendar grid not found, exit early
+    }
+    
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const today = now.getDate();
+    
+    // Hardcoded highlighted days for demo
+    const highlightedDays = [5, 12, 22]; // Example: Sports Day, Meeting, Exam
+    
+    // Get first day of month and number of days
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    
+    // Get day of week for first day (0 = Sunday, 6 = Saturday)
+    let firstDayOfWeek = firstDay.getDay();
+    
+    // Adjust for Monday-first calendar if needed (keeping Sunday-first for simplicity)
+    const weekdayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    
+    let html = '';
+    
+    // Add weekday headers
+    weekdayHeaders.forEach(day => {
+      html += `<div class="cc-calendar-card__day--header">${day}</div>`;
+    });
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      html += '<div class="cc-calendar-card__day"></div>';
+    }
+    
+    // Add days of month
+    for (let day = 1; day <= daysInMonth; day++) {
+      let classes = ['cc-calendar-card__day'];
+      
+      // Check if today
+      if (day === today) {
+        classes.push('cc-calendar-card__day--today');
+      }
+      
+      // Check if highlighted
+      if (highlightedDays.includes(day)) {
+        classes.push('cc-calendar-card__day--highlight');
+      }
+      
+      // Check if weekend (Saturday = 6, Sunday = 0)
+      const dayOfWeek = new Date(year, month, day).getDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        classes.push('cc-calendar-card__day--weekend');
+      }
+      
+      html += `<div class="${classes.join(' ')}">${day}</div>`;
+    }
+    
+    // Fill remaining cells to complete grid (6 rows x 7 columns = 42 cells)
+    const totalCells = firstDayOfWeek + daysInMonth;
+    const remainingCells = 42 - totalCells;
+    for (let i = 0; i < remainingCells; i++) {
+      html += '<div class="cc-calendar-card__day"></div>';
+    }
+    
+    calendarGrid.innerHTML = html;
+  }
+  
+  // Initialize calendar when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderBentoCalendar);
+  } else {
+    // Re-initialize when DOM changes (for dynamic content)
+    const observer = new MutationObserver(() => {
+      if (!document.getElementById('cc-calendar-grid')) {
+        setTimeout(renderBentoCalendar, 100); // Small delay for DOM to settle
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    // Try immediate initialization
+    renderBentoCalendar();
+  }
+})();

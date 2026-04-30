@@ -896,6 +896,383 @@
   .banner-left, .banner-right { gap: 8px; }
   .search-toggle-btn, .theme-toggle-btn, .notification-btn { padding: 8px; font-size: 14px; }
 }
+/* ============================================================
+   MAC-STYLE GLOW CARDS
+   ============================================================ */
+.cc-glow-card {
+  --x: 50%;
+  --y: 50%;
+  --xp: 0.5;
+  --yp: 0.5;
+  --base: #5ca870;
+  --spread: #7ec490;
+  --radius: 12px;
+  --border: 1px;
+  --backdrop: rgba(92, 168, 112, 0.1);
+  
+  position: relative;
+  background: 
+    radial-gradient(
+      circle at var(--x) var(--y),
+      var(--spread) 0%,
+      transparent 25%
+    ),
+    var(--backdrop),
+    var(--color-surface);
+  border: var(--border) solid var(--base);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cc-glow-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    var(--base),
+    transparent
+  );
+  border-radius: calc(var(--radius) + 2px);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  animation: glowRotate 3s linear infinite;
+}
+
+.cc-glow-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at var(--x) var(--y),
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 30%
+  );
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+@keyframes glowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cc-glow-card:hover::before {
+  opacity: 0.6;
+}
+
+.cc-glow-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Color Variants */
+.cc-glow-blue {
+  --base: #1976d2;
+  --spread: #42a5f5;
+  --backdrop: rgba(25, 118, 210, 0.1);
+}
+
+.cc-glow-green {
+  --base: #5ca870;
+  --spread: #7ec490;
+  --backdrop: rgba(92, 168, 112, 0.1);
+}
+
+.cc-glow-purple {
+  --base: #8b5cf6;
+  --spread: #a78bfa;
+  --backdrop: rgba(139, 92, 246, 0.1);
+}
+
+.cc-glow-red {
+  --base: #e53935;
+  --spread: #ef5350;
+  --backdrop: rgba(229, 57, 53, 0.1);
+}
+
+.cc-glow-orange {
+  --base: #f57c00;
+  --spread: #ff9800;
+  --backdrop: rgba(245, 124, 0, 0.1);
+}
+
+.cc-glow-yellow {
+  --base: #fbc02d;
+  --spread: #ffd54f;
+  --backdrop: rgba(251, 192, 45, 0.1);
+}
+
+/* ============================================================
+   MACOS-STYLE ADMIN DOCK
+   ============================================================ */
+.cc-admin-dock-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  margin-top: 20px;
+}
+
+.cc-admin-dock {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.cc-admin-dock__item {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transform-origin: bottom center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.cc-admin-dock__item:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cc-admin-dock__item:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.cc-admin-dock__item::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  border-radius: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cc-admin-dock__item:hover::before {
+  opacity: 1;
+}
+
+/* ============================================================
+   BENTO CALENDAR
+   ============================================================ */
+.cc-calendar-card {
+  display: flex;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 24px;
+  gap: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.cc-calendar-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.cc-calendar-card__left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cc-calendar-card__left h2 {
+  margin: 0 0 8px 0;
+  color: var(--color-text);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cc-calendar-card__left p {
+  margin: 0 0 16px 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cc-calendar-card__button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.cc-calendar-card__button:hover {
+  background: #4d9160;
+  transform: translateY(-1px);
+}
+
+.cc-calendar-card__right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cc-calendar-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cc-calendar-card__month {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.cc-calendar-card__divider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-border);
+}
+
+.cc-calendar-card__meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.cc-calendar-card__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  background: var(--color-border);
+  padding: 2px;
+  border-radius: 8px;
+  aspect-ratio: 7/6;
+}
+
+.cc-calendar-card__day,
+.cc-calendar-card__day--header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--color-surface);
+  border-radius: 4px;
+  aspect-ratio: 1;
+}
+
+.cc-calendar-card__day--header {
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.cc-calendar-card__day--highlight {
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+}
+
+.cc-calendar-card__day--today {
+  background: var(--color-warning);
+  color: white;
+  font-weight: 600;
+}
+
+.cc-calendar-card__day--weekend {
+  color: var(--color-text-muted);
+}
+
+/* Mobile responsiveness for calendar */
+@media (max-width: 768px) {
+  .cc-calendar-card {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .cc-calendar-card__left {
+    text-align: center;
+  }
+  
+  .cc-calendar-card__button {
+    align-self: center;
+  }
+  
+  .cc-calendar-card__grid {
+    aspect-ratio: 7/5;
+  }
+  
+  .cc-calendar-card__day,
+  .cc-calendar-card__day--header {
+    font-size: 10px;
+  }
+}
+
+/* Mobile responsiveness for admin dock */
+@media (max-width: 768px) {
+  .cc-admin-dock-wrapper {
+    display: none; /* Hide dock on mobile */
+  }
+}
+
+/* Mobile responsiveness for glow cards */
+@media (max-width: 768px) {
+  .cc-glow-card {
+    --border: 0.5px;
+    --radius: 8px;
+  }
+  
+  .cc-glow-card::before {
+    display: none; /* Disable animation on mobile */
+  }
+  
+  .cc-glow-card:hover {
+    transform: none; /* Disable hover lift on mobile */
+  }
+}
+
 @media (max-width: 480px) {
   .events-grid { grid-template-columns: 1fr; }
   .attendance-grid { grid-template-columns: 1fr; }

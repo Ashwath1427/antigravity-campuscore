@@ -600,68 +600,11 @@ const DEMO_USERS = [
     childRoll: "24",
     notifications: []
   },
-  {
-    id: 125,
-    username: "P3170068A",
-    password: "parent123",
-    name: "Parent of SHERI RITHIK REDDY",
-    role: "parent",
-    roleLabel: "Parent",
-    department: "Parent of SHERI RITHIK REDDY (Class 9-C)",
-    phone: "+91 99999 25000",
-    email: "parent3170068@example.com",
-    joined: "Apr 2024",
-    avatar_color: "#f57c00",
-    icon: "fa-user-friends",
-    childName: "SHERI RITHIK REDDY",
-    childId: "3170068",
-    childClass: "9-C",
-    childRoll: "25",
-    notifications: []
-  },
-  {
-    id: 126,
-    username: "P3220915A",
-    password: "parent123",
-    name: "Parent of BHUKYA PRANAVI",
-    role: "parent",
-    roleLabel: "Parent",
-    department: "Parent of BHUKYA PRANAVI (Class 9-C)",
-    phone: "+91 99999 26000",
-    email: "parent3220915@example.com",
-    joined: "Apr 2024",
-    avatar_color: "#f57c00",
-    icon: "fa-user-friends",
-    childName: "BHUKYA PRANAVI",
-    childId: "3220915",
-    childClass: "9-C",
-    childRoll: "26",
-    notifications: []
-  },
-  {
-    id: 127,
-    username: "P3190133A",
-    password: "parent123",
-    name: "Parent of TANABUDDI SRI BHAVESH REDDY",
-    role: "parent",
-    roleLabel: "Parent",
-    department: "Parent of TANABUDDI SRI BHAVESH REDDY (Class 9-C)",
-    phone: "+91 99999 27000",
-    email: "parent3190133@example.com",
-    joined: "Apr 2024",
-    avatar_color: "#f57c00",
-    icon: "fa-user-friends",
-    childName: "TANABUDDI SRI BHAVESH REDDY",
-    childId: "3190133",
-    childClass: "9-C",
-    childRoll: "27",
-    notifications: []
-  },
-];
+  ];
 
 // ─── Students (Complete 297 students synchronized with database) ────────────────────────────────────────────────
 let STUDENTS = [
-  // CLASS 9-C - 30 STUDENTS (from image)
+  // CLASS 9-C - 27 STUDENTS (from image)
   { id: "3180076", admNo: "3180076", name: "KASULA ASHWATH", class: "9-C", roll: "01", gender: "Male", dob: "15 Jan 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.7, parent: "Parent of KASULA ASHWATH" },
   { id: "3240214", admNo: "3240214", name: "NIMMAKAYALA PRATEEK REDDY", class: "9-C", roll: "02", gender: "Male", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of NIMMAKAYALA PRATEEK REDDY" },
   { id: "3240215", admNo: "3240215", name: "BHUKYA PRANAVI", class: "9-C", roll: "03", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of BHUKYA PRANAVI" },
@@ -689,10 +632,7 @@ let STUDENTS = [
   { id: "3240237", admNo: "3240237", name: "MEERA", class: "9-C", roll: "25", gender: "Female", dob: "15 Jan 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.4, parent: "Parent of MEERA" },
   { id: "3240238", admNo: "3240238", name: "ARJUN", class: "9-C", roll: "26", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ARJUN" },
   { id: "3240239", admNo: "3240239", name: "LAKSHMI", class: "9-C", roll: "27", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of LAKSHMI" },
-  { id: "3240240", admNo: "3240240", name: "VENKAT", class: "9-C", roll: "28", gender: "Male", dob: "15 Jan 2011", attendance: 83, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of VENKAT" },
-  { id: "3240241", admNo: "3240241", name: "SOUNDARYA", class: "9-C", roll: "29", gender: "Female", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of SOUNDARYA" },
-  { id: "3240242", admNo: "3240242", name: "CHANDRA", class: "9-C", roll: "30", gender: "Male", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of CHANDRA" },
-
+  
   // CLASS 6 - 20 STUDENTS (5 per section)
   { id: "3160001", admNo: "3160001", name: "RAVI KUMAR", class: "6-A", roll: "01", gender: "Male", dob: "15 Jan 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of RAVI KUMAR" },
   { id: "3160002", admNo: "3160002", name: "ANJALI DEVI", class: "6-A", roll: "02", gender: "Female", dob: "15 Jan 2012", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of ANJALI DEVI" },
@@ -1081,7 +1021,7 @@ let STUDENTS = [
   { id: "3200040", admNo: "3200040", name: "ROHIT SINGH", class: "10-D", roll: "15", gender: "Male", dob: "15 Jan 2008", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of ROHIT SINGH" }
 ];
 
-// ─── Teachers (7 teachers synchronized with database) ────────────────────────────────────────────────
+// ─── Teachers (10 teachers synchronized with database) ────────────────────────────────────────────────
 const TEACHERS = [
   { id: "T001", name: "Prasana Reddy",   subject: "Mathematics",       classes: "10-A, 9-B, 8-C",  exp: "8 years",  phone: "+91 87654 11111", status: "Active" },
   { id: "T002", name: "Ramesh Sharma",   subject: "Physics",           classes: "10-A, 10-B", exp: "12 years", phone: "+91 87654 22222", status: "Active" },
@@ -1089,7 +1029,10 @@ const TEACHERS = [
   { id: "T004", name: "Mohan Das",       subject: "Chemistry",         classes: "9-C, 10-C", exp: "10 years", phone: "+91 87654 44444", status: "Active" },
   { id: "T005", name: "Sunita Verma",    subject: "Social Studies",    classes: "8-A, 9-D", exp: "7 years",  phone: "+91 87654 55555", status: "Active" },
   { id: "T006", name: "Venkat Iyer",     subject: "Computer Science",  classes: "9-C, 10-D", exp: "5 years",  phone: "+91 87654 66666", status: "Active" },
-  { id: "T007", name: "Pooja Mehta",     subject: "Biology",           classes: "8-C, 9-C", exp: "9 years",  phone: "+91 87654 77777", status: "Active" }
+  { id: "T007", name: "Pooja Mehta",     subject: "Biology",           classes: "8-C, 9-C", exp: "9 years",  phone: "+91 87654 77777", status: "Active" },
+  { id: "T008", name: "Suresh Naidu",   subject: "Physical Education",classes: "All",        exp: "15 years", phone: "+91 87654 88888", status: "Active" },
+  { id: "T009", name: "Radhika Menon",  subject: "Hindi",             classes: "6-A, 6-B, 7-A", exp: "8 years",  phone: "+91 87654 99999", status: "Active" },
+  { id: "T010", name: "Amit Patel",     subject: "Geography",         classes: "8-D, 9-C, 10-B", exp: "6 years",  phone: "+91 87654 00000", status: "Active" }
 ];
 
 // ─── Class Schedule ──────────────────────────────────────────
@@ -1166,10 +1109,10 @@ const EVENTS = [
 
 // ─── Attendance Data ─────────────────────────────────────────
 const ATTENDANCE_SUMMARY = {
-  total_students: 297,
-  present_today: 261,
-  absent_today: 27,
-  late_today: 9,
+  total_students: STUDENTS.length,
+  present_today: Math.floor(STUDENTS.length * 0.88),
+  absent_today: Math.floor(STUDENTS.length * 0.09),
+  late_today: Math.floor(STUDENTS.length * 0.03),
   weekly: [
     { day: "Mon", present: 92, total: 100 },
     { day: "Tue", present: 88, total: 100 },
@@ -1784,6 +1727,77 @@ function saveSettings(userId, settingsObj) {
   const allSet = JSON.parse(localStorage.getItem('campuscore_settings') || '{}');
   allSet[userId] = settingsObj;
   localStorage.setItem('campuscore_settings', JSON.stringify(allSet));
+}
+
+// ─── Data Synchronization and Integrity Functions ───────────────────────────────────
+function syncComputedStats() {
+  // Update attendance summary based on current student data
+  const totalStudents = STUDENTS.length;
+  ATTENDANCE_SUMMARY.total_students = totalStudents;
+  ATTENDANCE_SUMMARY.present_today = Math.floor(totalStudents * 0.88);
+  ATTENDANCE_SUMMARY.absent_today = Math.floor(totalStudents * 0.09);
+  ATTENDANCE_SUMMARY.late_today = Math.floor(totalStudents * 0.03);
+  
+  // Update role home statistics
+  if (window.ROLE_HOME) {
+    Object.keys(window.ROLE_HOME).forEach(role => {
+      if (window.ROLE_HOME[role].stats) {
+        window.ROLE_HOME[role].stats.forEach(stat => {
+          if (stat.label === "Total Students") {
+            stat.value = totalStudents.toString();
+          }
+        });
+      }
+    });
+  }
+  
+  console.log(`[Data Sync] Updated stats for ${totalStudents} students`);
+}
+
+function runIntegrityCheck() {
+  const issues = [];
+  
+  // Check for duplicate student IDs
+  const studentIds = STUDENTS.map(s => s.id);
+  const duplicateIds = studentIds.filter((id, index) => studentIds.indexOf(id) !== index);
+  if (duplicateIds.length > 0) {
+    issues.push(`Duplicate student IDs: ${duplicateIds.join(', ')}`);
+  }
+  
+  // Check for duplicate usernames
+  const usernames = DEMO_USERS.map(u => u.username);
+  const duplicateUsernames = usernames.filter((username, index) => usernames.indexOf(username) !== index);
+  if (duplicateUsernames.length > 0) {
+    issues.push(`Duplicate usernames: ${duplicateUsernames.join(', ')}`);
+  }
+  
+  // Check parent-child relationships
+  const parentUsers = DEMO_USERS.filter(u => u.role === 'parent');
+  parentUsers.forEach(parent => {
+    const childExists = STUDENTS.some(s => s.id === parent.childId);
+    if (!childExists) {
+      issues.push(`Parent ${parent.username} references non-existent child ${parent.childId}`);
+    }
+  });
+  
+  // Check teacher assignments
+  TEACHERS.forEach(teacher => {
+    const assignedClasses = teacher.classes.split(', ');
+    assignedClasses.forEach(cls => {
+      const classExists = STUDENTS.some(s => s.class === cls);
+      if (!classExists && cls !== 'All') {
+        issues.push(`Teacher ${teacher.name} assigned to non-existent class ${cls}`);
+      }
+    });
+  });
+  
+  if (issues.length === 0) {
+    console.log('[Integrity Check] All data integrity checks passed');
+  } else {
+    console.warn('[Integrity Check] Issues found:', issues);
+  }
+  
+  return issues;
 }
 
 initDataStore();
