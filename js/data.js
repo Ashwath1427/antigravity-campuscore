@@ -1323,8 +1323,8 @@ const ROLE_HOME = {
     greeting: "Welcome back, Suman!",
     subtitle: "School operations, academic tracking, and staff monitoring overview.",
     stats: [
-      { label: "Total Students", value: "297", icon: "👥", color: "#5ca870" },
-      { label: "Total Teachers", value: "7", icon: "👨‍🏫", color: "#1976d2" },
+      { label: "Total Students", value: "130", icon: '<i class="fas fa-users"></i>', color: "#5ca870" },
+      { label: "Total Teachers", value: "7", icon: '<i class="fas fa-chalkboard-teacher"></i>', color: "#1976d2" },
       { label: "Total Classes", value: "20", icon: "🏫", color: "#ff6b6b" },
       { label: "Avg Attendance", value: "88%", icon: "📋", color: "#ffa726" },
       { label: "Pending Approvals", value: "5", icon: "✅", color: "#f57c00" },
@@ -1358,7 +1358,7 @@ const ROLE_HOME = {
     subtitle: "Academic coordination dashboard.",
     stats: [
       { label: "Total Students", value: "297", icon: "👥", color: "#5ca870" },
-      { label: "Total Teachers", value: "7", icon: "👨‍🏫", color: "#1976d2" },
+      { label: "Total Teachers", value: "7", icon: '<i class="fas fa-chalkboard-teacher"></i>', color: "#1976d2" },
       { label: "Total Classes", value: "20", icon: "🏫", color: "#ff6b6b" },
       { label: "Avg GPA", value: "7.6", icon: "📊", color: "#ffa726" },
       { label: "Active Notices", value: "7", icon: "📢", color: "#8b5cf6" },
@@ -1378,10 +1378,10 @@ const ROLE_HOME = {
     greeting: "Good Day, Principal Sir!",
     subtitle: "Institution-wide health, performance, and strategic overview.",
     stats: [
-      { label: "Total Students", value: "130", icon: "�", color: "#5ca870" },
-      { label: "Total Teachers", value: "7", icon: "👨‍�", color: "#1976d2" },
+      { label: "Total Students", value: "130", icon: '<i class="fas fa-users"></i>', color: "#5ca870" },
+      { label: "Total Teachers", value: "7", icon: '<i class="fas fa-chalkboard-teacher"></i>', color: "#1976d2" },
       { label: "Total Classes", value: "16", icon: "🏫", color: "#ff6b6b" },
-      { label: "Overall Attendance", value: "88%", icon: "�", color: "#ffa726" },
+      { label: "Overall Attendance", value: "88%", icon: '<i class="fas fa-clipboard-check"></i>', color: "#ffa726" },
       { label: "Strategic Approvals", value: "5", icon: "⏱️", color: "#d32f2f" },
     ]
   },
@@ -1399,10 +1399,10 @@ const ROLE_HOME = {
     greeting: "Welcome, SuperAdmin!",
     subtitle: "Full-system audit and administrative control center.",
     stats: [
-      { label: "System Health", value: "98%", icon: "💚", color: "#5ca870" },
-      { label: "Active Users", value: "297", icon: "👥", color: "#1976d2" },
-      { label: "Pending Tasks", value: "12", icon: "⏳", color: "#f57c00" },
-      { label: "Rank", value: "1", icon: "🏆", color: "#ffa726" },
+      { label: "Total Users", value: "142", icon: "👥", color: "#5ca870" },
+      { label: "System Health", value: "Good", icon: '<i class="fas fa-heartbeat"></i>', color: "#1976d2" },
+      { label: "Database", value: "Synced", icon: '<i class="fas fa-database"></i>', color: "#ff6b6b" },
+      { label: "Security", value: "Active", icon: '<i class="fas fa-shield-alt"></i>', color: "#ffa726" },
     ]
   },
   mac_admin: {

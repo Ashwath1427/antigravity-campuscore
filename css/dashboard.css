@@ -14,7 +14,9 @@
 .sidebar {
   width: var(--sidebar-width);
   height: 100vh;
-  background: linear-gradient(180deg, #5ca870 0%, #4d9160 100%);
+  background: rgba(22, 40, 28, 0.82);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
   color: white;
   position: fixed;
   top: 0; left: 0;
@@ -23,10 +25,10 @@
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
-  border-right: 5px solid #7ec490;
+  box-shadow: 10px 0 35px rgba(0, 0, 0, 0.35);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
   padding: 24px;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Logo */
@@ -810,18 +812,20 @@
 
 /* ---------- Welcome Banner ---------- */
 .welcome-banner {
-  background: linear-gradient(135deg, #5ca870, #2d7a6e);
-  color: white; padding: 32px; border-radius: var(--radius-lg);
-  margin-bottom: 28px; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #1e5245 0%, #2d7a6e 50%, #5ca870 100%);
+  color: white; padding: 36px 40px; border-radius: var(--radius-xl);
+  margin-bottom: 32px; position: relative; overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 .welcome-banner::after {
-  content: ''; position: absolute; right: -60px; top: -60px;
-  width: 250px; height: 250px; border-radius: 50%;
-  background: rgba(255,255,255,0.06);
+  content: ''; position: absolute; right: -50px; top: -50px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
 }
-.welcome-greeting { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
-.welcome-sub { font-size: 14px; opacity: 0.85; margin-bottom: 4px; }
-.welcome-date { font-size: 13px; opacity: 0.6; font-weight: 600; }
+.welcome-greeting { font-size: 32px; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; }
+.welcome-sub { font-size: 15px; opacity: 0.9; margin-bottom: 6px; font-weight: 500; }
+.welcome-date { font-size: 13px; opacity: 0.7; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 .welcome-school {
   display: inline-block; margin-top: 12px; padding: 6px 16px;
   background: rgba(255,255,255,0.12); border-radius: 99px;
