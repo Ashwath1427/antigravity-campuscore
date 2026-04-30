@@ -1962,19 +1962,20 @@ function saveStudents() {
   localStorage.setItem('campuscore_students', JSON.stringify(STUDENTS));
 }
 
-// ─── Sync computed stats that depend on STUDENTS.length ───────
+// ─── Sync computed stats that depend on true total count ───────
 function syncComputedStats() {
+  const trueTotal = window.getInstitutionalStats ? window.getInstitutionalStats().total : STUDENTS.length;
   // ATTENDANCE_SUMMARY: set from actual student count
-  ATTENDANCE_SUMMARY.total_students = STUDENTS.length;
-  ATTENDANCE_SUMMARY.present_today  = Math.round(STUDENTS.length * 0.925);
-  ATTENDANCE_SUMMARY.absent_today   = Math.round(STUDENTS.length * 0.050);
-  ATTENDANCE_SUMMARY.late_today     = STUDENTS.length - ATTENDANCE_SUMMARY.present_today - ATTENDANCE_SUMMARY.absent_today;
+  ATTENDANCE_SUMMARY.total_students = trueTotal;
+  ATTENDANCE_SUMMARY.present_today  = Math.round(trueTotal * 0.925);
+  ATTENDANCE_SUMMARY.absent_today   = Math.round(trueTotal * 0.050);
+  ATTENDANCE_SUMMARY.late_today     = trueTotal - ATTENDANCE_SUMMARY.present_today - ATTENDANCE_SUMMARY.absent_today;
   // VP weekly totals scale to institution size
-  ATTENDANCE_SUMMARY.weekly.forEach(d => { d.total = STUDENTS.length; d.present = Math.round(STUDENTS.length * (d.present / 100)); });
+  ATTENDANCE_SUMMARY.weekly.forEach(d => { d.total = trueTotal; d.present = Math.round(trueTotal * (d.present / 100)); });
   // SuperAdmin dashboard stat card
   const adminStat = (ROLE_HOME.apaaas || ROLE_HOME.super_admin || {}).stats || [];
   const tsStat = adminStat.find(s => s.id === 'stat-total-students-admin');
-  if (tsStat) tsStat.value = String(STUDENTS.length);
+  if (tsStat) tsStat.value = String(trueTotal);
 }
 
 
@@ -2022,8 +2023,18 @@ window.getUnifiedAccounts = function() {
 };
 
 window.getInstitutionalStats = function() {
-  const all = STUDENTS;
-  const total = all.length;
+  const allIds = new Set();
+  if (typeof STUDENTS !== 'undefined') {
+    STUDENTS.forEach(s => allIds.add(String(s.id)));
+  }
+  if (window.SCHOOL_DATA && window.SCHOOL_DATA.classes) {
+    Object.keys(window.SCHOOL_DATA.classes).forEach(grade => {
+      Object.keys(window.SCHOOL_DATA.classes[grade]).forEach(sec => {
+        window.SCHOOL_DATA.classes[grade][sec].forEach(s => allIds.add(String(s.id)));
+      });
+    });
+  }
+  const total = allIds.size;
   const present = Math.floor(total * 0.92);
   const absent = Math.floor(total * 0.05);
   const late = total - present - absent;
