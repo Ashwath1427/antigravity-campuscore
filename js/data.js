@@ -1368,21 +1368,21 @@ const ROLE_HOME = {
     greeting: "Hello, Ms. Anita!",
     subtitle: "Class 8-B dashboard and attendance.",
     stats: [
-      { label: "Class Strength",    value: "35",   icon: "🎓", color: "#5ca870" },
-      { label: "Present Today",     value: "32",   icon: "✅", color: "#4caf50" },
-      { label: "Absent Today",      value: "3",    icon: "❌", color: "#d32f2f" },
-      { label: "Class Average",     value: "78%",  icon: "📊", color: "#1976d2" },
+      { label: "Class Strength",    value: "35",   icon: '<i class="fas fa-users"></i>', color: "#5ca870" },
+      { label: "Present Today",     value: "32",   icon: '<i class="fas fa-check-circle"></i>', color: "#4caf50" },
+      { label: "Absent Today",      value: "3",    icon: '<i class="fas fa-times-circle"></i>', color: "#d32f2f" },
+      { label: "Class Average",     value: "78%",  icon: '<i class="fas fa-chart-line"></i>', color: "#1976d2" },
     ]
   },
   principal: {
     greeting: "Good Day, Principal Sir!",
     subtitle: "Institution-wide health, performance, and strategic overview.",
     stats: [
-      { label: "Total Students", value: "130", icon: '<i class="fas fa-users"></i>', color: "#5ca870" },
+      { label: "Total Students", value: "130", icon: '<i class="fas fa-user-graduate"></i>', color: "#5ca870" },
       { label: "Total Teachers", value: "7", icon: '<i class="fas fa-chalkboard-teacher"></i>', color: "#1976d2" },
-      { label: "Total Classes", value: "16", icon: "🏫", color: "#ff6b6b" },
+      { label: "Total Classes", value: "16", icon: '<i class="fas fa-school"></i>', color: "#ff6b6b" },
       { label: "Overall Attendance", value: "88%", icon: '<i class="fas fa-clipboard-check"></i>', color: "#ffa726" },
-      { label: "Strategic Approvals", value: "5", icon: "⏱️", color: "#d32f2f" },
+      { label: "Strategic Approvals", value: "5", icon: '<i class="fas fa-check-double"></i>', color: "#d32f2f" },
     ]
   },
   student: {
@@ -1399,7 +1399,7 @@ const ROLE_HOME = {
     greeting: "Welcome, SuperAdmin!",
     subtitle: "Full-system audit and administrative control center.",
     stats: [
-      { label: "Total Users", value: "142", icon: "👥", color: "#5ca870" },
+      { label: "Total Users", value: "142", icon: '<i class="fas fa-users"></i>', color: "#5ca870" },
       { label: "System Health", value: "Good", icon: '<i class="fas fa-heartbeat"></i>', color: "#1976d2" },
       { label: "Database", value: "Synced", icon: '<i class="fas fa-database"></i>', color: "#ff6b6b" },
       { label: "Security", value: "Active", icon: '<i class="fas fa-shield-alt"></i>', color: "#ffa726" },
