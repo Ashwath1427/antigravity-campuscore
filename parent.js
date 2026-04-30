@@ -673,7 +673,7 @@
       rzp.open();
     } catch (e) {
       console.error("[CampusCore] Razorpay Error:", e);
-      alert("Payment gateway failed to load. Please try again later. (Error: " + e.message + ")");
+      console.warn('[CampusCore] Alert suppressed:', "Payment gateway failed to load. Please try again later. (Error: " + e.message + ")");
     }
   };
 
@@ -723,7 +723,7 @@
     window.navigateTo('parent_fees');
 
     // Success Toast/Alert
-    alert('Payment Successful!\nTransaction ID: ' + (rzpResponse.razorpay_payment_id || 'DEMO_MODE'));
+    console.warn('[CampusCore] Alert suppressed:', 'Payment Successful!\nTransaction ID: ' + (rzpResponse.razorpay_payment_id || 'DEMO_MODE'));
   };
 
   /**

@@ -2721,7 +2721,7 @@ function buildTeacherHomework(user) {
       </div>
     </td>
     <td><span class="badge ${h.status === 'Graded' ? 'badge-active' : h.status === 'Grading' ? 'badge-warning' : 'badge-info'}">${h.status}</span></td>
-    <td><button style="padding:6px 12px;border-radius:6px;background:var(--color-primary);color:white;border:none;cursor:pointer;font-weight:600;font-size:11px" onclick="alert('Opening submissions...')">Review</button></td>
+    <td><button style="padding:6px 12px;border-radius:6px;background:var(--color-primary);color:white;border:none;cursor:pointer;font-weight:600;font-size:11px" onclick="console.warn('[CampusCore] Alert suppressed:', 'Opening submissions...')">Review</button></td>
   </tr>`).join('');
   return `<div class="dash-section" id="section-teacher_homework">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
@@ -3501,7 +3501,7 @@ function submitNewAssignment() {
   const subject = document.getElementById('assign-subject').value;
   const cls = document.getElementById('assign-class').value;
   const due = document.getElementById('assign-due').value;
-  if (!title || !due) { alert('Please fill in title and due date.'); return; }
+  if (!title || !due) { console.warn('[CampusCore] Alert suppressed:', 'Please fill in title and due date.'); return; }
   closeAssignModal();
   simulateAction('Assignment "' + title + '" published for ' + cls + ' — due ' + due + '.');
 }
@@ -4174,7 +4174,7 @@ function saveDocument() {
   if (!title && fileInput && fileInput.files.length > 0) {
     title = fileInput.files[0].name;
   }
-  if (!title) { alert('Please enter a title or choose a file.'); return; }
+  if (!title) { console.warn('[CampusCore] Alert suppressed:', 'Please enter a title or choose a file.'); return; }
   const newDoc = {
     id: 'DOC' + Date.now().toString().slice(-4),
     title,
@@ -5354,7 +5354,7 @@ function helpParent(ticketId, parentName) {
 
 window.executeAdvancedResolve = function(id) {
   const msg = document.getElementById('direct-resolution-msg').value;
-  if(!msg) { alert('Please provide a message or resolution note'); return; }
+  if(!msg) { console.warn('[CampusCore] Alert suppressed:', 'Please provide a message or resolution note'); return; }
   
   simulateAction('Transmitting resolution to Parent Portal...');
   setTimeout(() => {

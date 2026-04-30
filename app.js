@@ -300,19 +300,18 @@ function delay(ms) {
 // ─── APAAAS Admin Dock (MacOS Style) ────────────────────────
 window.CampusCoreAdminDock = {
   viewLogs: function() {
-    alert("Admin Logs Panel: \n[System] All services running gracefully.\n[DB] Supabase connection OK.");
+    console.log("[Admin] Logs Panel: All services running gracefully. Supabase connection OK.");
   },
   toggleLabs: function() {
     const isLabs = localStorage.getItem('CC_LABS_MODE') === 'true';
     localStorage.setItem('CC_LABS_MODE', !isLabs);
     console.log(`[Admin] Labs Mode is now: ${!isLabs}`);
-    alert(`Labs Mode toggled to: ${!isLabs}`);
   },
   debugOverlay: function() {
     console.log("[Admin] Toggling Debug Overlay");
     document.body.classList.toggle('debug-overlay-active');
     if(document.body.classList.contains('debug-overlay-active')) {
-      alert("Debug overlay active. Use CSS debugger.");
+      console.log("[Admin] Debug overlay active. Use CSS debugger.");
     }
   },
   forceResync: function() {
@@ -320,12 +319,11 @@ window.CampusCoreAdminDock = {
     if(typeof initDashboardLiveStats === 'function' && window.currentUser) {
       initDashboardLiveStats(window.currentUser);
     }
-    alert("Resync triggered.");
   },
   showMetrics: function() {
     const students = window.STUDENTS ? window.STUDENTS.length : 'N/A';
     const users = window.DEMO_USERS ? window.DEMO_USERS.length : 'N/A';
-    alert(`📊 System Metrics\nStudents: ${students}\nUsers: ${users}\nRole: ${window.currentUser?.role}`);
+    console.log(`📊 System Metrics\nStudents: ${students}\nUsers: ${users}\nRole: ${window.currentUser?.role}`);
   }
 };
 

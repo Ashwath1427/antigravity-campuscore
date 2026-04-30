@@ -1733,7 +1733,7 @@ function buildTeacherHomework(user) {
       </div>
     </td>
     <td><span class="badge ${h.status === 'Graded' ? 'badge-active' : h.status === 'Grading' ? 'badge-warning' : 'badge-info'}">${h.status}</span></td>
-    <td><button style="padding:6px 12px;border-radius:6px;background:var(--color-primary);color:white;border:none;cursor:pointer;font-weight:600;font-size:11px" onclick="alert('Opening submissions...')">Review</button></td>
+    <td><button style="padding:6px 12px;border-radius:6px;background:var(--color-primary);color:white;border:none;cursor:pointer;font-weight:600;font-size:11px" onclick="console.warn('[CampusCore] Alert suppressed:', 'Opening submissions...')">Review</button></td>
   </tr>`).join('');
   return `<div class="dash-section" id="section-teacher_homework">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
@@ -2511,7 +2511,7 @@ function submitNewAssignment() {
   const subject = document.getElementById('assign-subject').value;
   const cls = document.getElementById('assign-class').value;
   const due = document.getElementById('assign-due').value;
-  if (!title || !due) { alert('Please fill in title and due date.'); return; }
+  if (!title || !due) { console.warn('[CampusCore] Alert suppressed:', 'Please fill in title and due date.'); return; }
   closeAssignModal();
   simulateAction('Assignment "' + title + '" published for ' + cls + ' — due ' + due + '.');
 }
@@ -4100,17 +4100,17 @@ window.applyMacStyling = function() {
 window.CampusCoreMacAdmin = {
   macSettings: function() {
     simulateAction('Opening Mac Settings...');
-    alert('Mac Settings: Customize your Mac-style interface experience');
+    console.warn('[CampusCore] Alert suppressed:', 'Mac Settings: Customize your Mac-style interface experience');
   },
   
   macThemes: function() {
     simulateAction('Opening Mac Themes...');
-    alert('Mac Themes: Choose from various Mac-inspired color schemes');
+    console.warn('[CampusCore] Alert suppressed:', 'Mac Themes: Choose from various Mac-inspired color schemes');
   },
   
   macEffects: function() {
     simulateAction('Opening Mac Effects...');
-    alert('Mac Effects: Configure glow animations and transitions');
+    console.warn('[CampusCore] Alert suppressed:', 'Mac Effects: Configure glow animations and transitions');
   },
   
   macDebug: function() {
@@ -4120,12 +4120,12 @@ window.CampusCoreMacAdmin = {
       dockItems: document.querySelectorAll('.cc-mac-dock-item').length,
       animations: document.querySelectorAll('[style*="transition"]').length
     });
-    alert('Mac Debug: Check console for detailed information');
+    console.warn('[CampusCore] Alert suppressed:', 'Mac Debug: Check console for detailed information');
   },
   
   macLaunchpad: function() {
     simulateAction('Opening Mac Launchpad...');
-    alert('Mac Launchpad: Quick access to all Mac features');
+    console.warn('[CampusCore] Alert suppressed:', 'Mac Launchpad: Quick access to all Mac features');
   }
 };
 

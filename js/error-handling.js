@@ -89,7 +89,7 @@ function showUserFriendlyError(message) {
   if (typeof showNotification === 'function') {
     showNotification(message, 'error', 5000);
   } else {
-    alert(message);
+    console.warn('[CampusCore] User error suppressed:', message);
   }
 }
 
