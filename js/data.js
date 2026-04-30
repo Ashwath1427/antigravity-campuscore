@@ -1299,6 +1299,20 @@ const ROLE_NAV = {
       { id: "settings",          icon: "fa-cog",                label: "Settings" },
     ]},
   ],
+  mac_admin: [
+    { label: "Main", items: [
+      { id: "mac-dashboard",     icon: "fa-tachometer-alt",     label: "Mac Dashboard" },
+      { id: "system-monitor",    icon: "fa-desktop",            label: "System Monitor" },
+    ]},
+    { label: "Mac Controls", items: [
+      { id: "mac-controls",      icon: "fa-sliders-h",          label: "Mac Controls" },
+      { id: "style-lab",         icon: "fa-palette",            label: "Style Lab" },
+      { id: "mac-themes",        icon: "fa-fill-drip",           label: "Mac Themes" },
+    ]},
+    { label: "System", items: [
+      { id: "settings",          icon: "fa-cog",                label: "Settings" },
+    ]},
+  ],
 };
 ROLE_NAV.super_admin = ROLE_NAV.apaaas;
 ROLE_NAV.superadmin = ROLE_NAV.apaaas;
