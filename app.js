@@ -4,25 +4,48 @@
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  if (typeof loadTheme === 'function') loadTheme();
-  setupSidebar();
-  setupLoginForm();
-  updateDateTime();
-  setInterval(updateDateTime, 60000); // update time every minute
+  try {
+    if (typeof loadTheme === 'function') loadTheme();
+    setupSidebar();
+    setupLoginForm();
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // update time every minute
 
-  // BUG-009 FIX: Pre-load live Supabase data BEFORE restoring session so the
-  // dashboard always renders with fresh data instead of stale local arrays.
-  if (typeof initSupabaseData === 'function') {
-    try { await initSupabaseData(); } catch (e) { console.warn('[CampusCore] initSupabaseData failed, using local data:', e); }
-  }
+    // BUG-009 FIX: Pre-load live Supabase data BEFORE restoring session so the
+    // dashboard always renders with fresh data instead of stale local arrays.
+    // Make this NON-FATAL - if Supabase is offline, continue with local data
+    if (typeof initSupabaseData === 'function') {
+      try {
+        await initSupabaseData();
+      } catch (e) {
+        console.warn('[CampusCore] initSupabaseData failed, using local data:', e);
+        window.offlineMode = true;
+        // Continue execution - do not throw
+      }
+    }
 
-  // Restore session on refresh
-  if (restoreSession() && currentUser) {
-    initDashboard(currentUser);
-    showPage('dashboard');
-  } else {
-    // Show landing page by default for unauthenticated users
-    showPage('landing');
+    // Restore session on refresh
+    if (restoreSession() && currentUser) {
+      initDashboard(currentUser);
+      showPage('dashboard');
+    } else {
+      // Show landing page by default for unauthenticated users
+      showPage('landing');
+    }
+  } catch (error) {
+    console.error('[CampusCore] DOMContentLoaded error:', error);
+    // Ensure dashboard still initializes even if there's an error
+    if (restoreSession() && currentUser) {
+      try {
+        initDashboard(currentUser);
+        showPage('dashboard');
+      } catch (dashboardError) {
+        console.error('[CampusCore] Dashboard init failed:', dashboardError);
+        showPage('landing');
+      }
+    } else {
+      showPage('landing');
+    }
   }
 });
 

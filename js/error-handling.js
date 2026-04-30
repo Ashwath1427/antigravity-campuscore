@@ -7,13 +7,36 @@
 window.addEventListener('error', function(event) {
   console.error('[GLOBAL ERROR]', event.error);
   logError('GLOBAL_ERROR', event.error.message, event.error.stack);
-  showUserFriendlyError('An unexpected error occurred. Please try again.');
+
+  // Don't show toast for Supabase/network-related errors
+  const errorMessage = event.error?.message?.toLowerCase() || '';
+  const isSupabaseError = errorMessage.includes('supabase') ||
+                        errorMessage.includes('fetch') ||
+                        errorMessage.includes('network') ||
+                        errorMessage.includes('connection') ||
+                        errorMessage.includes('timeout') ||
+                        event.error?.name === 'TypeError';
+
+  if (!isSupabaseError) {
+    showUserFriendlyError('An unexpected error occurred. Please try again.');
+  }
 });
 
 window.addEventListener('unhandledrejection', function(event) {
   console.error('[UNHANDLED PROMISE REJECTION]', event.reason);
   logError('PROMISE_REJECTION', event.reason.message, event.reason.stack);
-  showUserFriendlyError('A network error occurred. Please check your connection.');
+
+  // Don't show toast for Supabase/network-related errors
+  const errorMessage = event.reason?.message?.toLowerCase() || String(event.reason).toLowerCase();
+  const isSupabaseError = errorMessage.includes('supabase') ||
+                        errorMessage.includes('fetch') ||
+                        errorMessage.includes('network') ||
+                        errorMessage.includes('connection') ||
+                        errorMessage.includes('timeout');
+
+  if (!isSupabaseError) {
+    showUserFriendlyError('A network error occurred. Please check your connection.');
+  }
 });
 
 // ─── Error Logging System ───────────────────────────────────────

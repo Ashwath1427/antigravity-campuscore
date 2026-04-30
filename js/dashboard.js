@@ -53,6 +53,11 @@ function renderWithRoleContext(user, role, builderFunc) {
 function buildDashboard(user) {
   const c = document.getElementById('content-area');
 
+  if (!c) {
+    console.error('[CampusCore] content-area element not found');
+    return;
+  }
+
   if (user.role === 'vice_principal') {
     c.innerHTML = [
       safeRender('Home', buildHome, user),
