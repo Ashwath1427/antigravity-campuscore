@@ -128,15 +128,26 @@ function buildDashboard(user) {
     ].join('');
     setTimeout(translateSuperAdminUI, 0);
   } else if (user.role === 'mac_admin' || String(user.username || '').toUpperCase() === 'APASAA') {
-    // Mac Admin Dashboard - Full Mac-style Experience
+    // Mac Admin Dashboard - Same as Super Admin but with Mac-style interface
     c.innerHTML = [
-      safeRender('Mac Dashboard', buildMacDashboard, user),
-      safeRender('System Monitor', buildSystemMonitor, user),
+      renderWithRoleContext(user, 'principal', (u) => safeRender('Master Dashboard', buildHome, u)).replace('id="section-home"', 'id="section-master_dashboard"'),
+      safeRender('Role Views', buildRoleViews, user),
+      safeRender('All Issues', buildAllIssuesSuperAdmin, user),
+      safeRender('All Accounts', buildAllAccounts, user),
+      safeRender('Removed Bin', buildRemovedBin, user),
+      safeRender('All Notices', buildAnnouncements, user).replace('id="section-announcements"', 'id="section-all_notices"'),
+      safeRender('All Approvals', buildVPApprovals, user).replace('id="section-vp_approvals"', 'id="section-all_approvals"'),
+      safeRender('Manage Documents', buildManageDocuments, user),
+      safeRender('All Attendance', buildVPAttendance, user).replace('id="section-vp_attendance"', 'id="section-all_attendance"'),
+      safeRender('All Results', buildVPExams, user).replace('id="section-vp_exams"', 'id="section-all_results"'),
+      safeRender('All Messages', buildVPMessages, user).replace('id="section-vp_messages"', 'id="section-all_messages"'),
+      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace('id="section-helpdesk_staff"', 'id="section-all_helpdesk"'),
       safeRender('Mac Controls', buildMacControls, user),
       safeRender('Style Lab', buildStyleLab, user),
       safeRender('Settings', buildSettings, user),
       buildMacAdminDock(user)
     ].join('');
+    setTimeout(applyMacStyling, 0);
   } else {
     c.innerHTML = [
       safeRender('Home', buildHome, user),
@@ -268,6 +279,22 @@ function buildHome(user) {
       { icon: 'fa-users-cog', label: 'Manage Accounts', color: '#8b5cf6', target: 'all_accounts' },
       { icon: 'fa-shield-alt', label: 'Audit Logs', color: '#5ca870', target: 'all_issues' },
       { icon: 'fa-folder-open', label: 'Master Files', color: '#f57c00', target: 'manage_documents' },
+    ],
+    mac_admin: [
+      { icon: 'fa-sitemap', label: 'Master Dash', color: '#1976d2', target: 'master_dashboard' },
+      { icon: 'fa-user-lock', label: 'Role Master', color: '#d32f2f', target: 'role_views' },
+      { icon: 'fa-users-cog', label: 'Manage Accounts', color: '#8b5cf6', target: 'all_accounts' },
+      { icon: 'fa-shield-alt', label: 'Audit Logs', color: '#5ca870', target: 'all_issues' },
+      { icon: 'fa-folder-open', label: 'Master Files', color: '#f57c00', target: 'manage_documents' },
+      { icon: 'fa-trash-alt', label: 'Removed Bin', color: '#e91e63', target: 'removed_bin' },
+      { icon: 'fa-bullhorn', label: 'All Notices', color: '#ff9800', target: 'all_notices' },
+      { icon: 'fa-check-double', label: 'All Approvals', color: '#4caf50', target: 'all_approvals' },
+      { icon: 'fa-clipboard-check', label: 'All Attendance', color: '#2196f3', target: 'all_attendance' },
+      { icon: 'fa-chart-bar', label: 'All Results', color: '#9c27b0', target: 'all_results' },
+      { icon: 'fa-envelope', label: 'All Messages', color: '#00bcd4', target: 'all_messages' },
+      { icon: 'fa-headset', label: 'Full Helpdesk', color: '#ff5722', target: 'all_helpdesk' },
+      { icon: 'fa-cog', label: 'Mac Controls', color: '#007AFF', target: 'mac-controls' },
+      { icon: 'fa-palette', label: 'Style Lab', color: '#AF52DE', target: 'style-lab' },
     ]
   };
   const quickActions = (qaMap[user.role] || []).map(qa => {
@@ -3900,20 +3927,47 @@ function buildMacAdminDock(user) {
   return `
     <div class="cc-admin-dock-wrapper cc-mac-dock-wrapper">
       <div class="cc-admin-dock cc-mac-admin-dock">
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macSettings" title="Mac Settings">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="master_dashboard" title="Master Dashboard" onclick="navigateTo('master_dashboard')">
+          <i class="fas fa-sitemap"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="role_views" title="Role Views" onclick="navigateTo('role_views')">
+          <i class="fas fa-user-lock"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_accounts" title="All Accounts" onclick="navigateTo('all_accounts')">
+          <i class="fas fa-users-cog"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_issues" title="Audit Logs" onclick="navigateTo('all_issues')">
+          <i class="fas fa-shield-alt"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="manage_documents" title="Master Files" onclick="navigateTo('manage_documents')">
+          <i class="fas fa-folder-open"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="removed_bin" title="Removed Bin" onclick="navigateTo('removed_bin')">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_notices" title="All Notices" onclick="navigateTo('all_notices')">
+          <i class="fas fa-bullhorn"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_approvals" title="All Approvals" onclick="navigateTo('all_approvals')">
+          <i class="fas fa-check-double"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_attendance" title="All Attendance" onclick="navigateTo('all_attendance')">
+          <i class="fas fa-clipboard-check"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_results" title="All Results" onclick="navigateTo('all_results')">
+          <i class="fas fa-chart-bar"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_messages" title="All Messages" onclick="navigateTo('all_messages')">
+          <i class="fas fa-envelope"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_helpdesk" title="Full Helpdesk" onclick="navigateTo('all_helpdesk')">
+          <i class="fas fa-headset"></i>
+        </button>
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-controls" title="Mac Controls" onclick="navigateTo('mac-controls')">
           <i class="fas fa-cog"></i>
         </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macThemes" title="Mac Themes">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="style-lab" title="Style Lab" onclick="navigateTo('style-lab')">
           <i class="fas fa-palette"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macEffects" title="Mac Effects">
-          <i class="fas fa-sparkles"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macDebug" title="Mac Debug">
-          <i class="fas fa-bug"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="macLaunchpad" title="Mac Launchpad">
-          <i class="fas fa-rocket"></i>
         </button>
       </div>
     </div>
@@ -3983,6 +4037,29 @@ window.adjustBlurAmount = function(value) {
     el.style.backdropFilter = `blur(${value}px)`;
   });
   simulateAction(`Blur amount adjusted to ${value}px`);
+};
+
+// Apply Mac styling to all sections for Mac Admin
+window.applyMacStyling = function() {
+  // Add Mac-style classes to all cards and sections
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+    card.classList.add('cc-mac-card');
+  });
+
+  // Add Mac-style to stats
+  const statCards = document.querySelectorAll('.stat-card');
+  statCards.forEach(card => {
+    card.classList.add('cc-mac-stat-card');
+  });
+
+  // Add Mac glow effects
+  const glowElements = document.querySelectorAll('.stat-card, .card');
+  glowElements.forEach(el => {
+    el.classList.add('cc-glow-card');
+  });
+
+  simulateAction('Mac styling applied to all sections');
 };
 
 // Mac Admin Dock Actions
