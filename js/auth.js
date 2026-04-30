@@ -8,6 +8,7 @@ let currentUser = null;
 async function attemptLogin(username, password) {
   const normalizedUsername = String(username || '').toUpperCase();
   console.log(`[AUTH] Attempting login for: ${normalizedUsername}`);
+  console.log(`[AUTH] DEMO_USERS available:`, DEMO_USERS ? DEMO_USERS.length : 'undefined');
   
   // 1. Try Supabase Login first
   if (typeof supabaseLogin === 'function') {
@@ -26,15 +27,24 @@ async function attemptLogin(username, password) {
   }
 
   // 2. Fallback to local DEMO_USERS
+  if (!DEMO_USERS || !Array.isArray(DEMO_USERS)) {
+    console.error(`[AUTH] DEMO_USERS is not available or not an array`);
+    return { success: false };
+  }
+  
   const user = DEMO_USERS.find(u => u.username.toUpperCase() === normalizedUsername);
   if (!user) {
     console.warn(`[AUTH] User not found in DEMO_USERS: ${normalizedUsername}`);
+    console.log(`[AUTH] Available users:`, DEMO_USERS.map(u => u.username));
     return { success: false };
   }
 
   const accountKey = `campuscore_account_password_${normalizedUsername}`;
   const stored = localStorage.getItem(accountKey);
   const expected = user.password || stored || 'PARENT123';
+  
+  console.log(`[AUTH] Checking password for ${normalizedUsername}`);
+  console.log(`[AUTH] Expected: ${expected}, Got: ${password}`);
   
   if (String(expected).toUpperCase() !== String(password).toUpperCase()) {
     console.error(`[AUTH] Password mismatch for ${normalizedUsername}`);
