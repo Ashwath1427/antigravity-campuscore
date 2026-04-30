@@ -1,1 +1,1 @@
-# campus-core-
+<!-- trigger pages build after submodule removal --># campus-core-
