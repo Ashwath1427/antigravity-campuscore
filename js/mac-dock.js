@@ -19,7 +19,7 @@ function initMacDock() {
                 <div class="dock-item home active" data-label="Dashboard" onclick="handleDockClick('home')">
                     <i class="fas fa-th-large"></i>
                 </div>
-                <div class="dock-item admin" data-label="User Management" onclick="handleDockClick('user_management')">
+                <div class="dock-item admin" data-label="User Management" onclick="handleDockClick('all_accounts')">
                     <i class="fas fa-users-cog"></i>
                 </div>
                 <div class="dock-item notices" data-label="System Notices" onclick="handleDockClick('notices')">
