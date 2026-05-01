@@ -115,8 +115,11 @@ function buildDashboard(user) {
     ].join('');
   } else if (user.role === 'apaaas' || String(user.username || '').toUpperCase() === 'APAAAS' || user.role === 'superadmin') {
     // Hardened SuperAdmin Render Logic
+    const activeGhost = localStorage.getItem('role_view_active') || 'principal';
+    const ghostTarget = activeGhost === 'none' ? 'principal' : activeGhost;
+    
     c.innerHTML = [
-      renderWithRoleContext(user, 'principal', (u) => safeRender('Master Dashboard (Ghost Principal)', buildHome, u)).replace('id="section-home"', 'id="section-master_dashboard"'),
+      renderWithRoleContext(user, ghostTarget, (u) => safeRender(`Master Dashboard (Ghost ${ghostTarget.toUpperCase()})`, buildHome, u)).replace('id="section-home"', 'id="section-master_dashboard"'),
       safeRender('Role Views', buildRoleViews, user),
       safeRender('All Issues', buildAllIssuesSuperAdmin, user),
       safeRender('All Accounts', buildAllAccounts, user),
@@ -129,13 +132,19 @@ function buildDashboard(user) {
       safeRender('All Messages', buildVPMessages, user).replace('id="section-vp_messages"', 'id="section-all_messages"'),
       safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace('id="section-helpdesk_staff"', 'id="section-all_helpdesk"'),
       safeRender('Settings', buildSettings, user),
-      buildAdminDock(user)
+      buildMacAdminDock(user)
     ].join('');
-    setTimeout(translateSuperAdminUI, 0);
+    setTimeout(() => {
+      translateSuperAdminUI();
+      if (typeof applyMacStyling === 'function') applyMacStyling();
+    }, 0);
   } else if (user.role === 'mac_admin' || String(user.username || '').toUpperCase() === 'APASAA') {
     // Mac Admin Dashboard - Same as Super Admin but with Mac-style interface
+    const activeGhost = localStorage.getItem('role_view_active') || 'principal';
+    const ghostTarget = activeGhost === 'none' ? 'principal' : activeGhost;
+
     c.innerHTML = [
-      renderWithRoleContext(user, 'principal', (u) => safeRender('Master Dashboard', buildHome, u)).replace('id="section-home"', 'id="section-master_dashboard"'),
+      renderWithRoleContext(user, ghostTarget, (u) => safeRender(`Master Dashboard (Ghost ${ghostTarget.toUpperCase()})`, buildHome, u)).replace('id="section-home"', 'id="section-master_dashboard"'),
       safeRender('Role Views', buildRoleViews, user),
       safeRender('All Issues', buildAllIssuesSuperAdmin, user),
       safeRender('All Accounts', buildAllAccounts, user),
@@ -147,6 +156,9 @@ function buildDashboard(user) {
       safeRender('All Results', buildVPExams, user).replace('id="section-vp_exams"', 'id="section-all_results"'),
       safeRender('All Messages', buildVPMessages, user).replace('id="section-vp_messages"', 'id="section-all_messages"'),
       safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace('id="section-helpdesk_staff"', 'id="section-all_helpdesk"'),
+      safeRender('Mac Dashboard', buildMacDashboard, user),
+      safeRender('System Monitor', buildSystemMonitor, user),
+      safeRender('Mac Themes', buildMacThemes, user),
       safeRender('Mac Controls', buildMacControls, user),
       safeRender('Style Lab', buildStyleLab, user),
       safeRender('Settings', buildSettings, user),
@@ -3225,7 +3237,7 @@ function buildRoleViews(user) {
   const roles = [
     { id: 'principal', icon: 'fa-user-shield', label: 'Principal', desc: 'Institutional oversight' },
     { id: 'vice_principal', icon: 'fa-user-tie', label: 'VP', desc: 'Academic operations' },
-    { id: 'teacher', icon: 'fa-chalkboard-teacher', label: 'Teacher', desc: 'Classroom & Results' },
+    { id: 'class_teacher', icon: 'fa-chalkboard-teacher', label: 'Teacher', desc: 'Classroom & Results' },
     { id: 'coordinator', icon: 'fa-sitemap', label: 'Coordinator', desc: 'Dept. Head view' },
     { id: 'parent', icon: 'fa-user-friends', label: 'Parent', desc: 'Child progress' },
     { id: 'student', icon: 'fa-user-graduate', label: 'Student', desc: 'Learning & Profile' }
@@ -3261,7 +3273,10 @@ function buildRoleViews(user) {
                    <button class="btn-primary" style="padding:6px 12px;font-size:11px;background:rgba(255,255,255,0.2);border:1px solid white;color:white" onclick="setRoleView('none')">Exit Preview</button>
                 </div>
                 <div style="padding:24px;background:var(--color-background);max-height:600px;overflow-y:auto">
-                    ${safeRender(activeRole + ' Dashboard', (activeRole === 'student' ? (window.buildStudentDashboard || buildHome) : (activeRole === 'parent' ? buildParentHome : buildHome)), dummyUser)}
+                    ${safeRender(activeRole + ' Dashboard', 
+                      (activeRole === 'student' ? (window.buildStudentDashboard || buildHome) : 
+                       (activeRole === 'parent' ? (window.buildParentDashboard || buildHome) : buildHome)), 
+                      dummyUser)}
                 </div>
             </div>
         `;
@@ -3815,7 +3830,7 @@ function buildMacDashboard(user) {
     </div>`).join('');
 
   return `
-  <div class="dash-section active" id="section-mac-dashboard">
+  <div class="dash-section" id="section-mac_dashboard">
     ${welcome}
     <div class="cc-mac-stats-grid">${stats}</div>
     ${buildBentoCalendar()}
@@ -3874,7 +3889,7 @@ function buildMacDashboard(user) {
 
 function buildSystemMonitor(user) {
   return `
-    <div class="dash-section" id="section-system-monitor">
+    <div class="dash-section" id="section-system_monitor">
       <div class="card cc-mac-card">
         <h3>🖥️ System Monitor</h3>
         <div class="cc-mac-monitor-grid">
@@ -3905,7 +3920,7 @@ function buildSystemMonitor(user) {
 
 function buildMacControls(user) {
   return `
-    <div class="dash-section" id="section-mac-controls">
+    <div class="dash-section" id="section-mac_controls">
       <div class="card cc-mac-card">
         <h3>🎮 Mac Controls</h3>
         <div class="cc-mac-controls-grid">
@@ -3932,7 +3947,7 @@ function buildMacControls(user) {
 
 function buildStyleLab(user) {
   return `
-    <div class="dash-section" id="section-style-lab">
+    <div class="dash-section" id="section-style_lab">
       <div class="card cc-mac-card">
         <h3>🎨 Style Lab</h3>
         <div class="cc-mac-style-grid">
@@ -3956,6 +3971,46 @@ function buildStyleLab(user) {
       </div>
     </div>`;
 }
+
+function buildMacThemes(user) {
+  const themes = [
+    { name: "Monterey", primary: "#007AFF", secondary: "#5856D6", bg: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)" },
+    { name: "Big Sur", primary: "#FF9500", secondary: "#FF2D55", bg: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" },
+    { name: "Ventura", primary: "#34C759", secondary: "#30B0C7", bg: "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)" },
+    { name: "Sonoma", primary: "#AF52DE", secondary: "#FF2D55", bg: "linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)" },
+    { name: "Aqua", primary: "#5AC8FA", secondary: "#007AFF", bg: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" }
+  ];
+
+  const cards = themes.map(t => `
+    <div class="card cc-mac-card cc-glow-card" style="cursor:pointer" onclick="applyMacTheme('${t.primary}', '${t.secondary}', '${t.bg}')">
+      <div style="height:100px; background:${t.bg}; border-radius:12px; margin-bottom:15px; border:1px solid rgba(255,255,255,0.1)"></div>
+      <h3 style="margin-bottom:5px">${t.name}</h3>
+      <div style="display:flex; gap:8px">
+        <span style="width:20px; height:20px; border-radius:50%; background:${t.primary}"></span>
+        <span style="width:20px; height:20px; border-radius:50%; background:${t.secondary}"></span>
+      </div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="dash-section" id="section-mac-themes">
+      <div class="card cc-mac-card">
+        <h3>🎨 Mac Themes</h3>
+        <p style="margin-bottom:20px; color:var(--color-text-muted)">Choose a Mac-inspired theme for your dashboard.</p>
+        <div class="cc-mac-themes-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:20px">
+          ${cards}
+        </div>
+      </div>
+    </div>`;
+}
+
+window.applyMacTheme = function(primary, secondary, bg) {
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', primary);
+    root.style.setProperty('--color-secondary', secondary);
+    root.style.setProperty('--mac-dashboard-bg', bg);
+    simulateAction('Mac theme updated to ' + primary);
+};
 
 function buildMacAdminDock(user) {
   return `
@@ -3997,10 +4052,10 @@ function buildMacAdminDock(user) {
         <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_helpdesk" title="Full Helpdesk" onclick="navigateTo('all_helpdesk')">
           <i class="fas fa-headset"></i>
         </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac-controls" title="Mac Controls" onclick="navigateTo('mac-controls')">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac_controls" title="Mac Controls" onclick="navigateTo('mac_controls')">
           <i class="fas fa-cog"></i>
         </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="style-lab" title="Style Lab" onclick="navigateTo('style-lab')">
+        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="style_lab" title="Style Lab" onclick="navigateTo('style_lab')">
           <i class="fas fa-palette"></i>
         </button>
       </div>
@@ -4014,31 +4069,41 @@ function buildMacAdminDock(user) {
 
 // Mac Control Functions
 window.toggleMacGlow = function() {
-  const glowCards = document.querySelectorAll('.cc-glow-card');
-  glowCards.forEach(card => {
-    card.style.display = card.style.display === 'none' ? 'block' : 'none';
-  });
-  simulateAction('Mac glow effects toggled');
+  document.body.classList.toggle('cc-glow-disabled');
+  const isEnabled = !document.body.classList.contains('cc-glow-disabled');
+  simulateAction(`Mac glow effects ${isEnabled ? 'enabled' : 'disabled'}`);
 };
 
 window.toggleMacDock = function() {
   const dock = document.querySelector('.cc-mac-dock-wrapper');
   if (dock) {
-    dock.style.display = dock.style.display === 'none' ? 'block' : 'none';
+    const isHidden = dock.style.display === 'none';
+    dock.style.display = isHidden ? 'block' : 'none';
   }
   simulateAction('Mac admin dock toggled');
 };
 
 window.toggleMacAnimations = function() {
-  const animatedElements = document.querySelectorAll('.cc-mac-stat-card, .cc-mac-dock-item');
-  animatedElements.forEach(el => {
-    el.style.transition = el.style.transition === 'none' ? 'all 0.3s ease' : 'none';
-  });
-  simulateAction('Mac animations toggled');
+  document.body.classList.toggle('cc-animations-disabled');
+  const isDisabled = document.body.classList.contains('cc-animations-disabled');
+  simulateAction(`Mac animations ${isDisabled ? 'disabled' : 'enabled'}`);
 };
 
 window.resetMacTheme = function() {
-  location.reload();
+  const root = document.documentElement;
+  root.style.removeProperty('--mac-glow-intensity');
+  root.style.removeProperty('--mac-animation-speed');
+  root.style.removeProperty('--mac-border-radius');
+  root.style.removeProperty('--mac-blur-amount');
+  root.style.removeProperty('--color-primary');
+  root.style.removeProperty('--color-secondary');
+  root.style.removeProperty('--mac-dashboard-bg');
+  
+  document.body.classList.remove('cc-glow-disabled');
+  document.body.classList.remove('cc-animations-disabled');
+  
+  simulateAction('Mac theme and styles reset to default');
+  setTimeout(() => location.reload(), 1000);
 };
 
 // Style Lab Functions
@@ -4096,72 +4161,14 @@ window.applyMacStyling = function() {
   simulateAction('Mac styling applied to all sections');
 };
 
-// Mac Admin Dock Actions
-window.CampusCoreMacAdmin = {
-  macSettings: function() {
-    simulateAction('Opening Mac Settings...');
-    console.warn('[CampusCore] Alert suppressed:', 'Mac Settings: Customize your Mac-style interface experience');
-  },
-  
-  macThemes: function() {
-    simulateAction('Opening Mac Themes...');
-    console.warn('[CampusCore] Alert suppressed:', 'Mac Themes: Choose from various Mac-inspired color schemes');
-  },
-  
-  macEffects: function() {
-    simulateAction('Opening Mac Effects...');
-    console.warn('[CampusCore] Alert suppressed:', 'Mac Effects: Configure glow animations and transitions');
-  },
-  
-  macDebug: function() {
-    simulateAction('Opening Mac Debug Panel...');
-    console.log('Mac Debug Info:', {
-      glowCards: document.querySelectorAll('.cc-glow-card').length,
-      dockItems: document.querySelectorAll('.cc-mac-dock-item').length,
-      animations: document.querySelectorAll('[style*="transition"]').length
-    });
-    console.warn('[CampusCore] Alert suppressed:', 'Mac Debug: Check console for detailed information');
-  },
-  
-  macLaunchpad: function() {
-    simulateAction('Opening Mac Launchpad...');
-    console.warn('[CampusCore] Alert suppressed:', 'Mac Launchpad: Quick access to all Mac features');
-  }
-};
-
-// Initialize Mac Admin Dock
+// Mac Admin Dock logic is handled via inline onclick navigateTo for reliability.
 (function() {
   'use strict';
   
-  function initMacAdminDock() {
-    const dockItems = document.querySelectorAll('.cc-mac-dock-item');
-    
-    dockItems.forEach(item => {
-      item.addEventListener('click', function(e) {
-        e.preventDefault();
-        const action = this.getAttribute('data-dock-action');
-        if (action && window.CampusCoreMacAdmin[action]) {
-          window.CampusCoreMacAdmin[action]();
-        }
-      });
-      
-      // Add hover scaling effect
-      item.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.15)';
-      });
-      
-      item.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1.1)';
-      });
-    });
-  }
-  
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMacAdminDock);
-  } else {
-    initMacAdminDock();
-  }
+  window.initMacAdminDock = function() {
+    // Basic initialization if needed, but navigation is handled by onclick
+    console.log('[CampusCore] Mac Admin Dock initialized');
+  };
 })();
 
 /* ============================================================
@@ -4191,31 +4198,8 @@ function buildBentoCalendar() {
 }
 
 /* ============================================================
-   MACOS-STYLE ADMIN DOCK
+   MAC-STYLE GLOW CARDS - JAVASCRIPT
    ============================================================ */
-function buildAdminDock(user) {
-  return `
-    <div class="cc-admin-dock-wrapper">
-      <div class="cc-admin-dock">
-        <button class="cc-admin-dock__item" data-dock-action="viewLogs" title="View System Logs">
-          <i class="fas fa-file-alt"></i>
-        </button>
-        <button class="cc-admin-dock__item" data-dock-action="toggleLabs" title="Toggle Lab Features">
-          <i class="fas fa-flask"></i>
-        </button>
-        <button class="cc-admin-dock__item" data-dock-action="debugOverlay" title="Debug Overlay">
-          <i class="fas fa-bug"></i>
-        </button>
-        <button class="cc-admin-dock__item" data-dock-action="forceResync" title="Force Data Resync">
-          <i class="fas fa-sync-alt"></i>
-        </button>
-        <button class="cc-admin-dock__item" data-dock-action="showMetrics" title="Show Metrics">
-          <i class="fas fa-chart-line"></i>
-        </button>
-      </div>
-    </div>
-  `;
-}
 
 /* ============================================================
    MAC-STYLE GLOW CARDS - JAVASCRIPT

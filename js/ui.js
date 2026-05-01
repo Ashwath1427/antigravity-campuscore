@@ -200,7 +200,15 @@ function handleSearch(query) {
     } else if (role === 'coordinator') {
       scopedStudents = STUDENTS.filter(s => String(s.class).startsWith('9-'));
     }
-    scopedStudents.filter(s => s.name.toLowerCase().includes(q) || s.class.toLowerCase().includes(q)).slice(0, 5)
+    // ── Deduplicate by ID to prevent same student appearing twice ──
+    const seenStudentIds = new Set();
+    const uniqueStudents = scopedStudents.filter(s => {
+      const key = s.id || s.admNo || (s.name + '|' + s.class);
+      if (seenStudentIds.has(key)) return false;
+      seenStudentIds.add(key);
+      return true;
+    });
+    uniqueStudents.filter(s => s.name.toLowerCase().includes(q) || s.class.toLowerCase().includes(q)).slice(0, 5)
       .forEach(s => items.push({ title: s.name, sub: `Class ${s.class} · Roll #${s.roll}`, icon: '🎓', section: role === 'teacher' ? 'teacher_classes' : 'students' }));
     TEACHERS.filter(t => t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q)).slice(0, 3)
       .forEach(t => items.push({ title: t.name, sub: `${t.subject} · ${t.classes}`, icon: '👨‍🏫', section: 'teachers' }));

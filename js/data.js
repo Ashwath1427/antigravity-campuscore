@@ -613,34 +613,34 @@ const DEMO_USERS = [
 
 // ─── Students (Complete 297 students synchronized with database) ────────────────────────────────────────────────
 let STUDENTS = [
-  // CLASS 9-C - 27 STUDENTS (from image)
-  { id: "3180076", admNo: "3180076", name: "KASULA ASHWATH", class: "9-C", roll: "01", gender: "Male", dob: "15 Jan 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.7, parent: "Parent of KASULA ASHWATH" },
-  { id: "3240214", admNo: "3240214", name: "NIMMAKAYALA PRATEEK REDDY", class: "9-C", roll: "02", gender: "Male", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of NIMMAKAYALA PRATEEK REDDY" },
-  { id: "3240215", admNo: "3240215", name: "BHUKYA PRANAVI", class: "9-C", roll: "03", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of BHUKYA PRANAVI" },
-  { id: "3240216", admNo: "3240216", name: "SNITHIK VENGALA", class: "9-C", roll: "04", gender: "Male", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of SNITHIK VENGALA" },
-  { id: "3240217", admNo: "3240217", name: "BHUKYA PRANEETH", class: "9-C", roll: "05", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of BHUKYA PRANEETH" },
-  { id: "3240218", admNo: "3240218", name: "G MANASWINI", class: "9-C", roll: "06", gender: "Female", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of G MANASWINI" },
-  { id: "3240219", admNo: "3240219", name: "NIDHISH DUMALA", class: "9-C", roll: "07", gender: "Male", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of NIDHISH DUMALA" },
-  { id: "3240220", admNo: "3240220", name: "SATHWIK REDDY GANTA", class: "9-C", roll: "08", gender: "Male", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of SATHWIK REDDY GANTA" },
-  { id: "3240221", admNo: "3240221", name: "KOTHA ASHVIK", class: "9-C", roll: "09", gender: "Male", dob: "15 Jan 2011", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.3, parent: "Parent of KOTHA ASHVIK" },
-  { id: "3240222", admNo: "3240222", name: "PRANEETH BHUKYA", class: "9-C", roll: "10", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of PRANEETH BHUKYA" },
-  { id: "3240223", admNo: "3240223", name: "VYSHNAVI B", class: "9-C", roll: "11", gender: "Female", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of VYSHNAVI B" },
-  { id: "3240224", admNo: "3240224", name: "HARSHITHA", class: "9-C", roll: "12", gender: "Female", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of HARSHITHA" },
-  { id: "3240225", admNo: "3240225", name: "RUTVIK J", class: "9-C", roll: "13", gender: "Male", dob: "15 Jan 2011", attendance: 84, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of RUTVIK J" },
-  { id: "3240226", admNo: "3240226", name: "SAICHARAN", class: "9-C", roll: "14", gender: "Male", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of SAICHARAN" },
-  { id: "3240227", admNo: "3240227", name: "ADVAITH", class: "9-C", roll: "15", gender: "Male", dob: "15 Jan 2011", attendance: 95, behavior: "Excellent", fee_status: "Paid", gpa: 8.5, parent: "Parent of ADVAITH" },
-  { id: "3240228", admNo: "3240228", name: "ANANYA", class: "9-C", roll: "16", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 8.2, parent: "Parent of ANANYA" },
-  { id: "3240229", admNo: "3240229", name: "ROHITH", class: "9-C", roll: "17", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ROHITH" },
-  { id: "3240230", admNo: "3240230", name: "TEJAS", class: "9-C", roll: "18", gender: "Male", dob: "15 Jan 2011", attendance: 89, behavior: "Good", fee_status: "Paid", gpa: 7.7, parent: "Parent of TEJAS" },
-  { id: "3240231", admNo: "3240231", name: "SNEHA", class: "9-C", roll: "19", gender: "Female", dob: "15 Jan 2011", attendance: 93, behavior: "Good", fee_status: "Paid", gpa: 8.1, parent: "Parent of SNEHA" },
-  { id: "3240232", admNo: "3240232", name: "KARTHIK", class: "9-C", roll: "20", gender: "Male", dob: "15 Jan 2011", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.4, parent: "Parent of KARTHIK" },
-  { id: "3240233", admNo: "3240233", name: "DIVYA", class: "9-C", roll: "21", gender: "Female", dob: "15 Jan 2011", attendance: 88, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of DIVYA" },
-  { id: "3240234", admNo: "3240234", name: "VIKRANT", class: "9-C", roll: "22", gender: "Male", dob: "15 Jan 2011", attendance: 90, behavior: "Good", fee_status: "Paid", gpa: 7.8, parent: "Parent of VIKRANT" },
-  { id: "3240235", admNo: "3240235", name: "PRIYANKA", class: "9-C", roll: "23", gender: "Female", dob: "15 Jan 2011", attendance: 92, behavior: "Good", fee_status: "Paid", gpa: 8.0, parent: "Parent of PRIYANKA" },
-  { id: "3240236", admNo: "3240236", name: "RAHUL", class: "9-C", roll: "24", gender: "Male", dob: "15 Jan 2011", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.5, parent: "Parent of RAHUL" },
-  { id: "3240237", admNo: "3240237", name: "MEERA", class: "9-C", roll: "25", gender: "Female", dob: "15 Jan 2011", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.4, parent: "Parent of MEERA" },
-  { id: "3240238", admNo: "3240238", name: "ARJUN", class: "9-C", roll: "26", gender: "Male", dob: "15 Jan 2011", attendance: 87, behavior: "Good", fee_status: "Paid", gpa: 7.6, parent: "Parent of ARJUN" },
-  { id: "3240239", admNo: "3240239", name: "LAKSHMI", class: "9-C", roll: "27", gender: "Female", dob: "15 Jan 2011", attendance: 91, behavior: "Good", fee_status: "Paid", gpa: 7.9, parent: "Parent of LAKSHMI" },
+  // CLASS 9-C – 27 CANONICAL STUDENTS (IDs match master registry in student.js)
+  { id: "3160136", admNo: "3160136", name: "PRANEETH BHUKYA",            class: "9-C", roll: "01", gender: "Male",   dob: "15 Jan 2011", attendance: 85, behavior: "Good",      fee_status: "Paid", gpa: 7.5, parent: "Parent of PRANEETH BHUKYA" },
+  { id: "3160417", admNo: "3160417", name: "SATHWIK REDDY GANTA",        class: "9-C", roll: "02", gender: "Male",   dob: "22 Feb 2011", attendance: 86, behavior: "Good",      fee_status: "Paid", gpa: 8.2, parent: "Parent of SATHWIK REDDY GANTA" },
+  { id: "3160662", admNo: "3160662", name: "KOTHA ASHVIK",               class: "9-C", roll: "03", gender: "Male",   dob: "10 Mar 2011", attendance: 92, behavior: "Good",      fee_status: "Paid", gpa: 8.5, parent: "Parent of KOTHA ASHVIK" },
+  { id: "3170292", admNo: "3170292", name: "BOPPARAJU ABHIRAM",          class: "9-C", roll: "04", gender: "Male",   dob: "05 Apr 2011", attendance: 88, behavior: "Good",      fee_status: "Paid", gpa: 7.8, parent: "Parent of BOPPARAJU ABHIRAM" },
+  { id: "3170355", admNo: "3170355", name: "BOYINI VIVEKANANDA MUDIRAJ", class: "9-C", roll: "05", gender: "Male",   dob: "12 May 2011", attendance: 89, behavior: "Good",      fee_status: "Paid", gpa: 7.9, parent: "Parent of BOYINI VIVEKANANDA MUDIRAJ" },
+  { id: "3170390", admNo: "3170390", name: "LOLLA ABHIRAM",              class: "9-C", roll: "06", gender: "Male",   dob: "20 Jun 2011", attendance: 90, behavior: "Good",      fee_status: "Paid", gpa: 8.0, parent: "Parent of LOLLA ABHIRAM" },
+  { id: "3180076", admNo: "3180076", name: "KASULA ASHWATH",             class: "9-C", roll: "07", gender: "Male",   dob: "12 Apr 2009", attendance: 94, behavior: "Excellent", fee_status: "Paid", gpa: 8.7, parent: "Parent of KASULA ASHWATH" },
+  { id: "3180133", admNo: "3180133", name: "SNITHIK VENGALA",            class: "9-C", roll: "08", gender: "Male",   dob: "30 Jul 2011", attendance: 92, behavior: "Good",      fee_status: "Paid", gpa: 8.2, parent: "Parent of SNITHIK VENGALA" },
+  { id: "3180183", admNo: "3180183", name: "NIDHISH DUMALA",             class: "9-C", roll: "09", gender: "Male",   dob: "15 Aug 2011", attendance: 93, behavior: "Good",      fee_status: "Paid", gpa: 8.3, parent: "Parent of NIDHISH DUMALA" },
+  { id: "3180184", admNo: "3180184", name: "YAMMANURU HARITEJA",         class: "9-C", roll: "10", gender: "Male",   dob: "25 Sep 2011", attendance: 94, behavior: "Good",      fee_status: "Paid", gpa: 8.4, parent: "Parent of YAMMANURU HARITEJA" },
+  { id: "3180286", admNo: "3180286", name: "CHARAN BATTU",               class: "9-C", roll: "11", gender: "Male",   dob: "05 Oct 2011", attendance: 95, behavior: "Good",      fee_status: "Paid", gpa: 8.5, parent: "Parent of CHARAN BATTU" },
+  { id: "3190472", admNo: "3190472", name: "ATHUL M",                    class: "9-C", roll: "12", gender: "Male",   dob: "18 Nov 2011", attendance: 96, behavior: "Good",      fee_status: "Paid", gpa: 8.6, parent: "Parent of ATHUL M" },
+  { id: "3200320", admNo: "3200320", name: "SIDDHARTH REDDY SADIVILLA",  class: "9-C", roll: "13", gender: "Male",   dob: "22 Dec 2011", attendance: 97, behavior: "Good",      fee_status: "Paid", gpa: 8.7, parent: "Parent of SIDDHARTH REDDY SADIVILLA" },
+  { id: "3200437", admNo: "3200437", name: "SIDDALA RAMCHARAN",          class: "9-C", roll: "14", gender: "Male",   dob: "08 Jan 2012", attendance: 98, behavior: "Good",      fee_status: "Paid", gpa: 8.8, parent: "Parent of SIDDALA RAMCHARAN" },
+  { id: "3210447", admNo: "3210447", name: "SAPAVATH JAHNAVI",           class: "9-C", roll: "15", gender: "Female", dob: "14 Feb 2012", attendance: 99, behavior: "Excellent", fee_status: "Paid", gpa: 9.2, parent: "Parent of SAPAVATH JAHNAVI" },
+  { id: "3210590", admNo: "3210590", name: "K MOKSHA",                   class: "9-C", roll: "16", gender: "Female", dob: "20 Mar 2012", attendance: 85, behavior: "Good",      fee_status: "Paid", gpa: 9.0, parent: "Parent of K MOKSHA" },
+  { id: "3230302", admNo: "3230302", name: "BOJJA HARIKESH REDDY",       class: "9-C", roll: "17", gender: "Male",   dob: "11 Apr 2012", attendance: 86, behavior: "Good",      fee_status: "Paid", gpa: 9.1, parent: "Parent of BOJJA HARIKESH REDDY" },
+  { id: "3230706", admNo: "3230706", name: "EKADANTHA YADAV",            class: "9-C", roll: "18", gender: "Male",   dob: "22 May 2012", attendance: 87, behavior: "Good",      fee_status: "Paid", gpa: 9.2, parent: "Parent of EKADANTHA YADAV" },
+  { id: "3240214", admNo: "3240214", name: "NIMMAKAYALA PRATEEK REDDY",  class: "9-C", roll: "19", gender: "Male",   dob: "30 Jun 2012", attendance: 88, behavior: "Good",      fee_status: "Paid", gpa: 9.3, parent: "Parent of NIMMAKAYALA PRATEEK REDDY" },
+  { id: "3240504", admNo: "3240504", name: "CHEEKOORI SAI CHARAN",       class: "9-C", roll: "20", gender: "Male",   dob: "15 Jul 2012", attendance: 89, behavior: "Good",      fee_status: "Paid", gpa: 9.4, parent: "Parent of CHEEKOORI SAI CHARAN" },
+  { id: "3240693", admNo: "3240693", name: "VALLETI SAI HARSHITH",       class: "9-C", roll: "21", gender: "Male",   dob: "20 Aug 2012", attendance: 90, behavior: "Good",      fee_status: "Paid", gpa: 7.5, parent: "Parent of VALLETI SAI HARSHITH" },
+  { id: "3250112", admNo: "3250112", name: "P SATHWIK REDDY",            class: "9-C", roll: "22", gender: "Male",   dob: "05 Sep 2012", attendance: 91, behavior: "Good",      fee_status: "Paid", gpa: 7.6, parent: "Parent of P SATHWIK REDDY" },
+  { id: "3260066", admNo: "3260066", name: "DEPA AARYAN REDDY",          class: "9-C", roll: "23", gender: "Male",   dob: "12 Oct 2012", attendance: 92, behavior: "Good",      fee_status: "Paid", gpa: 7.7, parent: "Parent of DEPA AARYAN REDDY" },
+  { id: "3230719", admNo: "3230719", name: "G MANASWINI",                class: "9-C", roll: "24", gender: "Female", dob: "22 Nov 2012", attendance: 93, behavior: "Good",      fee_status: "Paid", gpa: 7.8, parent: "Parent of G MANASWINI" },
+  { id: "3170068", admNo: "3170068", name: "SHERI RITHIK REDDY",         class: "9-C", roll: "25", gender: "Male",   dob: "30 Dec 2012", attendance: 94, behavior: "Good",      fee_status: "Paid", gpa: 7.9, parent: "Parent of SHERI RITHIK REDDY" },
+  { id: "3220915", admNo: "3220915", name: "BHUKYA PRANAVI",             class: "9-C", roll: "26", gender: "Female", dob: "14 Jan 2013", attendance: 95, behavior: "Good",      fee_status: "Paid", gpa: 8.0, parent: "Parent of BHUKYA PRANAVI" },
+  { id: "3190133", admNo: "3190133", name: "TANABUDDI SRI BHAVESH REDDY",class: "9-C", roll: "27", gender: "Male",   dob: "22 Feb 2013", attendance: 96, behavior: "Good",      fee_status: "Paid", gpa: 8.1, parent: "Parent of TANABUDDI SRI BHAVESH REDDY" },
   
   // CLASS 6 - 20 STUDENTS (5 per section)
   { id: "3160001", admNo: "3160001", name: "RAVI KUMAR", class: "6-A", roll: "01", gender: "Male", dob: "15 Jan 2012", attendance: 85, behavior: "Good", fee_status: "Paid", gpa: 7.2, parent: "Parent of RAVI KUMAR" },
@@ -1301,13 +1301,13 @@ const ROLE_NAV = {
   ],
   mac_admin: [
     { label: "Main", items: [
-      { id: "mac-dashboard",     icon: "fa-tachometer-alt",     label: "Mac Dashboard" },
-      { id: "system-monitor",    icon: "fa-desktop",            label: "System Monitor" },
+      { id: "mac_dashboard",     icon: "fa-tachometer-alt",     label: "Mac Dashboard" },
+      { id: "system_monitor",    icon: "fa-desktop",            label: "System Monitor" },
     ]},
     { label: "Mac Controls", items: [
-      { id: "mac-controls",      icon: "fa-sliders-h",          label: "Mac Controls" },
-      { id: "style-lab",         icon: "fa-palette",            label: "Style Lab" },
-      { id: "mac-themes",        icon: "fa-fill-drip",           label: "Mac Themes" },
+      { id: "mac_controls",      icon: "fa-sliders-h",          label: "Mac Controls" },
+      { id: "style_lab",         icon: "fa-palette",            label: "Style Lab" },
+      { id: "mac_themes",        icon: "fa-fill-drip",           label: "Mac Themes" },
     ]},
     { label: "System", items: [
       { id: "settings",          icon: "fa-cog",                label: "Settings" },
@@ -1689,11 +1689,27 @@ function initDataStore() {
   }
   
   // Persist STUDENTS to support Promote feature
+  // ── Data version guard: if stale localStorage exists, clear and re-seed ──
+  const DATA_VERSION = 'v3-canonical-9c';
+  if (localStorage.getItem('campuscore_data_version') !== DATA_VERSION) {
+    localStorage.removeItem('campuscore_students');
+    localStorage.setItem('campuscore_data_version', DATA_VERSION);
+    console.log('[Data] Cleared stale student data, re-seeding with canonical v3 dataset.');
+  }
   if (!localStorage.getItem('campuscore_students')) {
     localStorage.setItem('campuscore_students', JSON.stringify(STUDENTS));
   } else {
     STUDENTS = JSON.parse(localStorage.getItem('campuscore_students'));
   }
+  // ── Remove any duplicate IDs that may have crept in from old data ──
+  const seenIds = new Set();
+  STUDENTS = STUDENTS.filter(s => {
+    const key = s.id || s.admNo;
+    if (!key || seenIds.has(key)) return false;
+    seenIds.add(key);
+    return true;
+  });
+  localStorage.setItem('campuscore_students', JSON.stringify(STUDENTS));
   const sanitizedStudents = (Array.isArray(STUDENTS) ? STUDENTS : []).filter(s => !isExcludedStudentRecord(s));
   if (sanitizedStudents.length !== (Array.isArray(STUDENTS) ? STUDENTS.length : 0)) {
     STUDENTS = sanitizedStudents;

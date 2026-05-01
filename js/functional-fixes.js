@@ -514,7 +514,7 @@ function createAnnouncement(data) {
       title: data.title || '',
       content: data.content || '',
       date: new Date().toLocaleDateString('en-IN'),
-      author: currentUser.name,
+      author: (window.currentUser && window.currentUser.name) ? window.currentUser.name : 'System',
       category: data.category || 'General',
       priority: data.priority || 'medium',
       target: data.target || 'All',
