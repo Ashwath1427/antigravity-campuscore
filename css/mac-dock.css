@@ -1,116 +1,142 @@
 /* ============================================================
-   CAMPUS CORE – MAC DOCK CSS
-   Floating, animated dock for Admin (APAAAS) role
+   CAMPUS CORE MAC DOCK CSS
+   Premium glassmorphic dock for APASAA role only
    ============================================================ */
 
-.mac-dock-container {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    z-index: 10000;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+.cc-mac-dock-wrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
 }
 
-.mac-dock-container.visible {
-    transform: translateX(-50%) translateY(0);
+.cc-mac-admin-dock {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  padding: 12px 16px;
+  border-radius: 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  max-width: 92vw;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-.mac-dock {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    padding: 10px 15px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+.cc-mac-admin-dock::-webkit-scrollbar { display: none; }
+
+[data-theme="dark"] .cc-mac-admin-dock {
+  background: rgba(20, 24, 30, 0.75);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="dark"] .mac-dock {
-    background: rgba(30, 36, 40, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+.cc-mac-dock-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  color: var(--color-text-muted, #666);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  min-width: 60px;
+  flex-shrink: 0;
 }
 
-.dock-item {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    background: var(--color-surface);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: var(--color-primary);
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.cc-mac-dock-item:hover,
+.cc-mac-dock-item:focus {
+  background: rgba(25, 118, 210, 0.1);
+  color: var(--color-primary, #1976d2);
+  transform: translateY(-4px);
+  outline: none;
 }
 
-.dock-item:hover {
-    width: 70px;
-    height: 70px;
-    font-size: 32px;
-    margin: 0 10px -10px 10px;
+[data-theme="dark"] .cc-mac-dock-item:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.dock-item i {
-    transition: transform 0.3s ease;
+.cc-mac-dock-item.active,
+.cc-mac-dock-item[data-active="true"] {
+  color: var(--color-primary, #1976d2);
+  background: rgba(25, 118, 210, 0.12);
+  border-radius: 14px;
+  position: relative;
 }
 
-.dock-item:hover i {
-    transform: scale(1.1);
+.cc-mac-dock-item.active::after,
+.cc-mac-dock-item[data-active="true"]::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--color-primary, #1976d2);
+  border-radius: 50%;
 }
 
-.dock-item::after {
-    content: attr(data-label);
-    position: absolute;
-    top: -45px;
-    left: 50%;
-    transform: translateX(-50%) scale(0);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    pointer-events: none;
-    transition: transform 0.2s ease;
+.cc-mac-dock-item i {
+  font-size: 18px;
+  transition: transform 0.2s ease;
 }
 
-.dock-item:hover::after {
-    transform: translateX(-50%) scale(1);
+.cc-mac-dock-item:hover i {
+  transform: scale(1.1);
 }
 
-.dock-separator {
-    width: 1px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.2);
-    margin: 0 5px;
-    align-self: center;
+.cc-mac-dock-label {
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: 'Inter', -apple-system, sans-serif;
+  letter-spacing: -0.1px;
+  opacity: 0.8;
 }
 
-/* Specific item colors */
-.dock-item.admin { color: #fbc02d; }
-.dock-item.notices { color: #5ca870; }
-.dock-item.help { color: #1976d2; }
-.dock-item.settings { color: #78909c; }
-.dock-item.home { color: #e53935; }
+/* -- Sidebar removal for APASAA (no-sidebar-mode) -- */
+body.no-sidebar-mode #sidebar,
+body.no-sidebar-mode .sidebar-overlay,
+body.no-sidebar-mode .sidebar {
+  display: none !important;
+}
 
-/* Active dot */
-.dock-item.active::before {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--color-primary);
+body.no-sidebar-mode .main-content {
+  margin-left: 0 !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-bottom: 120px !important;
+}
+
+body.no-sidebar-mode .sticky-top-banner {
+  left: 0 !important;
+  width: 100% !important;
+}
+
+/* -- Responsive -- */
+@media (max-width: 768px) {
+  .cc-mac-admin-dock {
+    padding: 10px 10px;
+    gap: 2px;
+    border-radius: 20px;
+  }
+  .cc-mac-dock-item {
+    min-width: 48px;
+    padding: 7px 6px;
+  }
+  .cc-mac-dock-item i { font-size: 15px; }
+  .cc-mac-dock-label { font-size: 9px; }
 }

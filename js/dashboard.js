@@ -82,18 +82,32 @@ function buildDashboard(user) {
     c.innerHTML = safeRender('Parent Dashboard', window.buildParentDashboard || buildHome, user);
   } else if (user.role === 'coordinator') {
     c.innerHTML = [
-      buildCoordHome(user), buildCoordClasses(user), buildCoordIssues(user),
-      buildStaffApprovals(user), buildDocumentUploadSection(user),
-      buildVPSchedule(user), buildAnnouncements(user), buildEvents(user),
-      buildStaffHelpdesk(user), buildSettings(user)
+      safeRender('Home', buildCoordHome, user),
+      safeRender('Classes', buildCoordClasses, user),
+      safeRender('Issues', buildCoordIssues, user),
+      safeRender('Approvals', buildStaffApprovals, user),
+      safeRender('Upload Document', buildDocumentUploadSection, user),
+      safeRender('Schedule', buildVPSchedule, user),
+      safeRender('Notices', buildAnnouncements, user),
+      safeRender('Events', buildEvents, user),
+      safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
+      safeRender('Settings', buildSettings, user)
     ].join('');
   } else if (user.role === 'teacher') {
     c.innerHTML = [
-      buildTeacherHome(user), buildTeacherClasses(user), buildTeacherAttendance(user),
-      buildTeacherHomework(user), buildTeacherSchedule(user), buildTeacherResults(user),
-      buildTeacherStudentPerf(user), buildDocumentUploadSection(user),
-      buildAnnouncements(user), buildEvents(user),
-      buildTeacherMessages(user), buildStaffHelpdesk(user), buildSettings(user)
+      safeRender('Home', buildTeacherHome, user),
+      safeRender('Classes', buildTeacherClasses, user),
+      safeRender('Attendance', buildTeacherAttendance, user),
+      safeRender('Homework', buildTeacherHomework, user),
+      safeRender('Schedule', buildTeacherSchedule, user),
+      safeRender('Results', buildTeacherResults, user),
+      safeRender('Student Performance', buildTeacherStudentPerf, user),
+      safeRender('Upload Document', buildDocumentUploadSection, user),
+      safeRender('Notices', buildAnnouncements, user),
+      safeRender('Events', buildEvents, user),
+      safeRender('Messages', buildTeacherMessages, user),
+      safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
+      safeRender('Settings', buildSettings, user)
     ].join('');
   } else if (user.role === 'student') {
     c.innerHTML = safeRender('Student Dashboard', window.buildStudentDashboard || buildHome, user);
@@ -131,8 +145,7 @@ function buildDashboard(user) {
       safeRender('All Results', buildVPExams, user).replace('id="section-vp_exams"', 'id="section-all_results"'),
       safeRender('All Messages', buildVPMessages, user).replace('id="section-vp_messages"', 'id="section-all_messages"'),
       safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace('id="section-helpdesk_staff"', 'id="section-all_helpdesk"'),
-      safeRender('Settings', buildSettings, user),
-      buildMacAdminDock(user)
+      safeRender('Settings', buildSettings, user)
     ].join('');
     setTimeout(() => {
       translateSuperAdminUI();
@@ -142,6 +155,7 @@ function buildDashboard(user) {
     // Mac Admin Dashboard - Same as Super Admin but with Mac-style interface
     const activeGhost = localStorage.getItem('role_view_active') || 'principal';
     const ghostTarget = activeGhost === 'none' ? 'principal' : activeGhost;
+    const isCurrentViewAPASAA = (user.role === 'mac_admin') || (String(user.username || '').toUpperCase() === 'APASAA' && (!activeGhost || activeGhost === 'none'));
 
     c.innerHTML = [
       renderWithRoleContext(user, ghostTarget, (u) => safeRender(`Master Dashboard (Ghost ${ghostTarget.toUpperCase()})`, buildHome, u)).replace('id="section-home"', 'id="section-master_dashboard"'),
@@ -162,7 +176,7 @@ function buildDashboard(user) {
       safeRender('Mac Controls', buildMacControls, user),
       safeRender('Style Lab', buildStyleLab, user),
       safeRender('Settings', buildSettings, user),
-      buildMacAdminDock(user)
+      (isCurrentViewAPASAA ? buildMacAdminDock(user) : '')
     ].join('');
     setTimeout(applyMacStyling, 0);
   } else {
@@ -478,6 +492,7 @@ function buildStudents(user) {
     <td><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar" style="flex:1;min-width:60px"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div><strong style="color:${attColor(s.attendance)};font-size:12px">${s.attendance}%</strong></div></td>
     <td>${behaviorBadge(s.behavior)}</td><td>${feeStatusBadge(s.fee_status)}</td>
     <td><strong style="color:var(--color-primary)">${s.gpa}</strong>/10</td></tr>`).join('');
+
   return `<div class="dash-section" id="section-students"><div class="card"><h3>🎓 Student Directory</h3>
     <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
       <div style="position:relative;flex:1;min-width:200px"><i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--color-text-muted)"></i>
@@ -4014,51 +4029,55 @@ window.applyMacTheme = function(primary, secondary, bg) {
 };
 
 function buildMacAdminDock(user) {
+  // Resolve roleKey for the Dock (Ghost Mode aware)
+  let baseRoleKey = (user.role || '').toLowerCase().replace(' ', '_');
+  let activeRoleKey = baseRoleKey;
+  const ghostRole = localStorage.getItem('role_view_active');
+  if (ghostRole && ghostRole !== 'none') {
+    activeRoleKey = ghostRole;
+  }
+
+  // Get items for the active view
+  const navData = ROLE_NAV[activeRoleKey] || [];
+  const items = [];
+  
+  // Flatten ROLE_NAV items
+  navData.forEach(section => {
+    section.items.forEach(item => {
+      // Avoid duplicate Dashboard if it's already there
+      if (!items.find(i => i.id === item.id)) {
+        items.push(item);
+      }
+    });
+  });
+
+  // Add Mac-specific items if the base user is an admin
+  if (['super_admin', 'mac_admin', 'apaaas'].includes(baseRoleKey)) {
+    if (!items.find(i => i.id === 'mac_controls')) {
+      items.push({ id: 'mac_controls', icon: 'fa-cog', label: 'Mac Controls' });
+    }
+    if (!items.find(i => i.id === 'style_lab')) {
+      items.push({ id: 'style_lab', icon: 'fa-palette', label: 'Style Lab' });
+    }
+  }
+
+  // Add Logout always
+  items.push({ id: 'logout', icon: 'fa-sign-out-alt', label: 'Logout', customAction: 'logout()' });
+
+  const dockHtml = items.map(item => {
+    const action = item.customAction || `navigateTo('${item.id}')`;
+    return `
+      <button class="cc-mac-dock-item" data-dock-action="${item.id}" onclick="${action}">
+        <i class="fas ${item.icon}"></i>
+        <span class="cc-mac-dock-label">${item.label}</span>
+      </button>
+    `;
+  }).join('');
+
   return `
     <div class="cc-admin-dock-wrapper cc-mac-dock-wrapper">
       <div class="cc-admin-dock cc-mac-admin-dock">
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="master_dashboard" title="Master Dashboard" onclick="navigateTo('master_dashboard')">
-          <i class="fas fa-sitemap"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="role_views" title="Role Views" onclick="navigateTo('role_views')">
-          <i class="fas fa-user-lock"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_accounts" title="All Accounts" onclick="navigateTo('all_accounts')">
-          <i class="fas fa-users-cog"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_issues" title="Audit Logs" onclick="navigateTo('all_issues')">
-          <i class="fas fa-shield-alt"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="manage_documents" title="Master Files" onclick="navigateTo('manage_documents')">
-          <i class="fas fa-folder-open"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="removed_bin" title="Removed Bin" onclick="navigateTo('removed_bin')">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_notices" title="All Notices" onclick="navigateTo('all_notices')">
-          <i class="fas fa-bullhorn"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_approvals" title="All Approvals" onclick="navigateTo('all_approvals')">
-          <i class="fas fa-check-double"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_attendance" title="All Attendance" onclick="navigateTo('all_attendance')">
-          <i class="fas fa-clipboard-check"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_results" title="All Results" onclick="navigateTo('all_results')">
-          <i class="fas fa-chart-bar"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_messages" title="All Messages" onclick="navigateTo('all_messages')">
-          <i class="fas fa-envelope"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="all_helpdesk" title="Full Helpdesk" onclick="navigateTo('all_helpdesk')">
-          <i class="fas fa-headset"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="mac_controls" title="Mac Controls" onclick="navigateTo('mac_controls')">
-          <i class="fas fa-cog"></i>
-        </button>
-        <button class="cc-admin-dock__item cc-mac-dock-item" data-dock-action="style_lab" title="Style Lab" onclick="navigateTo('style_lab')">
-          <i class="fas fa-palette"></i>
-        </button>
+        ${dockHtml}
       </div>
     </div>
   `;
