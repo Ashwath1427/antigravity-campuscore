@@ -53,10 +53,5 @@
 }
 
 /* Section specific enhancements */
-#section-home {
-  /* Home specific styles */
-}
+/* Sections will inherit base styles; add specific overrides here when needed */
 
-#section-profile {
-  /* Profile specific styles */
-}
