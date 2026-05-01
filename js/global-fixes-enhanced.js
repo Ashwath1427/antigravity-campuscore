@@ -194,7 +194,7 @@ function initializeMissingData() {
         priority: 'medium'
       }
     ];
-    localStorage.setItem('campuscore_notices', JSON.stringify(defaultNotices));
+    localStorage.setItem('campuscore_notices', JSON.stringify({ active: defaultNotices, archived: [] }));
   }
 }
 

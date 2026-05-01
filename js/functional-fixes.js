@@ -521,7 +521,19 @@ function createAnnouncement(data) {
       createdDate: new Date().toISOString()
     };
     
-    let notices = JSON.parse(localStorage.getItem('campuscore_notices') || '{}');
+    let noticesData = localStorage.getItem('campuscore_notices');
+    let notices = {};
+    
+    try {
+      notices = JSON.parse(noticesData || '{}');
+      // Handle legacy array format
+      if (Array.isArray(notices)) {
+        notices = { active: notices, archived: [] };
+      }
+    } catch(e) {
+      notices = { active: [], archived: [] };
+    }
+    
     if (!notices.active) notices.active = [];
     notices.active.unshift(announcement);
     localStorage.setItem('campuscore_notices', JSON.stringify(notices));
