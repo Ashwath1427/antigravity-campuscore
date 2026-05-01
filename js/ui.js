@@ -249,11 +249,20 @@ function buildSidebar(user) {
   document.getElementById('banner-role-badge').textContent = user.roleLabel;
   // Nav
   const nav = document.getElementById('sidebar-nav');
-  const roleKey = (user.role || '').toLowerCase().replace(' ', '_');
+  let roleKey = (user.role || '').toLowerCase().replace(' ', '_');
+  
+  // ── Ghost Mode logic for Sidebar ──
+  if (['super_admin', 'mac_admin', 'apaaas', 'superadmin'].includes(roleKey)) {
+    const activeGhost = localStorage.getItem('role_view_active');
+    if (activeGhost && activeGhost !== 'none') {
+      roleKey = activeGhost.toLowerCase().replace(' ', '_');
+    }
+  }
+
   let sections = ROLE_NAV[roleKey] || ROLE_NAV[user.role] || [];
   
   if (sections.length === 0) {
-    console.warn(`No navigation configuration found for role: ${user.role}`);
+    console.warn(`No navigation configuration found for role: ${roleKey}`);
     sections = [{ label: "HOME", items: [{ id: "home", icon: "fa-home", label: "Dashboard" }] }];
   }
 

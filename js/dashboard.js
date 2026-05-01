@@ -200,6 +200,7 @@ function buildDashboard(user) {
 
 function triggerLiveReRender() {
   if (typeof buildDashboard === 'function') buildDashboard(currentUser);
+  if (typeof buildSidebar === 'function') buildSidebar(currentUser);
 }
 
 /**
