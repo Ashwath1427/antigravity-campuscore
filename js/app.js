@@ -115,7 +115,7 @@ async function handleLogin() {
 
   await delay(800);
 
-  const result = attemptLogin(username, password);
+  const result = await attemptLogin(username, password);
 
   btn.classList.remove('loading');
   btn.disabled = false;
