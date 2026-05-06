@@ -38,9 +38,15 @@
   --radius-lg: 18px;
   --radius-xl: 24px;
 
-  --sidebar-width: 220px;
+  --sidebar-width: 310px;
   --topbar-h: 58px;
   --transition: 0.3s ease;
+  
+  /* Liquid Glass Theme Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(15px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 /* ---------- Dark Mode ---------- */
@@ -57,6 +63,11 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.5);
+  
+  /* Liquid Glass Dark Theme Tokens */
+  --glass-bg: rgba(30, 36, 40, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 /* ---------- Reset ---------- */
@@ -74,13 +85,19 @@ html {
 
 body {
   font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-  background: var(--color-bg);
+  background: linear-gradient(135deg, #e0f2f1 0%, #ffffff 50%, #e8f5e9 100%);
+  background-attachment: fixed;
   color: var(--color-text);
   font-size: 14px;
   line-height: 1.6;
   min-height: 100vh;
   transition: background var(--transition), color var(--transition);
   overflow-x: hidden;
+}
+
+[data-theme="dark"] body {
+  background: linear-gradient(135deg, #0a192f 0%, #151a1e 50%, #1b5e20 100%);
+  background-attachment: fixed;
 }
 
 /* Fallback Banner */
@@ -199,12 +216,14 @@ a:hover {
 
 /* ---------- Cards ---------- */
 .card {
-  background: var(--color-surface);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 32px;
   margin-bottom: 24px;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(92, 168, 112, 0.1);
+  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border);
   transition: all 0.4s ease;
   position: relative;
   overflow: hidden;
