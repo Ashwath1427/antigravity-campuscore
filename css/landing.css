@@ -417,6 +417,24 @@ html {
 
 @media (max-width: 768px) {
   .land-nav-links { display: none; }
+  .land-nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: 16px 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 999;
+    gap: 4px;
+  }
+  [data-theme="dark"] .land-nav-links.open {
+    background: #1e2428;
+    border-bottom-color: #2d3a40;
+  }
   .land-hamburger { display: block; }
   
   .land-hero { 

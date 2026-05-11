@@ -64,7 +64,7 @@
 .db-status-details {
   font-size: 12px;
   opacity: 0.8;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
 }
 
 .db-status-actions {
@@ -193,12 +193,12 @@
 
 .db-actions .btn-secondary {
   background: var(--color-surface);
-  color: var(--color-text-primary);
+  color: var(--color-text);
   border: 1px solid var(--color-border);
 }
 
 .db-actions .btn-secondary:hover {
-  background: var(--color-surface-hover);
+  background: var(--color-surface-2);
   transform: translateY(-1px);
 }
 
@@ -360,7 +360,7 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--color-surface);
-  color: var(--color-text-primary);
+  color: var(--color-text);
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 12px;

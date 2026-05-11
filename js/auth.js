@@ -44,7 +44,6 @@ async function attemptLogin(username, password) {
   const expected = user.password || stored || 'PARENT123';
   
   console.log(`[AUTH] Checking password for ${normalizedUsername}`);
-  console.log(`[AUTH] Expected: ${expected}, Got: ${password}`);
   
   if (String(expected).toUpperCase() !== String(password).toUpperCase()) {
     console.error(`[AUTH] Password mismatch for ${normalizedUsername}`);

@@ -14,7 +14,7 @@
 /* Medium Tablets (Portrait) */
 @media (max-width: 1024px) {
   :root {
-    --sidebar-width: 240px;
+    --sidebar-width: 280px;
   }
 
   .stats-grid {

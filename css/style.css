@@ -832,39 +832,7 @@ a:hover {
   color: var(--color-danger);
 }
 
-/* Staff Helpdesk Pulse & Status */
-.ticket-active {
-  position: relative;
-}
-
-.ticket-active::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 8px;
-  height: 8px;
-  background: var(--color-danger);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7);
-  }
-
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(211, 47, 47, 0);
-  }
-
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
-  }
-}
+/* Staff Helpdesk Pulse & Status — defined above, no duplicate needed */
 
 /* Toast System */
 .toast {

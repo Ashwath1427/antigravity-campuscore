@@ -38,7 +38,7 @@
 }
 
 .floating-back:hover { 
-  background: var(--color-surface-hover); 
+  background: var(--color-surface-2); 
   transform: translateX(-4px); 
 }
 
