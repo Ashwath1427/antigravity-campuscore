@@ -46,15 +46,16 @@
     font-size: 24px;
     color: var(--color-primary);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform-origin: bottom;
+    will-change: transform;
 }
 
 .dock-item:hover {
-    width: 70px;
-    height: 70px;
-    font-size: 32px;
-    margin: 0 10px -10px 10px;
+    transform: scale(1.4) translateY(-10px);
+    margin: 0 15px;
+    z-index: 10;
 }
 
 .dock-item i {

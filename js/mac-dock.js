@@ -19,17 +19,17 @@ function initMacDock() {
     const dockHtml = `
         <div id="mac-dock-container" class="mac-dock-container">
             <div class="mac-dock">
-                <div class="dock-item home active" data-label="Dashboard" onclick="handleDockClick('home', event)">
+                <div class="dock-item home active" data-label="Dashboard" onclick="handleDockClick('master_dashboard', event)">
                     <i class="fas fa-th-large"></i>
                 </div>
                 <div class="dock-item admin" data-label="User Management" onclick="handleDockClick('all_accounts', event)">
                     <i class="fas fa-users-cog"></i>
                 </div>
-                <div class="dock-item notices" data-label="System Notices" onclick="handleDockClick('notices', event)">
+                <div class="dock-item notices" data-label="System Notices" onclick="handleDockClick('all_notices', event)">
                     <i class="fas fa-bullhorn"></i>
                 </div>
                 <div class="dock-separator"></div>
-                <div class="dock-item help" data-label="Help Desk" onclick="handleDockClick('help_desk', event)">
+                <div class="dock-item help" data-label="Help Desk" onclick="handleDockClick('all_helpdesk', event)">
                     <i class="fas fa-headset"></i>
                 </div>
                 <div class="dock-item" data-label="Database" onclick="handleDockClick('database', event)">

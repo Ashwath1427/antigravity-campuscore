@@ -28,20 +28,8 @@
   color: var(--color-primary);
 }
 
-/* Grid Layouts for Sections */
-.content-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.content-grid-equal {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
-}
+/* Grid Layouts for Sections (Use classes from dashboard.css) */
+/* .content-grid and .content-grid-equal are defined in dashboard.css */
 
 /* Data Tables within Sections */
 .section-table-wrapper {

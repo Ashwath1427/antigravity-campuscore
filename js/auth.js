@@ -45,7 +45,7 @@ async function attemptLogin(username, password) {
   
   console.log(`[AUTH] Checking password for ${normalizedUsername}`);
   
-  if (String(expected).toUpperCase() !== String(password).toUpperCase()) {
+  if (String(expected) !== String(password)) {
     console.error(`[AUTH] Password mismatch for ${normalizedUsername}`);
     return { success: false };
   }

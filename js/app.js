@@ -442,14 +442,16 @@ function renderBentoCalendar() {
     grid.innerHTML = html;
   }
 
-  // Use a MutationObserver because the dashboard HTML is injected dynamically
-  const observer = new MutationObserver(() => {
-    if (document.getElementById('bento-cal-grid') && document.getElementById('bento-cal-grid').children.length === 0) {
-      renderBentoCalendar();
-    }
-  });
+  // ─── Bento Calendar Observer ──────────────────────────────────
+  (function() {
+    const observer = new MutationObserver(() => {
+      if (document.getElementById('bento-cal-grid') && document.getElementById('bento-cal-grid').children.length === 0) {
+        renderBentoCalendar();
+      }
+    });
 
-  document.addEventListener('DOMContentLoaded', () => {
-    observer.observe(document.body, { childList: true, subtree: true });
-    renderBentoCalendar(); // Initial check
-  });
+    document.addEventListener('DOMContentLoaded', () => {
+      observer.observe(document.body, { childList: true, subtree: true });
+      renderBentoCalendar(); // Initial check
+    });
+  })();
