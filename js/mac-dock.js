@@ -5,9 +5,12 @@
 
 function initMacDock() {
     // Only show for super_admin (APAAAS)
-    if (!currentUser || !['super_admin', 'apaaas', 'superadmin'].includes(currentUser.role)) {
-        removeMacDock();
-        return;
+    if (!currentUser || !['super_admin', 'apaaas', 'superadmin', 'apasaa'].includes(currentUser.role)) {
+        // Also check by username
+        if (!currentUser || !['APAAAS', 'APASAA'].includes(String(currentUser.username || '').toUpperCase())) {
+            removeMacDock();
+            return;
+        }
     }
 
     // Check if dock already exists

@@ -206,7 +206,7 @@ function handleSearch(query) {
       .forEach(s => items.push({ title: s.name, sub: `Class ${s.class} · Roll #${s.roll}`, icon: '🎓', section: role === 'teacher' ? 'teacher_classes' : 'students' }));
 
     // Filter Teachers (With Secrecy)
-    const isAdmin = (currentUser.role === 'apaaas' || currentUser.role === 'super_admin' || String(currentUser.username || '').toUpperCase() === 'APAAAS');
+    const isAdmin = (currentUser.role === 'apaaas' || currentUser.role === 'super_admin' || ['APAAAS', 'APASAA'].includes(String(currentUser.username || '').toUpperCase()));
     TEACHERS.filter(t => {
       const matches = t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q);
       if (!matches) return false;
@@ -255,7 +255,7 @@ function buildSidebar(user) {
   let sections = ROLE_NAV[roleKey] || ROLE_NAV[user.role] || [];
 
   // SECRECY: Hide Admin (APAAAS) role from anyone not specifically logged in as admin
-  const isAdmin = (user.role === 'apaaas' || user.role === 'super_admin' || String(user.username || '').toUpperCase() === 'APAAAS');
+  const isAdmin = (user.role === 'apaaas' || user.role === 'super_admin' || ['APAAAS', 'APASAA'].includes(String(user.username || '').toUpperCase()));
   if (!isAdmin) {
     sections = (sections || []).filter(s => {
       const label = (s.label || '').toUpperCase();

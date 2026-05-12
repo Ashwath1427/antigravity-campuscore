@@ -172,7 +172,7 @@ function initDashboard(user) {
   renderNotifications(user);
   buildDashboard(user);
 
-  if (user.role === 'apaaas' || user.role === 'superadmin' || user.role === 'super_admin' || String(user.username || '').toUpperCase() === 'APAAAS') {
+  if (user.role === 'apaaas' || user.role === 'superadmin' || user.role === 'super_admin' || ['APAAAS', 'APASAA'].includes(String(user.username || '').toUpperCase())) {
     navigateTo('master_dashboard');
   } else {
     navigateTo('home');

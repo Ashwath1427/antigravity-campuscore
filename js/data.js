@@ -183,6 +183,25 @@ const DEMO_USERS = [
       { title: "Storage Usage", text: "localStorage usage at 45%", time: "1d ago", icon: "💾", color: "#f57c00" }
     ]
   },
+  {
+    id: 9,
+    username: "APASAA",
+    password: "APASAA",
+    name: "Mac Admin",
+    role: "super_admin",
+    roleLabel: "Super Admin",
+    department: "System Administration",
+    phone: "+91 98765 00003",
+    email: "macadmin@dpsnadergul.edu",
+    joined: "Jan 2020",
+    avatar_color: "#1b5e20",
+    icon: "fa-user-cog",
+    notifications: [
+      { title: "System Health", text: "All systems operational", time: "30m ago", icon: "✅", color: "#5ca870" },
+      { title: "Mac Dock Active", text: "Admin dock initialized successfully", time: "1h ago", icon: "🖥️", color: "#1976d2" },
+      { title: "Database Sync", text: "All data synchronized", time: "2h ago", icon: "💾", color: "#f57c00" }
+    ]
+  },
   // ─── Generated Parent Users (Class 9-C) ───
   {
     id: 101,
