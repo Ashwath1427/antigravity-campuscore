@@ -649,36 +649,38 @@ function updateDashboardCounts() {
   }
 }
 
-function showNotification(message, type = 'info') {
-  const notification = document.createElement('div');
-  notification.className = `notification notification-${type}`;
-  notification.textContent = message;
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 15px 20px;
-    border-radius: 5px;
-    color: white;
-    font-weight: 500;
-    z-index: 10000;
-    animation: slideIn 0.3s ease;
-  `;
-  
-  const colors = {
-    success: '#4caf50',
-    error: '#f44336',
-    info: '#2196f3',
-    warning: '#ff9800'
+if (typeof showNotification === 'undefined') {
+  window.showNotification = function(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 5px;
+      color: white;
+      font-weight: 500;
+      z-index: 10000;
+      animation: slideIn 0.3s ease;
+    `;
+    
+    const colors = {
+      success: '#4caf50',
+      error: '#f44336',
+      info: '#2196f3',
+      warning: '#ff9800'
+    };
+    
+    notification.style.backgroundColor = colors[type] || colors.info;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
   };
-  
-  notification.style.backgroundColor = colors[type] || colors.info;
-  document.body.appendChild(notification);
-  
-  setTimeout(() => {
-    notification.style.animation = 'slideOut 0.3s ease';
-    setTimeout(() => notification.remove(), 300);
-  }, 3000);
 }
 
 // ─── Add Admin Buttons to Navigation ───────────────────────────────
