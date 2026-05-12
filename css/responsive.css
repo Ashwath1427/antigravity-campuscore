@@ -5,7 +5,7 @@
 
 /* Large Desktops and Monitors */
 @media (min-width: 1400px) {
-  .land-container, .main-content {
+  .land-container {
     max-width: 1320px;
     margin: 0 auto;
   }
