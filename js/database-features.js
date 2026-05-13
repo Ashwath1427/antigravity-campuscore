@@ -81,7 +81,7 @@ async function testDatabaseConnection() {
   text.textContent = 'Testing...';
   
   try {
-    if (typeof supabase !== 'undefined') {
+    if (typeof supabase !== 'undefined' && supabase && typeof supabase.from === 'function') {
       const { data, error } = await supabase.from('cc_students').select('count').single();
       if (error) throw error;
       
