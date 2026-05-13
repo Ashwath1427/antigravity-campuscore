@@ -299,7 +299,7 @@ function validateForm(formId, rules = {}) {
 }
 
 // ─── Performance Monitoring ───────────────────────────────────
-const performanceMetrics = {
+const systemPerformanceMetrics = {
   pageLoadTime: 0,
   jsExecutionTime: 0,
   apiCallCount: 0,
@@ -309,8 +309,8 @@ const performanceMetrics = {
 // Track page load time
 window.addEventListener('load', function() {
   const navigation = performance.getEntriesByType('navigation')[0];
-  performanceMetrics.pageLoadTime = navigation.loadEventEnd - navigation.fetchStart;
-  console.log(`Page load time: ${performanceMetrics.pageLoadTime}ms`);
+  systemPerformanceMetrics.pageLoadTime = navigation.loadEventEnd - navigation.fetchStart;
+  console.log(`Page load time: ${systemPerformanceMetrics.pageLoadTime}ms`);
 });
 
 // Track JavaScript execution time
@@ -318,7 +318,7 @@ function measurePerformance(name, fn) {
   const start = performance.now();
   const result = fn();
   const end = performance.now();
-  performanceMetrics.jsExecutionTime += (end - start);
+  systemPerformanceMetrics.jsExecutionTime += (end - start);
   console.log(`${name} execution time: ${(end - start).toFixed(2)}ms`);
   return result;
 }

@@ -271,7 +271,7 @@ function validateTeacherData(teacher) {
 }
 
 // ─── Database Performance Monitoring ─────────────────────────
-let performanceMetrics = {
+let databasePerformanceMetrics = {
   queryCount: 0,
   errorCount: 0,
   avgResponseTime: 0,
@@ -282,26 +282,26 @@ function trackQueryPerformance(startTime, success) {
   const endTime = Date.now();
   const responseTime = endTime - startTime;
   
-  performanceMetrics.queryCount++;
-  performanceMetrics.lastQueryTime = responseTime;
+  databasePerformanceMetrics.queryCount++;
+  databasePerformanceMetrics.lastQueryTime = responseTime;
   
   if (!success) {
-    performanceMetrics.errorCount++;
+    databasePerformanceMetrics.errorCount++;
   }
   
   // Calculate average response time
-  performanceMetrics.avgResponseTime = 
-    (performanceMetrics.avgResponseTime * (performanceMetrics.queryCount - 1) + responseTime) / 
-    performanceMetrics.queryCount;
+  databasePerformanceMetrics.avgResponseTime = 
+    (databasePerformanceMetrics.avgResponseTime * (databasePerformanceMetrics.queryCount - 1) + responseTime) / 
+    databasePerformanceMetrics.queryCount;
 }
 
 function getPerformanceReport() {
   return {
-    totalQueries: performanceMetrics.queryCount,
-    errorRate: performanceMetrics.queryCount > 0 ? 
-      (performanceMetrics.errorCount / performanceMetrics.queryCount * 100).toFixed(2) + '%' : '0%',
-    avgResponseTime: performanceMetrics.avgResponseTime.toFixed(2) + 'ms',
-    lastQueryTime: performanceMetrics.lastQueryTime + 'ms'
+    totalQueries: databasePerformanceMetrics.queryCount,
+    errorRate: databasePerformanceMetrics.queryCount > 0 ? 
+      (databasePerformanceMetrics.errorCount / databasePerformanceMetrics.queryCount * 100).toFixed(2) + '%' : '0%',
+    avgResponseTime: databasePerformanceMetrics.avgResponseTime.toFixed(2) + 'ms',
+    lastQueryTime: databasePerformanceMetrics.lastQueryTime + 'ms'
   };
 }
 
