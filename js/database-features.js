@@ -91,7 +91,6 @@ async function testDatabaseConnection() {
     } else {
       // Fallback to local storage mode
       dbStatus.connected = false;
-      showNotification('Using local storage mode', 'info');
     }
   } catch (error) {
     dbStatus.connected = false;
