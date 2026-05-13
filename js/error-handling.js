@@ -22,7 +22,8 @@ window.addEventListener('error', function(event) {
                         event.error?.name === 'TypeError';
 
   if (!isSupabaseError) {
-    showUserFriendlyError('An unexpected error occurred. Please try again.');
+    const shortMsg = event.error?.message || 'Unknown Logic Error';
+    showUserFriendlyError('System Error: ' + shortMsg);
   }
 });
 
