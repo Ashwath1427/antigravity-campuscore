@@ -5,8 +5,12 @@
 
 // ─── Global Error Handler ───────────────────────────────────────
 window.addEventListener('error', function(event) {
+  // If it's a resource error (img, script, etc.), event.error will be undefined.
+  // We only want to show toasts for actual JS execution errors.
+  if (!event.error) return;
+
   console.error('[GLOBAL ERROR]', event.error);
-  logError('GLOBAL_ERROR', event.error.message, event.error.stack);
+  logError('GLOBAL_ERROR', event.error?.message || 'Unknown Error', event.error?.stack || '');
 
   // Don't show toast for Supabase/network-related errors
   const errorMessage = event.error?.message?.toLowerCase() || '';
