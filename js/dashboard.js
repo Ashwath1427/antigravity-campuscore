@@ -42,21 +42,21 @@ function safeRender(name, builderFunc, user) {
  * @param {string} key - The translation key defined in data.js 
  * @returns {string} - Translated text for current language 
  */
-window.t = function(key) {
+window.t = function (key) {
   const lang = localStorage.getItem('cc_sys_lang') || 'en';
   if (!window.CORE_TRANSLATIONS || !window.CORE_TRANSLATIONS[key]) return key;
   return window.CORE_TRANSLATIONS[key][lang] || window.CORE_TRANSLATIONS[key]['en'];
 };
 
-window.changeLanguage = function(lang) {
+window.changeLanguage = function (lang) {
   localStorage.setItem('cc_sys_lang', lang);
   const labels = { en: 'English', te: 'తెలుగు', hi: 'हिन्दी' };
   const lbl = document.getElementById('current-lang-label');
   if (lbl) lbl.textContent = labels[lang] || 'English';
-  
+
   console.log(`[CampusCore] System language changed to: ${lang}`);
   simulateAction(`Language set to ${labels[lang]}`);
-  
+
   triggerLiveReRender();
 };
 
@@ -65,7 +65,7 @@ window.triggerLiveReRender = function (targetSection = null) {
     buildDashboard(window.currentUser);
     // Explicitly re-apply sidebar as well to update menu tokens
     buildSidebar(window.currentUser);
-    
+
     // Recovery: navigate back to where we wanted to go
     if (targetSection) {
       setTimeout(() => {
@@ -562,7 +562,7 @@ function buildStudents(user) {
     <div style="overflow-x:auto;border-radius:14px"><table class="data-table" id="students-table"><thead><tr><th>Student</th><th>Class</th><th>Roll</th><th>Gender</th><th>Attendance</th><th>Behavior</th><th>Fee</th><th>GPA</th></tr></thead><tbody id="students-tbody">${rows}</tbody></table></div></div></div>`;
 }
 
-window.openAddStudentModal = function() {
+window.openAddStudentModal = function () {
   const m = `<div class="modal-overlay" id="add-student-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
     <div class="modal" style="max-width:500px">
       <h3>Admit New Student</h3>
@@ -582,7 +582,7 @@ window.openAddStudentModal = function() {
   document.body.insertAdjacentHTML('beforeend', m);
 };
 
-window.saveNewStudent = function() {
+window.saveNewStudent = function () {
   const name = document.getElementById('ns-name').value;
   const grade = document.getElementById('ns-grade').value;
   const sec = document.getElementById('ns-sec').value;
@@ -732,16 +732,16 @@ function buildAnnouncements(user) {
   const priC = { high: '#d32f2f', medium: '#f57c00', low: '#5ca870' };
   const filterCat = localStorage.getItem('vp_notice_filter_cat') || 'All Categories';
   const vpNoticeTab = localStorage.getItem('vp_notice_tab') || 'active';
-  
+
   let liveAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
   let archivedAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
-  
+
   const parentSid = user.role === 'parent' ? String(user.childId || user.username.replace(/^P/i, '').replace(/A$/i, '')) : null;
   const parentShared = (parentSid && typeof getStudentSharedData === 'function') ? getStudentSharedData(parentSid) : null;
   const readSet = new Set((parentShared && parentShared.noticesRead) || []);
-  
+
   let source = user.role === 'vice_principal' && vpNoticeTab === 'archived' ? archivedAnnouncements : liveAnnouncements;
-  
+
   // Apply Target Audience Filter for Students/Parents
   if (user.role === 'student' || user.role === 'parent') {
     source = source.filter(a => (a.target || 'All') === 'All' || a.target === (user.role === 'student' ? 'Students' : 'Parents'));
@@ -756,7 +756,7 @@ function buildAnnouncements(user) {
     const c = catC[a.category] || '#5ca870';
     const p = priC[a.priority] || '#5ca870';
     const isUnread = user.role === 'parent' ? !readSet.has(String(a.id)) : false;
-    
+
     // Pick translated title and body based on current system language
     const lang = localStorage.getItem('cc_sys_lang') || 'en';
     const displayTitle = (lang === 'te' && a.title_te) ? a.title_te : (lang === 'hi' && a.title_hi) ? a.title_hi : a.title;
@@ -789,13 +789,13 @@ function buildAnnouncements(user) {
   </div>`;
 }
 
-window.updateVPNoticeFilter = function(val) {
+window.updateVPNoticeFilter = function (val) {
   localStorage.setItem('vp_notice_filter_cat', val);
   triggerLiveReRender();
   navigateTo('announcements');
 };
 
-window.parentReadNotice = function(noticeId) {
+window.parentReadNotice = function (noticeId) {
   if (!window.currentUser || window.currentUser.role !== 'parent' || typeof getStudentSharedData !== 'function') return;
   const sid = String(window.currentUser.childId || window.currentUser.username.replace(/^P/i, '').replace(/A$/i, ''));
   const shared = getStudentSharedData(sid);
@@ -819,7 +819,7 @@ function getVPEvents() {
 
 function buildEvents(user) {
   const filterCat = localStorage.getItem('vp_event_filter_cat') || 'All Events';
-  
+
   let source = getVPEvents();
   if (filterCat !== 'All Events') {
     source = source.filter(e => e.title.includes(filterCat) || (filterCat === 'Sports' && e.title.includes('Sports')) || (filterCat === 'Cultural' && (e.title.includes('Annual') || e.title.includes('Club'))));
@@ -863,7 +863,7 @@ function buildEvents(user) {
   </div>`;
 }
 
-window.updateVPEventFilter = function(val) {
+window.updateVPEventFilter = function (val) {
   localStorage.setItem('vp_event_filter_cat', val);
   triggerLiveReRender();
   navigateTo('events');
@@ -1162,15 +1162,15 @@ window.compareVPSections = function () {
   window.updateCompMatrix();
 };
 
-window.updateCompMatrix = function() {
+window.updateCompMatrix = function () {
   const c1 = document.getElementById('comp-1').value;
   const c2 = document.getElementById('comp-2').value;
   const d1 = CLASS_PERFORMANCE.find(x => x.class === c1);
   const d2 = CLASS_PERFORMANCE.find(x => x.class === c2);
-  
+
   document.getElementById('lbl-1').innerText = c1;
   document.getElementById('lbl-2').innerText = c2;
-  
+
   const body = document.getElementById('comp-body');
   body.innerHTML = `
     <tr><td>Avg Attendance</td><td>${d1.avgAtt}%</td><td>${d2.avgAtt}%</td></tr>
@@ -1207,7 +1207,7 @@ window.exportVPReport = function () {
   document.body.insertAdjacentHTML('beforeend', m);
 };
 
-window.runInstitutionalExport = function() {
+window.runInstitutionalExport = function () {
   const btn = document.getElementById('exp-btn');
   const cancel = document.getElementById('exp-cancel');
   const progress = document.getElementById('export-progress');
@@ -1224,18 +1224,18 @@ window.runInstitutionalExport = function() {
     p += Math.random() * 25;
     if (p > 100) p = 100;
     fill.style.width = p + '%';
-    
+
     if (p < 30) status.innerText = 'Extracting class metrics...';
     else if (p < 70) status.innerText = 'Calculating institutional benchmarks...';
     else if (p < 95) status.innerText = 'Formatting ' + format + ' dossier...';
     else status.innerText = 'Finalizing download...';
 
     if (p >= 100) {
-       clearInterval(interval);
-       setTimeout(() => {
-         simulateAction(`Success: Institutional_${format}_Report_2026.zip downloaded.`);
-         document.getElementById('vp-export-modal').remove();
-       }, 800);
+      clearInterval(interval);
+      setTimeout(() => {
+        simulateAction(`Success: Institutional_${format}_Report_2026.zip downloaded.`);
+        document.getElementById('vp-export-modal').remove();
+      }, 800);
     }
   }, 400);
 };
@@ -1393,11 +1393,11 @@ function buildVPStudents(user) {
   let data = students.map((s, idx) => {
     const sid = String(s.id);
     const shared = getVPStudentSharedData(sid);
-    
+
     // Normalize grade and section
     let grade = String(shared.currentClass || s.currentClass || s.class || '');
     let section = String(shared.currentSection || s.currentSection || s.section || '');
-    
+
     if (grade.includes('-')) {
       const parts = grade.split('-');
       grade = parts[0];
@@ -1406,7 +1406,7 @@ function buildVPStudents(user) {
     // Corrected normalization: 
     const gradeVal = String(s.class || '').split('-')[0] || '9';
     const sectionVal = String(s.class || '').split('-')[1] || s.section || 'C';
-    
+
     return { s, sid, shared, grade: gradeVal, section: sectionVal, att: Number(s.attendancePct || s.attendance || 0), gpa: s.gpa || 0, status: s.status || 'Active' };
   });
 
@@ -1492,41 +1492,41 @@ function onVPAnalysisClassChange(val) {
   sec.innerHTML = opts.map(o => `<option value="${o}">${o === 'All Sections' ? o : 'Section ' + o}</option>`).join('');
 }
 
-window.applyVPStudentFilters = async function() {
+window.applyVPStudentFilters = async function () {
   const cls = document.getElementById('vp-filter-class').value;
   const sec = document.getElementById('vp-filter-section').value;
   const q = document.getElementById('vp-filter-query').value;
-  
+
   localStorage.setItem('vp_student_analysis_filter', JSON.stringify({ class: cls, section: sec, q }));
 
   // spirito of the request: attempt real-time query if possible
   if (window.supabaseClient) {
     simulateAction('Querying Supabase registry...');
     try {
-        let results;
-        if (cls !== 'All Classes' && sec !== 'All Sections') {
-            results = await sbGetStudentsByClass(cls + '-' + sec);
-        } else if (cls !== 'All Classes') {
-            results = await sbGetStudentsByGrade(cls);
-        } else {
-            results = await sbFetchStudents();
-        }
-        
-        if (results) {
-            // Update the cache for the view
-            // NOTE: We only update the global cache if it's the "All" fetch
-            // For targeted filters, buildVPStudents will handle the visual filtering from the full cache
-            // But we simulate the fetch to show it's "Working"
-            console.log(`[Supabase] Live fetch returned ${results.length} students`);
-        }
-    } catch(e) { console.error('SB Filter Error:', e); }
+      let results;
+      if (cls !== 'All Classes' && sec !== 'All Sections') {
+        results = await sbGetStudentsByClass(cls + '-' + sec);
+      } else if (cls !== 'All Classes') {
+        results = await sbGetStudentsByGrade(cls);
+      } else {
+        results = await sbFetchStudents();
+      }
+
+      if (results) {
+        // Update the cache for the view
+        // NOTE: We only update the global cache if it's the "All" fetch
+        // For targeted filters, buildVPStudents will handle the visual filtering from the full cache
+        // But we simulate the fetch to show it's "Working"
+        console.log(`[Supabase] Live fetch returned ${results.length} students`);
+      }
+    } catch (e) { console.error('SB Filter Error:', e); }
   }
 
   triggerLiveReRender();
   navigateTo('vp_students');
 };
 
-window.clearVPStudentFilters = function() {
+window.clearVPStudentFilters = function () {
   localStorage.setItem('vp_student_analysis_filter', JSON.stringify({ class: 'All Classes', section: 'All Sections', q: '' }));
   triggerLiveReRender();
   navigateTo('vp_students');
@@ -1554,10 +1554,10 @@ function openVPStudentProfileModal(studentId) {
 function buildVPStudentIssues(user) {
   const tab = localStorage.getItem('vp_issue_tab') || 'main';
   const filterGrade = localStorage.getItem('vp_issue_filter_grade') || 'All Grades';
-  
+
   const escStore = getEscalationStore();
   let issues = (GLOBAL_ISSUES || []).slice().sort((a, b) => new Date(b.updated || b.created) - new Date(a.updated || a.created));
-  
+
   // Apply Grade Filter if set
   if (filterGrade !== 'All Grades') {
     issues = issues.filter(i => String(i.class || '').startsWith(filterGrade));
@@ -1566,7 +1566,7 @@ function buildVPStudentIssues(user) {
   const mainIssues = issues.filter(i => i.stage === 'VP' && i.status !== 'Resolved' && i.status !== 'Closed' && i.status !== 'Escalated');
   const globalEsc = issues.filter(i => i.status === 'Escalated').map(i => ({ ...i, _source: 'main' }));
   const localVpEsc = (escStore.vpEscalated || []).map(i => ({ ...i, _source: 'coordinator' }));
-  
+
   const escalatedIssues = [...localVpEsc, ...globalEsc];
   const resolvedIssues = issues.filter(i => i.status === 'Resolved' || i.status === 'Closed');
   const activeList = tab === 'escalated' ? escalatedIssues : tab === 'resolved' ? resolvedIssues : mainIssues;
@@ -1616,7 +1616,7 @@ function buildVPStudentIssues(user) {
   </div>`;
 }
 
-window.updateVPIssueGradeFilter = function(val) {
+window.updateVPIssueGradeFilter = function (val) {
   localStorage.setItem('vp_issue_filter_grade', val);
   triggerLiveReRender();
   navigateTo('vp_student_issues');
@@ -1638,14 +1638,14 @@ function saveVPTeachers(data) {
 function buildVPTeachers(user) {
   const filterSub = localStorage.getItem('vp_teacher_filter_subject') || 'All Subjects';
   const filterStatus = localStorage.getItem('vp_teacher_filter_status') || 'All Status';
-  
+
   const allTeachers = getVPTeachers();
   let filtered = allTeachers;
-  
+
   if (filterSub !== 'All Subjects') {
     filtered = filtered.filter(t => t.subject === filterSub);
   }
-  
+
   if (filterStatus !== 'All Status') {
     filtered = filtered.filter(t => t.status === filterStatus);
   }
@@ -1716,7 +1716,7 @@ function buildVPTeachers(user) {
   </div>`;
 }
 
-window.openEditTeacherModal = function(id) {
+window.openEditTeacherModal = function (id) {
   const teachers = getVPTeachers();
   const t = teachers.find(x => x.id === id);
   if (!t) return;
@@ -1754,7 +1754,7 @@ window.openEditTeacherModal = function(id) {
   document.body.insertAdjacentHTML('beforeend', html);
 };
 
-window.updateTeacherData = function(id) {
+window.updateTeacherData = function (id) {
   const teachers = getVPTeachers();
   const idx = teachers.findIndex(x => x.id === id);
   if (idx === -1) return;
@@ -1771,7 +1771,7 @@ window.updateTeacherData = function(id) {
   navigateTo('vp_teachers');
 };
 
-window.updateVPTeacherFilter = function(key, val) {
+window.updateVPTeacherFilter = function (key, val) {
   if (key === 'subject') localStorage.setItem('vp_teacher_filter_subject', val);
   if (key === 'status') localStorage.setItem('vp_teacher_filter_status', val);
   triggerLiveReRender();
@@ -1814,7 +1814,7 @@ window.openVPTeacherReminder = function (id, name) {
   document.body.insertAdjacentHTML('beforeend', m);
 };
 
-window.flagTeacher = function(id) {
+window.flagTeacher = function (id) {
   const reason = prompt('Specify reason for flagging this faculty member:');
   if (reason) {
     const flags = JSON.parse(localStorage.getItem('campuscore_teacher_flags') || '{}');
@@ -1824,7 +1824,7 @@ window.flagTeacher = function(id) {
     triggerLiveReRender();
   }
 };
-window.flagFaculty = function(id) { window.flagTeacher(id); };
+window.flagFaculty = function (id) { window.flagTeacher(id); };
 
 window.openVPTeacherFlag = function (id, name) {
   const m = `<div class="modal-overlay" id="staff-flag-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
@@ -1859,11 +1859,11 @@ window.openVPPendingStaffWork = function () {
 
 function buildVPSchedule(user) {
   const view = localStorage.getItem('vp_schedule_view') || 'today';
-  
+
   if (view === 'week') {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
     const times = Object.keys(WEEKLY_SCHEDULE);
-    
+
     let gridHTML = `<div class="card" style="grid-column: 1 / -1">
       <p style="color:var(--color-text-muted);margin-bottom:16px;font-size:13px">Full Weekly Academic Grid - Class 10A View</p>
       <div style="overflow-x:auto">
@@ -1876,10 +1876,10 @@ function buildVPSchedule(user) {
               <tr>
                 <td style="font-weight:700">${t}</td>
                 ${days.map(d => {
-                  const sub = WEEKLY_SCHEDULE[t][d];
-                  const color = sub === 'LUNCH' ? '#999' : (sub === 'Math' ? '#5ca870' : (sub === 'Science' ? '#f57c00' : '#1976d2'));
-                  return `<td><span class="badge" style="background:${color};color:white;width:80px;display:inline-block">${sub}</span></td>`;
-                }).join('')}
+      const sub = WEEKLY_SCHEDULE[t][d];
+      const color = sub === 'LUNCH' ? '#999' : (sub === 'Math' ? '#5ca870' : (sub === 'Science' ? '#f57c00' : '#1976d2'));
+      return `<td><span class="badge" style="background:${color};color:white;width:80px;display:inline-block">${sub}</span></td>`;
+    }).join('')}
               </tr>
             `).join('')}
           </tbody>
@@ -2019,7 +2019,7 @@ window.approveExamResult = function (cls, subj) {
 
 function buildVPReports(user) {
   const filterGrade = localStorage.getItem('vp_report_filter_grade') || 'All Classes';
-  
+
   return `<div class="dash-section" id="section-vp_reports">
     <div class="card" style="margin-bottom:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
@@ -2064,11 +2064,11 @@ function buildVPReports(user) {
   </div>`;
 }
 
-window.navigateToVPModule = function(target, grade) {
+window.navigateToVPModule = function (target, grade) {
   if (grade !== 'All Classes') {
     if (target === 'vp_attendance') localStorage.setItem('att_filter_class', grade);
     if (target === 'vp_class_perf') {
-       localStorage.setItem('vp_perf_grade', grade); // handled by table filter
+      localStorage.setItem('vp_perf_grade', grade); // handled by table filter
     }
     if (target === 'vp_student_issues') localStorage.setItem('vp_issue_filter_grade', grade);
   }
@@ -2076,7 +2076,7 @@ window.navigateToVPModule = function(target, grade) {
   navigateTo(target);
 };
 
-window.updateVPReportFilter = function(val) {
+window.updateVPReportFilter = function (val) {
   localStorage.setItem('vp_report_filter_grade', val);
   triggerLiveReRender();
   navigateTo('vp_reports');
@@ -2084,13 +2084,13 @@ window.updateVPReportFilter = function(val) {
 
 function buildVPApprovals(user) {
   const filterType = localStorage.getItem('vp_approvals_filter_type') || 'All Approvals';
-  
+
   // Guard against undefined data
   if (typeof VP_APPROVALS === 'undefined') {
     return `<div class="dash-section" id="section-vp_approvals"><div class="card"><p>No approval data available.</p></div></div>`;
   }
 
-  const localComments = window.CCStorage 
+  const localComments = window.CCStorage
     ? CCStorage.getItem('approval_comments', user.role, user.id, {})
     : JSON.parse(localStorage.getItem('cc_approval_comments') || '{}');
 
@@ -2159,7 +2159,7 @@ function buildVPApprovals(user) {
   </div>`;
 }
 
-window.updateVPApprovalsFilter = function(val) {
+window.updateVPApprovalsFilter = function (val) {
   localStorage.setItem('vp_approvals_filter_type', val);
   triggerLiveReRender();
   navigateTo('vp_approvals');
@@ -2308,14 +2308,14 @@ function closeGenericLanguageModal() { const m = document.getElementById('generi
 function saveGenericLanguage() {
   if (!currentUser) return;
   const lang = (document.getElementById('generic-lang-select') || {}).value || 'English';
-  
+
   if (typeof setSystemLanguage === 'function') {
     setSystemLanguage(lang);
   } else {
     localStorage.setItem('cc_sys_lang', lang);
     triggerLiveReRender();
   }
-  
+
   closeGenericLanguageModal();
 }
 
@@ -2600,16 +2600,16 @@ function buildTeacherAttendance(user) {
   // Get real students for the teacher's default class (9-B)
   const allStudents = (typeof window.CAMPUSCORE_REGISTRY !== 'undefined') ? window.CAMPUSCORE_REGISTRY.getAllStudents() : [];
   const classStudents = allStudents.filter(s => s.grade === '9' && s.section === 'B');
-  
+
   // State recovery: Get pending marks from this session
   const currentMarks = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
-  
+
   const rows = classStudents.map((s, i) => {
     const status = currentMarks[s.id] || 'Present'; // Default to Present
     const isP = status === 'Present';
     const isA = status === 'Absent';
     const isL = status === 'Late';
-    
+
     // Simulate last 5 days if none exist
     const last5 = (s.attendance_logs || []).slice(-5).map(l => l.status);
     while (last5.length < 5) last5.push('Present');
@@ -2634,7 +2634,7 @@ function buildTeacherAttendance(user) {
           <button class="att-btn l ${isL ? 'active' : ''}" onclick="markTeacherAttendance('${s.id}', 'Late', this)">L</button>
         </div>
       </td>
-      <td><input type="text" id="remark-${s.id}" placeholder="Add remark..." value="${currentMarks['remark_'+s.id] || ''}" oninput="saveAttendanceRemark('${s.id}', this.value)" style="padding:6px;width:100%;border-radius:6px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)" /></td>
+      <td><input type="text" id="remark-${s.id}" placeholder="Add remark..." value="${currentMarks['remark_' + s.id] || ''}" oninput="saveAttendanceRemark('${s.id}', this.value)" style="padding:6px;width:100%;border-radius:6px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text)" /></td>
     </tr>`;
   }).join('');
 
@@ -2663,7 +2663,7 @@ function buildTeacherAttendance(user) {
   </div>`;
 }
 
-window.saveAttendanceRemark = function(id, val) {
+window.saveAttendanceRemark = function (id, val) {
   let marking = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
   marking['remark_' + id] = val;
   localStorage.setItem('teacher_current_marking', JSON.stringify(marking));
@@ -2673,17 +2673,17 @@ async function executeAttendanceSubmission() {
   const marking = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
   const allStudents = window.CAMPUSCORE_REGISTRY.getAllStudents();
   const classStudents = allStudents.filter(s => s.grade === '9' && s.section === 'B');
-  
+
   if (classStudents.length === 0) return;
-  
+
   simulateAction('Finalizing local records...');
-  
+
   const studentUpdates = [];
-  
+
   classStudents.forEach(s => {
     const status = marking[s.id] || 'Present';
     const remark = marking['remark_' + s.id] || '';
-    
+
     // Ensure logs exist and append today's record
     const logs = s.attendance_logs || [];
     logs.push({
@@ -2692,16 +2692,16 @@ async function executeAttendanceSubmission() {
       remark: remark,
       timestamp: new Date().getTime()
     });
-    
+
     // Calculate new percentage
     const presentCount = logs.filter(l => l.status === 'Present' || l.status === 'Late').length;
     const newPct = Math.round((presentCount / logs.length) * 100);
-    
+
     // Update student object locally
     s.attendance_logs = logs;
     s.attendancePct = newPct;
     s.last_sync_at = new Date().toISOString();
-    
+
     // Build update payload for Supabase
     studentUpdates.push({
       id: s.id,
@@ -2710,28 +2710,28 @@ async function executeAttendanceSubmission() {
       gpa: s.gpa || 0,
       last_sync_at: s.last_sync_at
     });
-    
+
     // Persist to LocalStorage
     localStorage.setItem('campuscore_student_data_' + s.id, JSON.stringify(s));
   });
-  
+
   // Clear temp buffer
   localStorage.removeItem('teacher_current_marking');
-  
+
   // 1. Success Message for Local Persistence
   simulateAction('Attendance records saved locally.');
 
   // 2. Asynchronous Sync to Supabase (Local-First approach)
   try {
-     if (typeof sbSyncAttendance === 'function') {
-        await sbSyncAttendance(studentUpdates);
-        simulateAction('Attendance synced to server');
-     }
+    if (typeof sbSyncAttendance === 'function') {
+      await sbSyncAttendance(studentUpdates);
+      simulateAction('Attendance synced to server');
+    }
   } catch (error) {
-     console.error('[Attendance] Sync failed', error);
-     simulateAction('Saved locally, will sync when online');
+    console.error('[Attendance] Sync failed', error);
+    simulateAction('Saved locally, will sync when online');
   }
-  
+
   setTimeout(() => {
     triggerLiveReRender();
   }, 1000);
@@ -3878,14 +3878,14 @@ function sendMsgReply(index) {
   let activeMessages = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
   let content = document.getElementById('reply-text-' + index).value.trim();
   if (!content) return;
-  
+
   if (!activeMessages[index].replies) activeMessages[index].replies = [];
-  activeMessages[index].replies.push({ 
-    sender: currentUser.name, 
-    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 
-    content 
+  activeMessages[index].replies.push({
+    sender: currentUser.name,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    content
   });
-  
+
   localStorage.setItem('campuscore_vp_msgs', JSON.stringify(activeMessages));
   simulateAction('Reply sent to thread.');
   triggerLiveReRender();
@@ -3915,10 +3915,10 @@ function openMsgForwardModal(sub, sender) {
   document.body.insertAdjacentHTML('beforeend', m);
 }
 
-window.executeMsgForward = function(sub, sender) {
+window.executeMsgForward = function (sub, sender) {
   const target = document.getElementById('fwd-target').value;
   const note = document.getElementById('fwd-note').value;
-  
+
   let msgs = JSON.parse(localStorage.getItem('campuscore_vp_msgs')) || VP_MESSAGES.map((m, i) => ({ ...m, _id: i, replies: [] }));
   const newMsg = {
     _id: Date.now(),
@@ -3929,7 +3929,7 @@ window.executeMsgForward = function(sub, sender) {
     content: `[Forwarded to ${target}] \nNote: ${note}\n---\nOriginal Message follows...`,
     replies: []
   };
-  
+
   msgs.unshift(newMsg);
   localStorage.setItem('campuscore_vp_msgs', JSON.stringify(msgs));
   document.getElementById('fwd-msg-modal').remove();
@@ -3961,7 +3961,7 @@ function openBroadcastModal() {
   document.body.insertAdjacentHTML('beforeend', m);
 };
 
-window.executeBroadcast = function() {
+window.executeBroadcast = function () {
   const target = document.getElementById('bc-target').value;
   const content = document.getElementById('bc-content').value;
   if (!content) return;
@@ -3976,7 +3976,7 @@ window.executeBroadcast = function() {
     content: content,
     replies: []
   };
-  
+
   msgs.unshift(newMsg);
   localStorage.setItem('campuscore_vp_msgs', JSON.stringify(msgs));
   document.getElementById('bc-modal').remove();
@@ -4011,7 +4011,7 @@ function openNewMessageModal() {
   document.body.insertAdjacentHTML('beforeend', m);
 };
 
-window.executeNewMsg = function() {
+window.executeNewMsg = function () {
   const target = document.getElementById('nm-target').value;
   const sub = document.getElementById('nm-sub').value;
   const content = document.getElementById('nm-content').value;
@@ -4027,7 +4027,7 @@ window.executeNewMsg = function() {
     content: content,
     replies: []
   };
-  
+
   msgs.unshift(newMsg);
   localStorage.setItem('campuscore_vp_msgs', JSON.stringify(msgs));
   document.getElementById('nm-modal').remove();
@@ -4307,12 +4307,12 @@ function rejectRequest(id) {
 function buildStaffHelpdesk(user) {
   const filter = localStorage.getItem('helpdesk_filter') || 'All';
   let raw = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]');
-  
+
   // Fallback to institutional data if localStorage is empty
   if (raw.length === 0 && window.HELPDESK_TICKETS) {
     raw = window.HELPDESK_TICKETS;
   }
-  
+
   const tickets = filter === 'All' ? raw : raw.filter(t => t.status === filter);
 
   const rows = tickets.map(t => `
@@ -4455,7 +4455,7 @@ function buildRegistration(user) {
   </div>`;
 }
 
-window.switchRegTab = function(type) {
+window.switchRegTab = function (type) {
   const pBtn = document.getElementById('reg-tab-parent');
   const tBtn = document.getElementById('reg-tab-teacher');
   const bBtn = document.getElementById('reg-tab-bulk');
@@ -4466,8 +4466,8 @@ window.switchRegTab = function(type) {
   const btns = [pBtn, tBtn, bBtn];
   const forms = [pForm, tForm, bForm];
 
-  btns.forEach(b => { if(b){ b.style.background = 'transparent'; b.style.color = 'var(--color-text)'; b.style.border = 'none'; } });
-  forms.forEach(f => { if(f){ f.style.display = 'none'; } });
+  btns.forEach(b => { if (b) { b.style.background = 'transparent'; b.style.color = 'var(--color-text)'; b.style.border = 'none'; } });
+  forms.forEach(f => { if (f) { f.style.display = 'none'; } });
 
   if (type === 'parent') {
     pBtn.style.background = 'var(--color-primary)'; pBtn.style.color = 'white'; pBtn.style.border = '';
@@ -4476,12 +4476,12 @@ window.switchRegTab = function(type) {
     tBtn.style.background = 'var(--color-primary)'; tBtn.style.color = 'white'; tBtn.style.border = '';
     tForm.style.display = 'block';
   } else if (type === 'bulk') {
-    if(bBtn) { bBtn.style.background = 'var(--color-primary)'; bBtn.style.color = 'white'; bBtn.style.border = ''; }
-    if(bForm) bForm.style.display = 'block';
+    if (bBtn) { bBtn.style.background = 'var(--color-primary)'; bBtn.style.color = 'white'; bBtn.style.border = ''; }
+    if (bForm) bForm.style.display = 'block';
   }
 };
 
-window.executeRegistration = function(type) {
+window.executeRegistration = function (type) {
   if (type === 'teacher') {
     const name = document.getElementById('reg-t-name').value.trim();
     const username = document.getElementById('reg-t-user').value.trim();
@@ -4492,10 +4492,10 @@ window.executeRegistration = function(type) {
     if (!name || !username || !subject) { simulateAction('Please fill all required fields'); return; }
 
     const teacherData = { id: username, name, username, password, subject, department: dept, role: 'teacher', status: 'Active', classes: '7A, 8B', avatar_color: '#5ca870', icon: 'fa-chalkboard-teacher' };
-    
+
     // 1. Register for Auth
     if (typeof registerDynamicUser === 'function') registerDynamicUser(teacherData);
-    
+
     // 2. Add to Teacher Monitor
     const teachers = getVPTeachers();
     teachers.push({ id: username, name, subject, status: 'Active', classes: '9A, 10B' });
@@ -4515,11 +4515,11 @@ window.executeRegistration = function(type) {
     if (!sName || !pName || !pUsername) { simulateAction('Please fill all student and parent fields'); return; }
 
     const studentId = 'Dynamic' + Date.now().toString().slice(-4);
-    
+
     // 1. Create Student Data
     const studentData = { name: sName, currentClass: sClass, currentSection: sSec, roll: sRoll, attendancePct: 100, gpa: 0, status: 'Active', activityLog: [] };
     localStorage.setItem('campuscore_student_data_' + studentId, JSON.stringify(studentData));
-    
+
     // 2. Update Student Registry Index
     const dynamicIds = JSON.parse(localStorage.getItem('campuscore_dynamic_student_ids') || '[]');
     dynamicIds.push(studentId);
@@ -4531,11 +4531,11 @@ window.executeRegistration = function(type) {
 
     simulateAction(`Family registered: ${sName} and Parent ${pName}`);
   }
-  
+
   triggerLiveReRender();
 };
 
-window.downloadStudentBulkTemplate = function() {
+window.downloadStudentBulkTemplate = function () {
   if (window.BulkUploadProcessor) {
     BulkUploadProcessor.downloadStudentTemplate();
   } else {
@@ -4543,7 +4543,7 @@ window.downloadStudentBulkTemplate = function() {
   }
 };
 
-window.handleBulkStudentUpload = function(event) {
+window.handleBulkStudentUpload = function (event) {
   const file = event.target.files[0];
   if (!file) return;
   if (window.BulkUploadProcessor) {
@@ -4553,7 +4553,7 @@ window.handleBulkStudentUpload = function(event) {
   }
 };
 
-window.processBulkStudentData = function(csvText) {
+window.processBulkStudentData = function (csvText) {
   const lines = csvText.trim().split('\n');
   if (lines.length <= 1) {
     simulateAction('Error: File is empty or has no data rows.');
@@ -4565,7 +4565,7 @@ window.processBulkStudentData = function(csvText) {
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
-    
+
     // Simple CSV split (comma separated)
     const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
     if (cols.length >= 7) {
@@ -4590,38 +4590,38 @@ window.processBulkStudentData = function(csvText) {
 
   students.forEach((s, idx) => {
     const studentId = 'Bulk' + Date.now().toString().slice(-4) + idx;
-    
+
     // 1. Create Student Data
-    const studentData = { 
-      name: s.sName, 
-      currentClass: s.sClass, 
-      currentSection: s.sSec, 
-      roll: s.sRoll, 
-      attendancePct: 100, 
-      gpa: 0, 
-      status: 'Active', 
-      activityLog: [{ note: 'Bulk uploaded to system', date: new Date().toISOString(), actor: currentUser.name }] 
+    const studentData = {
+      name: s.sName,
+      currentClass: s.sClass,
+      currentSection: s.sSec,
+      roll: s.sRoll,
+      attendancePct: 100,
+      gpa: 0,
+      status: 'Active',
+      activityLog: [{ note: 'Bulk uploaded to system', date: new Date().toISOString(), actor: currentUser.name }]
     };
     localStorage.setItem('campuscore_student_data_' + studentId, JSON.stringify(studentData));
-    
+
     // 2. Update Student Registry Index
     const dynamicIds = JSON.parse(localStorage.getItem('campuscore_dynamic_student_ids') || '[]');
     dynamicIds.push(studentId);
     localStorage.setItem('campuscore_dynamic_student_ids', JSON.stringify(dynamicIds));
 
     // 3. Register Parent for Auth
-    const parentUser = { 
-      id: Date.now() + idx, 
-      name: s.pName, 
-      username: s.pUsername, 
-      password: s.pPass, 
-      role: 'parent', 
-      roleLabel: 'Parent', 
-      childName: s.sName, 
-      childId: studentId, 
-      childClass: `${s.sClass}-${s.sSec}`, 
-      avatar_color: '#f57c00', 
-      icon: 'fa-user-friends' 
+    const parentUser = {
+      id: Date.now() + idx,
+      name: s.pName,
+      username: s.pUsername,
+      password: s.pPass,
+      role: 'parent',
+      roleLabel: 'Parent',
+      childName: s.sName,
+      childId: studentId,
+      childClass: `${s.sClass}-${s.sSec}`,
+      avatar_color: '#f57c00',
+      icon: 'fa-user-friends'
     };
     if (typeof registerDynamicUser === 'function') registerDynamicUser(parentUser);
   });
@@ -4852,7 +4852,7 @@ function buildAllAccounts(user) {
     </div>`;
 }
 
-window.setAccountFilter = function(val) {
+window.setAccountFilter = function (val) {
   localStorage.setItem('account_filter_role', val);
   triggerLiveReRender();
   navigateTo('all_accounts');
@@ -4949,7 +4949,7 @@ function setSystemLanguage(l) {
   localStorage.setItem('campuscore_language', l);
   simulateAction('Applying ' + l + ' localization...');
   triggerLiveReRender();
-  
+
   // High delay to ensure re-render is finished
   setTimeout(() => {
     if (typeof applyLanguage === 'function') {
@@ -4970,7 +4970,7 @@ function viewAccount(uid) {
   const all = (typeof getUnifiedAccounts === 'function') ? getUnifiedAccounts() : [];
   const u = all.find(x => x.username === uid || x.id === uid);
   if (!u) { simulateAction('Audit log generated for ' + uid); return; }
-  
+
   const html = `<div class="modal-overlay" id="view-acc-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
     <div class="modal" style="max-width:450px">
       <div style="display:flex;align-items:center;gap:15px;margin-bottom:20px">
@@ -5171,15 +5171,15 @@ window.submitApprovalComment = function (id) {
 window.markTeacherAttendance = function (roll, status, btn) {
   // Use the database-synced version if available, otherwise local simulation
   if (window.supabaseClient) {
-     markTeacherAttendanceDB(roll, status, btn); 
-     return;
+    markTeacherAttendanceDB(roll, status, btn);
+    return;
   }
   let marking = JSON.parse(localStorage.getItem('teacher_current_marking') || '{}');
   marking[roll] = status;
   localStorage.setItem('teacher_current_marking', JSON.stringify(marking));
 
   const group = btn.closest('.attendance-btn-group');
-  if(group) {
+  if (group) {
     group.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
@@ -5233,7 +5233,7 @@ window.submitHelpReply = function (id) {
       });
       localStorage.setItem('campuscore_tickets', JSON.stringify(tickets));
     }
-    
+
     const modal = document.getElementById('helpdesk-reply-modal');
     if (modal) modal.remove();
     simulateAction('Reply recorded in ticket history and sent to parent.');
@@ -5309,7 +5309,7 @@ window.openVPEventModal = function () {
   document.body.insertAdjacentHTML('beforeend', m);
 }
 
-window.openEventMasterPlan = function(title) {
+window.openEventMasterPlan = function (title) {
   const m = `<div class="modal-overlay" id="evt-master-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
     <div class="modal" style="max-width:500px">
       <h3>Event Master Plan: ${title}</h3>
@@ -5337,13 +5337,13 @@ window.saveVPEvent = function () {
   const dateStr = document.getElementById('ev-date').value;
   const color = document.getElementById('ev-cat').value;
   const desc = document.getElementById('ev-desc').value || 'Planned Institutional Activity';
-  
+
   if (!name || !dateStr) { simulateAction('⚠️ Please provide an event name and date.'); return; } // WARN-003 FIX: replaced blocking alert() with toast
-  
+
   const newEv = { title: name, date: dateStr, desc: desc, color: color };
   let localEvents = JSON.parse(localStorage.getItem('campuscore_events'));
   if (!localEvents) localEvents = EVENTS;
-  
+
   localEvents.unshift(newEv);
   localStorage.setItem('campuscore_events', JSON.stringify(localEvents));
 
@@ -5380,10 +5380,10 @@ function helpParent(ticketId, parentName) {
   document.body.insertAdjacentHTML('beforeend', m);
 }
 
-window.executeAdvancedResolve = function(id) {
+window.executeAdvancedResolve = function (id) {
   const msg = document.getElementById('direct-resolution-msg').value;
-  if(!msg) { console.warn('[CampusCore] Alert suppressed:', 'Please provide a message or resolution note'); return; }
-  
+  if (!msg) { console.warn('[CampusCore] Alert suppressed:', 'Please provide a message or resolution note'); return; }
+
   simulateAction('Transmitting resolution to Parent Portal...');
   setTimeout(() => {
     let tickets = JSON.parse(localStorage.getItem('campuscore_tickets') || '[]');
@@ -5391,7 +5391,7 @@ window.executeAdvancedResolve = function(id) {
     const idx = tickets.findIndex(t => t.id === id);
     if (idx > -1) {
       tickets[idx].status = 'Resolved';
-      if(!tickets[idx].notes) tickets[idx].notes = [];
+      if (!tickets[idx].notes) tickets[idx].notes = [];
       tickets[idx].notes.push({ sender: currentUser.role, text: msg, date: new Date().toLocaleString() });
       localStorage.setItem('campuscore_tickets', JSON.stringify(tickets));
     }
@@ -5461,21 +5461,21 @@ async function fetchGlobalCounts() {
     const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: 0, present: 0, absent: 0, late: 0 };
     // BUG-002a FIX: was from('teachers') — correct table is cc_users filtered by role='teacher'
     const { count: teacherCount } = await window.supabaseClient.from('cc_users').select('*', { count: 'exact', head: true }).eq('role', 'teacher');
-    
+
     // Update generic stats (Principal/Admin fallback)
     updateStat('stat-generic-0', stats.total || '...');
     updateStat('stat-generic-1', teacherCount || '32');
     updateStat('stat-institutional-att', (stats.present || 0) + '/' + (stats.total || 0));
-    
+
     const user = window.currentUser;
     if (user && (user.role === 'student' || user.role === 'parent')) {
       const sid = (user.role === 'parent' && window.getParentSid) ? window.getParentSid(user) : (user.childId || user.id);
       const data = window.getStudentSharedData ? window.getStudentSharedData(sid) : null;
       if (data) {
-         updateStat('p-stat-att', data.attendancePct + '%');
-         updateStat('p-stat-gpa', (data.results ? data.results.overall : 0) + '%');
-         updateStat('p-stat-hw', (data.homework ? data.homework.filter(h=>h.status==='Pending').length : 0));
-         updateStat('p-stat-exams', (data.exams ? data.exams.length : 0));
+        updateStat('p-stat-att', data.attendancePct + '%');
+        updateStat('p-stat-gpa', (data.results ? data.results.overall : 0) + '%');
+        updateStat('p-stat-hw', (data.homework ? data.homework.filter(h => h.status === 'Pending').length : 0));
+        updateStat('p-stat-exams', (data.exams ? data.exams.length : 0));
       }
     }
     console.log('[CampusCore] Global stats synchronized with Institutional Registry');
@@ -5487,15 +5487,15 @@ async function fetchVPStats() {
     const stats = window.getInstitutionalStats ? window.getInstitutionalStats() : { total: 0, present: 0, absent: 0, late: 0 };
     // BUG-002b FIX: 'issues' table doesn't exist in Supabase. Issues are localStorage-only.
     const openIssues = (window.GLOBAL_ISSUES || []).filter(i => i.status === 'Open').length;
-    
+
     updateStat('stat-present', stats.present || '0');
     updateStat('stat-absent', stats.absent || '0');
     updateStat('stat-total-students', stats.total || '0');
     updateStat('stat-approvals', String(openIssues) || '5');
-    
+
     // Principal/Admin sync
     updateStat('stat-institutional-att', (stats.present || 0) + '/' + (stats.total || 0));
-    
+
     console.log('[CampusCore] Syncing VP/Admin stats with Institutional Registry');
   } catch (e) { console.error('[CampusCore] Error:', e); }
 }
