@@ -285,7 +285,7 @@ function buildSidebar(user) {
   nav.innerHTML = sections.map(section => `
     <div class="menu-section-label">${section.label}</div>
     ${section.items.map(item => {
-    const label = (typeof window.t === 'function') ? window.t(item.id) : item.label;
+    const label = (typeof window.t === 'function' && window.CORE_TRANSLATIONS && window.CORE_TRANSLATIONS[item.id]) ? window.t(item.id) : (item.label || item.id);
 
     // Inject badge for messages if not already present
     let displayBadge = item.badge;

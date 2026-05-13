@@ -208,7 +208,8 @@ function buildDashboard(user) {
       safeRender('Events', buildEvents, user),
       safeRender('Manage Documents', buildManageDocuments, user).replace(/(<div[^>]+)id="section-manage_documents"/, '$1id="section-manage_documents"'),
       safeRender('All Messages', buildVPMessages, user).replace(/(<div[^>]+)id="section-vp_messages"/, '$1id="section-all_messages"'),
-      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace(/(<div[^>]+)id="section-helpdesk_tickets"/, '$1id="section-all_helpdesk"'),
+      safeRender('Full Helpdesk', buildStaffHelpdesk, user).replace(/(<div[^>]+)id="section-helpdesk_staff"/, '$1id="section-all_helpdesk"'),
+      `<div id="section-database" class="dash-section"></div>`,
       safeRender('User Registration', buildRegistration, user),
       safeRender('Settings', buildSettings, user)
     ].join('');
