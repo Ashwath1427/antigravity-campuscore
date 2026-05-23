@@ -1,7 +1,7 @@
 import re
 
-dash = open('C:/Users/Kasula Santhosh/OneDrive/Desktop/ANTIGRAVATI CAMPUSCORE/js/dashboard.js', encoding='utf-8').read()
-data = open('C:/Users/Kasula Santhosh/OneDrive/Desktop/ANTIGRAVATI CAMPUSCORE/js/data.js', encoding='utf-8').read()
+dash = open('js/dashboard.js', encoding='utf-8').read()
+data = open('js/data.js', encoding='utf-8').read()
 
 checks = []
 
