@@ -5,10 +5,8 @@
  */
 
 // --- CONFIGURATION ---
-// Production Supabase project for CampusCore
-const SUPABASE_URL = "https://bzqqgurlqunpzgdavedz.supabase.co";
-// Production anonymous key
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6cXFxdXJscXF1bnB6Z2RhdmVkeiIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzE0NDI5NjcwLCJleHAiOjIwMzAwMDU2NzB9.9hJ6K5m_XqPfGvLz8JxQ5sYfVhQh2aL8J9m9qF2pW7k"; 
+const SUPABASE_URL = (typeof SUPABASE_CONFIG !== 'undefined' && SUPABASE_CONFIG.URL) ? SUPABASE_CONFIG.URL : null;
+const SUPABASE_ANON_KEY = (typeof SUPABASE_CONFIG !== 'undefined' && SUPABASE_CONFIG.ANON_KEY) ? SUPABASE_CONFIG.ANON_KEY : null;
 
 let supabase = null;
 

@@ -694,16 +694,13 @@
       <div class="content-area" id="content-area"></div>
     </div>
   </div>
-  <!-- Supabase Client Library -->
+  <!-- Supabase / Data layer -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js?v=21"></script>
   <script src="js/supabase-client.js?v=21"></script>
-  <script>
-    // Initialize Supabase sync on load
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof initSupabaseData === 'function') initSupabaseData();
-    });
-  </script>
+  <script src="js/db.js?v=21"></script>
 
+  <!-- Core data and UI modules -->
   <script src="js/data.js?v=21"></script>
   <script src="js/error-handling.js"></script>
   <script src="js/auth.js?v=21"></script>

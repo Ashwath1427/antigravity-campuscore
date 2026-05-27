@@ -13,7 +13,14 @@ let dbStatus = {
 };
 
 // Database connection status indicator
-function createDatabaseStatusIndicator() {
+// Only mounted within section-database, not globally in banner
+function createDatabaseStatusIndicator(containerId = 'db-header') {
+  const container = document.getElementById(containerId);
+  if (!container) return false;  // Container doesn't exist - don't render
+  
+  // Check if already rendered to prevent duplicates
+  if (document.getElementById('db-status-indicator')) return false;
+  
   const statusHtml = `
     <div id="db-status-indicator" class="db-status-indicator">
       <div class="db-status-icon" id="db-status-icon">
@@ -33,12 +40,17 @@ function createDatabaseStatusIndicator() {
     </div>
   `;
   
-  const banner = document.querySelector('.banner-right');
-  if (banner) {
-    banner.insertAdjacentHTML('afterbegin', statusHtml);
-  }
-  
+  container.insertAdjacentHTML('beforeend', statusHtml);
   updateDatabaseStatus();
+  return true;
+}
+
+// Clean up database indicator from DOM
+function removeDatabaseStatusIndicator() {
+  const indicator = document.getElementById('db-status-indicator');
+  if (indicator) {
+    indicator.remove();
+  }
 }
 
 // Update database status display
@@ -514,12 +526,45 @@ function updatePerformanceMetrics() {
 }
 
 // ─── Initialize Database Features ─────────────────────────────
+// Only initialize when super admin is viewing database management section
+function initializeDatabaseFeatures() {
+  // Only for super admin / APAAAS roles
+  if (!window.currentUser || !['super_admin', 'superadmin', 'apaaas'].includes(window.currentUser.role)) {
+    return;
+  }
+  
+  // Create modal (safe globally)
+  createDatabaseManagementModal();
+  
+  // Note: Status indicator now mounts conditionally via buildDashboard
+  // when section-database is rendered for super admin role
+  startAutoSync();
+  testDatabaseConnection();
+}
+
+// Call when dashboard rebuilds for super admin
+window.__initDatabaseFeaturesWhenNeeded = function() {
+  if (!window.currentUser) return;
+  if (!['super_admin', 'superadmin', 'apaaas'].includes(window.currentUser.role)) return;
+  
+  // Render status indicator only if section-database exists
+  const dbSection = document.getElementById('section-database');
+  if (dbSection) {
+    // Check if header exists, create it if not
+    let dbHeader = document.getElementById('db-header');
+    if (!dbHeader) {
+      dbHeader = document.createElement('div');
+      dbHeader.id = 'db-header';
+      dbHeader.style.marginBottom = '16px';
+      dbSection.insertAdjacentElement('afterbegin', dbHeader);
+    }
+    createDatabaseStatusIndicator('db-header');
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
-    createDatabaseStatusIndicator();
-    createDatabaseManagementModal();
-    startAutoSync();
-    testDatabaseConnection();
+    initializeDatabaseFeatures();
   }, 1000);
 });
 
@@ -541,8 +586,10 @@ function addDatabaseManagementToMenu() {
 
 // Export functions for global use
 window.createDatabaseStatusIndicator = createDatabaseStatusIndicator;
+window.removeDatabaseStatusIndicator = removeDatabaseStatusIndicator;
 window.testDatabaseConnection = testDatabaseConnection;
 window.syncDatabase = syncDatabase;
+window.initializeDatabaseFeatures = initializeDatabaseFeatures;
 window.createDatabaseBackup = createDatabaseBackup;
 window.restoreDatabaseBackup = restoreDatabaseBackup;
 window.exportDataToCSV = exportDataToCSV;
