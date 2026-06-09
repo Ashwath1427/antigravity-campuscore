@@ -269,7 +269,23 @@
   }
 
   function getNotices() {
-    const list = JSON.parse(localStorage.getItem("campuscore_notices") || JSON.stringify(ANNOUNCEMENTS || []));
+    let list = [];
+    try {
+      const raw = localStorage.getItem("campuscore_notices");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          list = parsed;
+        } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.active)) {
+          list = parsed.active;
+        }
+      }
+    } catch (e) {
+      console.warn("[Student] Failed to parse campuscore_notices:", e);
+    }
+    if (!list || list.length === 0) {
+      list = window.ANNOUNCEMENTS || [];
+    }
     return list.filter(n => !n.target || n.target === "All" || n.target === "Students" || n.target === "Student");
   }
   function getStudentSharedData(sid) {
@@ -326,7 +342,7 @@
     const shared = ctx.shared || getStudentSharedData(sid) || {};
     
     const homework = Array.isArray(shared.homework) ? shared.homework : seedHomework(sid);
-    const messages = Array.isArray(shared.messages) ? shared.messages : seedMessages(sid, profile.name);
+    const messages = Array.isArray(shared.messages) ? shared.messages : seedMessages(sid, profile.fullName);
     const notices = getNotices() || [];
     const read = new Set(shared.noticesRead || []);
     const results = shared.results || generateResults(sid);
@@ -335,7 +351,7 @@
 
     return {
       sid, profile, homework, messages, notices, read, results, exams, attendancePct,
-      name: profile.name || user.name,
+      name: profile.fullName || user.name,
       pendingHomework: homework.filter(h => h.status === "Pending").length,
       upcomingExams: exams.filter(e => examStatus(e.date) === "Upcoming").length,
       unreadMessages: messages.filter(m => m.unread).length,
@@ -437,7 +453,7 @@
   ensureParentAccounts();
 
   if (window.ROLE_NAV) {
-    ROLE_NAV.student = [
+    window.ROLE_NAV.student = [
       { label: "DASHBOARD", items: [{ id: "home", icon: "fa-home", label: "Overview" }, { id: "profile", icon: "fa-user-circle", label: "My Profile" }] },
       { label: "ACADEMICS", items: [
           { id: "student_attendance", icon: "fa-clipboard-check", label: "Attendance" }, 
@@ -459,21 +475,36 @@
 
   window.buildStudentDashboard = function buildStudentDashboard(user) {
     const d = getStudentContextData(user);
+
+    function safeBuild(name, fn, data) {
+      try {
+        return fn(data);
+      } catch (e) {
+        console.error(`[Student] Error building ${name}:`, e);
+        return `<div class="dash-section" id="section-${name}">
+          <div class="card" style="border-left:4px solid var(--color-danger);padding:20px">
+            <h3 style="color:var(--color-danger)">⚠️ ${name} failed to render</h3>
+            <p style="color:var(--color-text-muted)">${e.message}</p>
+          </div>
+        </div>`;
+      }
+    }
+
     return [
-      buildStudentHome(d),
-      buildStudentProfile(d),
-      buildStudentIdCard(d),
-      buildStudentAttendance(d),
-      buildStudentTimetable(d),
-      buildStudentHomework(d),
-      buildStudentExams(d),
-      buildStudentResults(d),
-      buildStudentAlmanac(d),
-      buildStudentRequests(d),
-      buildStudentHelpdesk(d),
-      buildStudentNotices(d),
-      buildStudentMessages(d),
-      buildStudentSettings(d),
+      safeBuild('home', buildStudentHome, d),
+      safeBuild('profile', buildStudentProfile, d),
+      safeBuild('student_id_card', buildStudentIdCard, d),
+      safeBuild('student_attendance', buildStudentAttendance, d),
+      safeBuild('student_timetable', buildStudentTimetable, d),
+      safeBuild('student_homework', buildStudentHomework, d),
+      safeBuild('student_exams', buildStudentExams, d),
+      safeBuild('student_results', buildStudentResults, d),
+      safeBuild('student_almanac', buildStudentAlmanac, d),
+      safeBuild('student_requests', buildStudentRequests, d),
+      safeBuild('helpdesk', buildStudentHelpdesk, d),
+      safeBuild('student_notices', buildStudentNotices, d),
+      safeBuild('student_messages', buildStudentMessages, d),
+      safeBuild('student_settings', buildStudentSettings, d),
     ].join("");
   };
 
@@ -971,7 +1002,7 @@
       </div>
     `).join('');
 
-    return `<div class="dash-section" id="${d.user.role==='parent'?'section-parent_requests':'section-student_requests'}">
+    return `<div class="dash-section" id="${(window.currentUser && window.currentUser.role==='parent')?'section-parent_requests':'section-student_requests'}">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
           <h3>📄 Request Center</h3>
@@ -987,7 +1018,7 @@
     const tickets = JSON.parse(localStorage.getItem('campuscore_helpdesk_tickets') || '[]').filter(t => t.studentName === d.profile.fullName);
     const rows = tickets.map(t => `<tr><td>${t.id}</td><td>${t.subject}</td><td><span class="badge badge-info">${t.status}</span></td><td>${t.lastUpdate}</td></tr>`).join('');
     
-    return `<div class="dash-section" id="${d.user.role==='parent'?'section-helpdesk':'section-helpdesk'}">
+    return `<div class="dash-section" id="${(window.currentUser && window.currentUser.role==='parent')?'section-helpdesk':'section-helpdesk'}">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
           <h3>🎧 Helpdesk Support</h3>

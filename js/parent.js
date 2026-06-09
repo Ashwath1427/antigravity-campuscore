@@ -18,12 +18,28 @@
   }
 
   function getChildProfile(sid) {
+    let profile = {};
     // Attempt to use global student registry helpers if available
     if (typeof window.getStudentProfileData === 'function') {
-      return window.getStudentProfileData(sid);
+      profile = window.getStudentProfileData(sid) || {};
+    } else {
+      // Fallback to STUDENTS array
+      profile = (window.STUDENTS || []).find(s => s.admNo === sid || s.id === sid) || (window.STUDENTS ? window.STUDENTS[0] : {});
     }
-    // Fallback to STUDENTS array
-    return (window.STUDENTS || []).find(s => s.admNo === sid || s.id === sid) || (window.STUDENTS ? window.STUDENTS[0] : {});
+
+    // Normalize property names: student.js uses fullName/className/rollNo/studentId
+    // but parent templates expect name/class/roll/admNo
+    const student9c = (window.STUDENT_9C || []).find(s => s.id === sid);
+    profile.name = profile.name || profile.fullName || (student9c ? student9c.name : 'Student');
+    profile.fullName = profile.fullName || profile.name;
+    profile.class = profile.class || profile.className || '9C';
+    profile.roll = profile.roll || profile.rollNo || (student9c ? student9c.roll : '—');
+    profile.admNo = profile.admNo || profile.studentId || sid;
+    profile.attendance = profile.attendance || 0;
+    profile.classTeacher = profile.classTeacher || 'Anita Pillai';
+    profile.parentContact = profile.parentContact || '+91 98765 00000';
+
+    return profile;
   }
 
   function getChildSharedData(sid) {
@@ -78,19 +94,33 @@
       settings: getParentSettings(sid)
     };
 
+    function safeBuild(name, fn, data) {
+      try {
+        return fn(data);
+      } catch (e) {
+        console.error(`[Parent] Error building ${name}:`, e);
+        return `<div class="dash-section" id="section-${name}">
+          <div class="card" style="border-left:4px solid var(--color-danger);padding:20px">
+            <h3 style="color:var(--color-danger)">⚠️ ${name} failed to render</h3>
+            <p style="color:var(--color-text-muted)">${e.message}</p>
+          </div>
+        </div>`;
+      }
+    }
+
     // Concatenate all sections
     return [
-      buildParentHome(ctx),
-      buildParentProfile(ctx),
-      buildParentAttendance(ctx),
-      buildParentHomework(ctx),
-      buildParentExams(ctx),
-      buildParentResults(ctx),
-      buildParentFees(ctx),
-      typeof window.buildAnnouncements === 'function' ? window.buildAnnouncements(user) : "",
-      typeof window.buildEvents === 'function' ? window.buildEvents(user) : "",
-      buildParentMessages(ctx),
-      buildParentSettings(ctx)
+      safeBuild('home', buildParentHome, ctx),
+      safeBuild('parent_child', buildParentProfile, ctx),
+      safeBuild('parent_attendance', buildParentAttendance, ctx),
+      safeBuild('parent_homework', buildParentHomework, ctx),
+      safeBuild('parent_exams', buildParentExams, ctx),
+      safeBuild('parent_results', buildParentResults, ctx),
+      safeBuild('parent_fees', buildParentFees, ctx),
+      safeBuild('announcements', (c) => typeof window.buildAnnouncements === 'function' ? window.buildAnnouncements(c.user) : "", ctx),
+      safeBuild('events', (c) => typeof window.buildEvents === 'function' ? window.buildEvents(c.user) : "", ctx),
+      safeBuild('parent_messages', buildParentMessages, ctx),
+      safeBuild('settings', buildParentSettings, ctx)
     ].join("");
   };
 

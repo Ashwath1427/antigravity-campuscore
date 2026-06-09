@@ -252,7 +252,7 @@ function buildSidebar(user) {
   // Nav
   const nav = document.getElementById('sidebar-nav');
   const roleKey = (user.role || '').toLowerCase().replace(' ', '_');
-  let sections = ROLE_NAV[roleKey] || ROLE_NAV[user.role] || [];
+  let sections = (window.ROLE_NAV && (window.ROLE_NAV[roleKey] || window.ROLE_NAV[user.role])) || [];
 
   // SECRECY: Hide Admin (APAAAS) role from anyone not specifically logged in as admin
   const isAdmin = (user.role === 'apaaas' || user.role === 'super_admin' || ['APAAAS', 'APASAA'].includes(String(user.username || '').toUpperCase()));

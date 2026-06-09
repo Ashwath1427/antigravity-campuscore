@@ -1226,7 +1226,7 @@ const RECENT_ACTIVITY = [
 ];
 
 // ─── Role Navigation Config ──────────────────────────────────
-const ROLE_NAV = {
+window.ROLE_NAV = {
   vice_principal: [
     {
       label: "Main", items: [

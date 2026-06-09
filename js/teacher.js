@@ -448,5 +448,75 @@ function showNotification(message, type = 'info') {
   }, 3000);
 }
 
+function viewHomeworkDetails(hwId) {
+  const hw = TEACHER_HOMEWORK_TRACKING.find(h => h.id === hwId);
+  if (!hw) return;
+  
+  const modal = `
+    <div class="modal-overlay" id="hw-details-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+      <div class="modal" style="max-width:600px">
+        <h3 style="margin-top:0">Homework Details: ${hw.title}</h3>
+        <p><strong>Class:</strong> ${hw.class}</p>
+        <p><strong>Due Date:</strong> ${hw.dueDate}</p>
+        <p><strong>Status:</strong> ${hw.status}</p>
+        <p><strong>Submitted:</strong> ${hw.submitted} / ${hw.submitted + hw.pending}</p>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+          <button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Close</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modal);
+}
+
+function editMarks(exam, className) {
+  const result = TEACHER_RESULT_TRACKING.find(r => r.exam === exam && r.class === className);
+  if (!result) return;
+  
+  // Set up values to trigger the entry form
+  showMarksEntryModal();
+  setTimeout(() => {
+    const examSelect = document.getElementById('marks-exam');
+    const classSelect = document.getElementById('marks-class');
+    if (examSelect) examSelect.value = exam;
+    if (classSelect) classSelect.value = className;
+  }, 100);
+}
+
+function openTeacherMessageModal(msgId) {
+  const store = getEscalationStore();
+  const issue = store.teacherInbox.find(i => i.id === msgId);
+  if (!issue) {
+    showNotification('Message not found', 'error');
+    return;
+  }
+  
+  issue.unread = false;
+  localStorage.setItem('campuscore_escalations', JSON.stringify(store));
+  
+  const modal = `
+    <div class="modal-overlay" id="teacher-msg-modal" style="display:flex" onclick="if(event.target===this) this.remove()">
+      <div class="modal" style="max-width:600px">
+        <h3 style="margin-top:0">${issue.subject || issue.title}</h3>
+        <p><strong>From:</strong> ${issue.sender || issue.reporterName}</p>
+        <p><strong>Time:</strong> ${issue.time || new Date(issue.registeredDate || issue.escalatedDate).toLocaleString()}</p>
+        <div style="margin-top:15px;padding:15px;background:var(--color-bg-secondary);border-radius:8px;">
+          ${issue.content || issue.desc}
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+          <button class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">Close</button>
+          <button class="btn-primary" onclick="this.closest('.modal-overlay').remove(); openRegisterTeacherIssueModal()">Reply</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modal);
+  
+  // Refresh dashboard to show read status
+  if (typeof buildDashboard === 'function') {
+    setTimeout(() => buildDashboard(currentUser), 100);
+  }
+}
+
 // ─── Initialize Teacher Functions ─────────────────────────────────
 console.log('[Teacher.js] Teacher module loaded successfully');

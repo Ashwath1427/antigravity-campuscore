@@ -19,7 +19,9 @@ function safeRender(name, builderFunc, user) {
     return html;
   } catch (e) {
     console.error(`[CampusCore] Render error in ${name}:`, e);
-    return `<div class="dash-section" id="section-${name.toLowerCase().replace(/\s+/g, '_')}">
+    // Use "active" class and id="section-home" so the error card is visible
+    // and navigateTo('home') can find it (prevents infinite re-render loop)
+    return `<div class="dash-section active" id="section-home">
       <div class="card" style="border-left:4px solid var(--color-danger);padding:30px;text-align:center">
         <div style="font-size:40px;margin-bottom:15px;color:var(--color-danger)"><i class="fas fa-exclamation-triangle"></i></div>
         <h3 style="color:var(--color-danger);margin-bottom:10px">${name} Rendering Failed</h3>
@@ -734,10 +736,19 @@ function buildAnnouncements(user) {
   const filterCat = localStorage.getItem('vp_notice_filter_cat') || 'All Categories';
   const vpNoticeTab = localStorage.getItem('vp_notice_tab') || 'active';
 
-  let liveAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices')) || ANNOUNCEMENTS;
-  let archivedAnnouncements = JSON.parse(localStorage.getItem('campuscore_notices_archived')) || [];
+  let rawNotices = null;
+  try {
+    rawNotices = JSON.parse(localStorage.getItem('campuscore_notices'));
+  } catch(e) {}
+  let liveAnnouncements = Array.isArray(rawNotices) ? rawNotices : (rawNotices && Array.isArray(rawNotices.active) ? rawNotices.active : null) || ANNOUNCEMENTS;
 
-  const parentSid = user.role === 'parent' ? String(user.childId || user.username.replace(/^P/i, '').replace(/A$/i, '')) : null;
+  let rawArchived = null;
+  try {
+    rawArchived = JSON.parse(localStorage.getItem('campuscore_notices_archived'));
+  } catch(e) {}
+  let archivedAnnouncements = Array.isArray(rawArchived) ? rawArchived : (rawNotices && Array.isArray(rawNotices.archived) ? rawNotices.archived : null) || [];
+
+  const parentSid = user.role === 'parent' ? String(user.childId || (user.username || '').replace(/^P/i, '').replace(/A$/i, '')) : null;
   const parentShared = (parentSid && typeof getStudentSharedData === 'function') ? getStudentSharedData(parentSid) : null;
   const readSet = new Set((parentShared && parentShared.noticesRead) || []);
 
@@ -798,7 +809,7 @@ window.updateVPNoticeFilter = function (val) {
 
 window.parentReadNotice = function (noticeId) {
   if (!window.currentUser || window.currentUser.role !== 'parent' || typeof getStudentSharedData !== 'function') return;
-  const sid = String(window.currentUser.childId || window.currentUser.username.replace(/^P/i, '').replace(/A$/i, ''));
+  const sid = String(window.currentUser.childId || (window.currentUser.username || '').replace(/^P/i, '').replace(/A$/i, ''));
   const shared = getStudentSharedData(sid);
   const set = new Set(shared.noticesRead || []);
   set.add(String(noticeId));

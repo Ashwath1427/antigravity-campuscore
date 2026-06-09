@@ -1,0 +1,2 @@
+HELPDESK_TICKETS: assignedTo, id, lastUpdate, priority, status, studentName, subject
+TEACHERS: avatar_color, classes, email, exp, id, name, phone, status, subject
