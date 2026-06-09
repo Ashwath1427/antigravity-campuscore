@@ -43,7 +43,7 @@ requiredFunctions.forEach(func => {
 // Test 3: Check if Supabase is properly configured
 console.log('\n3. SUPABASE CONFIGURATION TEST:');
 try {
-  const supabaseConfigured = typeof window.supabase !== 'undefined';
+  const supabaseConfigured = typeof window.supabaseClient !== 'undefined';
   console.log(`  Supabase Library: ${supabaseConfigured ? '✅ LOADED' : '❌ MISSING'}`);
   
   const configCheck = typeof isSupabaseConfigured === 'function' ? isSupabaseConfigured() : false;

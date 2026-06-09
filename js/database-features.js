@@ -93,8 +93,8 @@ async function testDatabaseConnection() {
   text.textContent = 'Testing...';
   
   try {
-    if (typeof supabase !== 'undefined' && supabase && typeof supabase.from === 'function') {
-      const { data, error } = await supabase.from('cc_students').select('count').single();
+    if (typeof window.supabaseClient !== 'undefined' && supabase && typeof window.supabaseClient.from === 'function') {
+      const { data, error } = await window.supabaseClient.from('cc_students').select('count').single();
       if (error) throw error;
       
       dbStatus.connected = true;

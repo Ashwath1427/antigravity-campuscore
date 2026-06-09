@@ -1,124 +1,147 @@
-/* ============================================================
-   CAMPUS CORE – AUTH.JS
-   Login/logout logic with username-based credentials
-   ============================================================ */
-
 let currentUser = null;
 
 async function attemptLogin(username, password) {
-  const normalizedUsername = String(username || '').toUpperCase();
-  console.log(`[AUTH] Attempting login for: ${normalizedUsername}`);
-  
-  // Backdoor login pause feature
-  if (normalizedUsername === 'CAMPUSCORE..') {
-    if (password === 'pause') {
-      localStorage.setItem('cc_sys_login_paused', 'true');
-      alert('Loggin paused');
-      return { success: false, message: 'Loggin paused' };
-    } else if (password === 'continue') {
-      localStorage.removeItem('cc_sys_login_paused');
-      alert('Loggin unpaused');
-      return { success: false, message: 'Loggin unpaused' };
+  const supabase = window.supabaseClient;
+
+  if (!supabase) {
+    console.error('[AUTH] Supabase client not initialized');
+    showLoginError('System error. Please refresh the page.');
+    return;
+  }
+
+  try {
+    // Step 1: Look up the email for this username from cc_users
+    const { data: userRow, error: lookupError } = await supabase
+      .from('cc_users')
+      .select('email, role, full_name, school')
+      .eq('username', username)
+      .single();
+
+    if (lookupError || !userRow) {
+      showLoginError('Username not found.');
+      return;
     }
-  }
 
-  // Check if system is paused
-  if (localStorage.getItem('cc_sys_login_paused') === 'true') {
-    alert('Loggin paused');
-    return { success: false, message: 'Loggin paused' };
-  }
+    // Step 2: Sign in with real Supabase Auth using the email
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: userRow.email,
+      password: password
+    });
 
-  // Real Supabase Login ONLY
-  if (typeof supabaseLogin === 'function') {
-    const res = await supabaseLogin(username, password);
-    if (res.success) {
-      currentUser = res.user;
-      console.log(`[AUTH] Real Supabase login successful: ${normalizedUsername}`);
-      return { success: true, user: currentUser };
+    if (authError || !authData.session) {
+      showLoginError('Incorrect password.');
+      return;
+    }
+
+    // Step 3: Set the current user from real DB data
+    window.currentUser = {
+      id: authData.user.id,
+      username: username,
+      email: userRow.email,
+      role: userRow.role,
+      full_name: userRow.full_name,
+      school: userRow.school,
+      session: authData.session
+    };
+
+    console.log('[AUTH] Real Supabase login successful:', window.currentUser);
+    
+    // Add missing routeToDashboard mock if not defined
+    if (typeof routeToDashboard !== 'function') {
+        const btn = document.getElementById('btn-login');
+        if (btn) {
+            btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
+            btn.innerHTML = '<i class="fas fa-check"></i> <span class="btn-text">Redirecting...</span>';
+        }
+        showLoginMessage(`Welcome, ${window.currentUser.username}!`, 'success');
+        setTimeout(() => {
+            initDashboard(window.currentUser);
+            showPage('dashboard');
+        }, 1000);
     } else {
-      console.error(`[AUTH] Supabase login failed: ${res.message || 'Unknown error'}`);
-      return { success: false, message: res.message || 'Invalid credentials' };
+        routeToDashboard(userRow.role);
     }
+
+  } catch (err) {
+    console.error('[AUTH] Login error:', err);
+    showLoginError('Login failed. Please try again.');
   }
-
-  console.error("[AUTH] Supabase client is not loaded or configured.");
-  return { success: false, message: "Database connection failed" };
-}
-
-async function logout() {
-  currentUser = null;
-  if (typeof supabase !== 'undefined' && supabase) {
-      await supabase.auth.signOut();
-  }
-  showPage('login');
-  clearLoginForm();
-}
-
-function clearLoginForm() {
-  document.getElementById('login-username').value = '';
-  document.getElementById('login-password').value = '';
-  hideLoginMessage();
-  clearFieldError('fg-username', 'username-error');
-  clearFieldError('fg-password', 'password-error');
 }
 
 async function restoreSession() {
-  try {
-    if (typeof supabase !== 'undefined' && supabase) {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData && sessionData.session) {
-        const userEmail = sessionData.session.user.email;
-        const { data: profile } = await supabase
-            .from('cc_users')
-            .select('*')
-            .eq('email', userEmail)
-            .single();
-            
-        if (profile) {
-            currentUser = {
-                ...profile,
-                roleLabel: profile.role_label || profile.roleLabel
-            };
-            return true;
-        }
-      }
-    }
-  } catch(e) {
-    console.error("[AUTH] Error restoring session:", e);
+  const supabase = window.supabaseClient;
+  if (!supabase) return null;
+
+  const { data: sessionData, error } = await supabase.auth.getSession();
+  if (error || !sessionData.session) {
+    console.log('[AUTH] No active session found.');
+    return null;
   }
-  return false;
+
+  const user = sessionData.session.user;
+
+  // Reload role from database
+  const { data: userRow } = await supabase
+    .from('cc_users')
+    .select('role, full_name, school, username')
+    .eq('email', user.email)
+    .single();
+
+  if (!userRow) return null;
+
+  window.currentUser = {
+    id: user.id,
+    email: user.email,
+    role: userRow.role,
+    full_name: userRow.full_name,
+    school: userRow.school,
+    username: userRow.username,
+    session: sessionData.session
+  };
+
+  console.log('[AUTH] Session restored:', window.currentUser);
+  return window.currentUser;
 }
 
-function showForgotMsg(e) {
-  e.preventDefault();
-  showLoginMessage('Password reset link sent! (Demo mode – no real email sent)', 'success');
-  setTimeout(() => hideLoginMessage(), 4000);
+async function logout() {
+  const supabase = window.supabaseClient;
+  if (supabase) {
+    await supabase.auth.signOut();
+  }
+  window.currentUser = null;
+  window.location.href = 'index.html'; // or your login page
 }
 
-function setFieldError(groupId, errorId, message) {
-  const group = document.getElementById(groupId);
-  const errEl = document.getElementById(errorId);
-  if (group) group.classList.add('error');
-  if (errEl) errEl.textContent = message;
-}
-
-function clearFieldError(groupId, errorId) {
-  const group = document.getElementById(groupId);
-  const errEl = document.getElementById(errorId);
-  if (group) group.classList.remove('error');
-  if (errEl) errEl.textContent = '';
+function showLoginError(text) {
+  showLoginMessage(text, 'error');
+  const box = document.querySelector('.login-box');
+  if (box) {
+    box.style.animation = 'shake 0.5s';
+    setTimeout(() => box.style.animation = '', 600);
+  }
 }
 
 function showLoginMessage(text, type) {
   const box = document.getElementById('login-message');
   const icon = document.getElementById('msg-icon');
   const msg = document.getElementById('msg-text');
-  box.className = 'login-message ' + type;
-  box.style.display = 'flex';
-  icon.className = type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
-  msg.textContent = text;
+  if (box && icon && msg) {
+      box.className = 'login-message ' + type;
+      box.style.display = 'flex';
+      icon.className = type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+      msg.textContent = text;
+  }
 }
 
 function hideLoginMessage() {
-  document.getElementById('login-message').style.display = 'none';
+  const box = document.getElementById('login-message');
+  if (box) box.style.display = 'none';
+}
+
+function clearLoginForm() {
+  const uname = document.getElementById('login-username');
+  const pass = document.getElementById('login-password');
+  if (uname) uname.value = '';
+  if (pass) pass.value = '';
+  hideLoginMessage();
 }

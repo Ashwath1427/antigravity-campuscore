@@ -9,7 +9,7 @@ console.log('=== CAMPUS CORE COMPREHENSIVE TEST ===');
 console.log('\n1. SUPABASE CONNECTIVITY TEST:');
 setTimeout(() => {
   try {
-    if (typeof window.supabase !== 'undefined') {
+    if (typeof window.supabaseClient !== 'undefined') {
       console.log('  ✅ Supabase library loaded');
       
       // Test connection by trying to initialize
@@ -19,11 +19,11 @@ setTimeout(() => {
       }
       
       // Test actual database connection
-      if (window.supabase && window.supabase.from) {
+      if (window.supabaseClient && window.supabaseClientClient.from) {
         console.log('  ✅ Supabase client available');
         
         // Try a simple query to test connectivity
-        window.supabase.from('cc_students').select('count').then(result => {
+        window.supabaseClientClient.from('cc_students').select('count').then(result => {
           if (!result.error) {
             console.log('  ✅ Database connection successful');
             console.log(`  📊 Found ${result.data?.[0]?.count || 0} students in database`);

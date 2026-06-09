@@ -9,46 +9,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupSidebar();
     setupLoginForm();
     updateDateTime();
-    setInterval(updateDateTime, 60000); // update time every minute
+    setInterval(updateDateTime, 60000);
 
-    // BUG-009 FIX: Pre-load live Supabase data BEFORE restoring session so the
-    // dashboard always renders with fresh data instead of stale local arrays.
-    // Make this NON-FATAL - if Supabase is offline, continue with local data
+    const user = await restoreSession();
+    if (!user) {
+      // If no session, show login page
+      if (typeof showPage === 'function') showPage('landing');
+      return;
+    }
+    
+    // Otherwise boot the dashboard for this role
     if (typeof initSupabaseData === 'function') {
       try {
         await initSupabaseData();
       } catch (e) {
         console.warn('[CampusCore] initSupabaseData failed, using local data:', e);
-        window.offlineMode = true;
-        // Continue execution - do not throw
       }
     }
-
-    // Restore session on refresh
-    if (await restoreSession() && currentUser) {
-      initDashboard(currentUser);
-      showPage('dashboard');
-    } else {
-      // Show landing page by default for unauthenticated users
-      showPage('landing');
-    }
+    if (typeof initDashboard === 'function') initDashboard(user);
+    if (typeof showPage === 'function') showPage('dashboard');
   } catch (error) {
     console.error('[CampusCore] DOMContentLoaded error:', error);
-    // Ensure dashboard still initializes even if there's an error
-    if (await restoreSession() && currentUser) {
-      try {
-        initDashboard(currentUser);
-        showPage('dashboard');
-      } catch (dashboardError) {
-        console.error('[CampusCore] Dashboard init failed:', dashboardError);
-        showPage('landing');
-      }
-    } else {
-      showPage('landing');
-    }
+    if (typeof showPage === 'function') showPage('landing');
   }
 });
-
 // ─── Login Form ──────────────────────────────────────────────
 function setupLoginForm() {
   const form = document.getElementById('login-form');

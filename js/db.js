@@ -11,9 +11,9 @@ const DB = {
      * @param {object} options - Optional query parameters (filter, order, etc.)
      */
     async fetch(table, fallbackVarName, options = {}) {
-        if (window.supabase) {
+        if (window.supabaseClient) {
             try {
-                let query = window.supabase.from(table).select(options.select || '*');
+                let query = window.supabaseClientClient.from(table).select(options.select || '*');
                 
                 if (options.match) query = query.match(options.match);
                 if (options.order) query = query.order(options.order.column, { ascending: options.order.ascending });
@@ -72,9 +72,9 @@ const DB = {
      * @param {function} callback - Function to run on change.
      */
     subscribe(table, callback) {
-        if (!window.supabase) return null;
+        if (!window.supabaseClient) return null;
         
-        return window.supabase
+        return window.supabaseClient
             .channel(`public:${table}`)
             .on('postgres_changes', { event: '*', schema: 'public', table: table }, (payload) => {
                 console.log(`[Realtime] Change received on ${table}:`, payload);

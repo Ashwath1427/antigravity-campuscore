@@ -694,15 +694,21 @@
     </div>
   </div>
   <!-- Supabase / Data layer -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js?v=21"></script>
-  <script src="js/supabase-client.js?v=21"></script>
   <script src="js/db.js?v=21"></script>
 
   <!-- Core data and UI modules -->
   <script src="js/data.js?v=21"></script>
   <script src="js/error-handling.js"></script>
-  <script src="js/auth.js?v=21"></script>
+  <!-- Step 1: Supabase CDN (must be first) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Step 2: Initialize the client (must be before auth.js) -->
+  <script src="js/supabase-client.js"></script>
+
+  <!-- Step 3: Auth logic (uses window.supabaseClient) -->
+  <script src="js/auth.js"></script>
+
+  <!-- Step 4: Everything else -->
   <script src="js/ui.js?v=21"></script>
   <script src="js/student-registry.js?v=21"></script>
   <script src="js/dashboard.js?v=22"></script>
