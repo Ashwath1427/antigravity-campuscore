@@ -459,13 +459,13 @@ INSERT INTO cc_students (adm_no, name, class, section, roll, gender, parent, par
 ('3200019', 'DEEPAK KUMAR', '10', 'D', '04', 'Male', 'Parent of DEEPAK KUMAR', '+91 98765 48019', 'deepak10d@example.com', 92, 8.1, 'Paid'),
 ('3200020', 'REKHA RANI', '10', 'D', '05', 'Female', 'Parent of REKHA RANI', '+91 98765 48020', 'rekha10d@example.com', 86, 7.3, 'Paid');
 INSERT INTO cc_teachers (employee_id, name, subject, classes, experience, phone, email, status, department) VALUES
-('T001', 'Prasana Reddy', 'Mathematics', '10-A, 9-B, 8-C', '8 years', '+91 87654 11111', 'prasana@dpsnadergul.edu', 'Active', 'Mathematics Department'),
-('T002', 'Ramesh Sharma', 'Physics', '10-A, 10-B', '12 years', '+91 87654 22222', 'ramesh@dpsnadergul.edu', 'Active', 'Science Department'),
-('T003', 'Anita Pillai', 'English Literature', '8-B, 9-A', '6 years', '+91 87654 33333', 'anita@dpsnadergul.edu', 'Active', 'English Department'),
-('T004', 'Mohan Das', 'Chemistry', '9-C, 10-C', '10 years', '+91 87654 44444', 'mohan@dpsnadergul.edu', 'Active', 'Science Department'),
-('T005', 'Sunita Verma', 'Social Studies', '8-A, 9-D', '7 years', '+91 87654 55555', 'sunita@dpsnadergul.edu', 'Active', 'Social Studies Department'),
-('T006', 'Venkat Iyer', 'Computer Science', '9-C, 10-D', '5 years', '+91 87654 66666', 'venkat@dpsnadergul.edu', 'Active', 'Computer Science Department'),
-('T007', 'Pooja Mehta', 'Biology', '8-C, 9-C', '9 years', '+91 87654 77777', 'pooja@dpsnadergul.edu', 'Active', 'Science Department');
+('T001', 'Prasana Reddy', 'Mathematics', '["10-A", "9-B", "8-C"]', '8 years', '+91 87654 11111', 'prasana@dpsnadergul.edu', 'Active', 'Mathematics Department'),
+('T002', 'Ramesh Sharma', 'Physics', '["10-A", "10-B"]', '12 years', '+91 87654 22222', 'ramesh@dpsnadergul.edu', 'Active', 'Science Department'),
+('T003', 'Anita Pillai', 'English Literature', '["8-B", "9-A"]', '6 years', '+91 87654 33333', 'anita@dpsnadergul.edu', 'Active', 'English Department'),
+('T004', 'Mohan Das', 'Chemistry', '["9-C", "10-C"]', '10 years', '+91 87654 44444', 'mohan@dpsnadergul.edu', 'Active', 'Science Department'),
+('T005', 'Sunita Verma', 'Social Studies', '["8-A", "9-D"]', '7 years', '+91 87654 55555', 'sunita@dpsnadergul.edu', 'Active', 'Social Studies Department'),
+('T006', 'Venkat Iyer', 'Computer Science', '["9-C", "10-D"]', '5 years', '+91 87654 66666', 'venkat@dpsnadergul.edu', 'Active', 'Computer Science Department'),
+('T007', 'Pooja Mehta', 'Biology', '["8-C", "9-C"]', '9 years', '+91 87654 77777', 'pooja@dpsnadergul.edu', 'Active', 'Science Department');
 INSERT INTO cc_announcements (title, content, date, author, category, priority, target_audience) VALUES
 ('Welcome to CampusCore', 'This is the new school management system for DPS Nadergul. All students, parents, and teachers can now access their dashboards.', CURRENT_DATE, 'System', 'General', 'high', 'All'),
 ('Mid-Term Examination Schedule', 'Mid-term exams will start from next week. Please check the schedule in your respective dashboards.', CURRENT_DATE, 'Coordinator', 'Academic', 'high', 'All'),
