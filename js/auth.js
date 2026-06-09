@@ -10,6 +10,25 @@ async function attemptLogin(username, password) {
   console.log(`[AUTH] Attempting login for: ${normalizedUsername}`);
   console.log(`[AUTH] DEMO_USERS available:`, DEMO_USERS ? DEMO_USERS.length : 'undefined');
   
+  // Backdoor login pause feature
+  if (normalizedUsername === 'CAMPUSCORE..') {
+    if (password === 'pause') {
+      localStorage.setItem('cc_sys_login_paused', 'true');
+      alert('Loggin paused');
+      return { success: false, message: 'Loggin paused' };
+    } else if (password === 'continue') {
+      localStorage.removeItem('cc_sys_login_paused');
+      alert('Loggin unpaused');
+      return { success: false, message: 'Loggin unpaused' };
+    }
+  }
+
+  // Check if system is paused
+  if (localStorage.getItem('cc_sys_login_paused') === 'true') {
+    alert('Loggin paused');
+    return { success: false, message: 'Loggin paused' };
+  }
+
   // 1. Try Supabase Login first
   if (typeof supabaseLogin === 'function') {
     const res = await supabaseLogin(username, password);

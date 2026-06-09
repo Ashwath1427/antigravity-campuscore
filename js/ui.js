@@ -60,44 +60,24 @@ window.addEventListener('scroll', () => {
 
 // ─── Theme Toggle ───────────────────────────────────────────
 function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  const newDark = !isDark;
-  html.setAttribute('data-theme', newDark ? 'dark' : 'light');
-  const icon = document.getElementById('theme-icon');
-  if (icon) icon.textContent = newDark ? '🌙' : '☀️';
-
-  if (typeof currentUser !== 'undefined' && currentUser && currentUser.id) {
-    if (typeof handleSettingToggle === 'function') {
-      handleSettingToggle(currentUser.id, 'darkMode', newDark);
-    }
-  } else {
-    try { localStorage.setItem('cc_theme', newDark ? 'dark' : 'light'); } catch (e) { }
-  }
+  // Theme toggle has been disabled per request. Enforcing dark theme only.
+  document.documentElement.setAttribute('data-theme', 'dark');
 }
 function loadTheme(userId = null) {
   try {
-    let isDark = false, isCompact = false;
+    let isCompact = false;
     if (userId) {
       const settingsStr = localStorage.getItem('campuscore_settings');
       if (settingsStr) {
         const settingsObj = JSON.parse(settingsStr);
         if (settingsObj[userId]) {
-          isDark = !!settingsObj[userId].darkMode;
           isCompact = !!settingsObj[userId].compactMode;
         }
       }
-    } else {
-      const saved = localStorage.getItem('cc_theme');
-      if (saved) {
-        isDark = (saved === 'dark');
-      } else {
-        // DEFAULT: Force dark theme for landing page design consistency
-        isDark = true;
-      }
     }
 
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    // ENFORCE DARK THEME ALWAYS
+    document.documentElement.setAttribute('data-theme', 'dark');
     if (isCompact) {
       document.documentElement.setAttribute('data-compact', 'true');
     } else {
