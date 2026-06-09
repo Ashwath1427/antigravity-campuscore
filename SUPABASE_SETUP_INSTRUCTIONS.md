@@ -16,13 +16,13 @@ This guide will help you set up the complete CampusCore database in Supabase wit
 3. Click "New query" to open a new SQL editor tab
 
 ### Step 2: Execute the Complete SQL Script
-1. Open the `supabase-complete.sql` file from your project folder
+1. Open the `CAMPUSCORE_MASTER_SETUP.sql` file from your project folder
 2. Copy the entire content of the file
 3. Paste it into the Supabase SQL editor
 4. Click "Run" to execute the script
 
 ### Step 3: What the Script Does
-The `supabase-complete.sql` script will:
+The `CAMPUSCORE_MASTER_SETUP.sql` script will:
 
 #### 🗑️ **Clean Up Old Data**
 - Drops all existing tables to start fresh
