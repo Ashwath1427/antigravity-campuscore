@@ -46,7 +46,7 @@ CREATE TABLE public.profiles (
     id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     full_name TEXT NOT NULL,
-    role TEXT NOT NULL CHECK (role IN ('admin', 'teacher', 'coordinator', 'parent', 'student', 'vp')),
+    role TEXT NOT NULL CHECK (role IN ('admin', 'teacher', 'coordinator', 'parent', 'student', 'vp', 'vice_principal')),
     role_label TEXT,
     department TEXT,
     phone TEXT,
@@ -67,7 +67,7 @@ CREATE TABLE public.cc_users (
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     name TEXT NOT NULL,
-    role TEXT NOT NULL CHECK (role IN ('admin', 'teacher', 'coordinator', 'parent', 'student', 'vp')),
+    role TEXT NOT NULL CHECK (role IN ('admin', 'teacher', 'coordinator', 'parent', 'student', 'vp', 'vice_principal')),
     role_label TEXT,
     department TEXT,
     phone TEXT,
@@ -322,7 +322,7 @@ COMMIT;
 -- ============================================================
 
 INSERT INTO cc_users (username, password, name, email, phone, role, role_label, department, avatar_color, icon) VALUES
-('VP001', 'VP123', 'SUMAN', 'vp@dpsnadergul.edu', '+91 98765 43210', 'vice_principal', 'Vice Principal', 'Executive Office', '#2d7a6e', 'fa-user-tie'),
+('VP001', 'VP123', 'SUMAN', 'vp@dpsnadergul.edu', '+91 98765 43210', 'vp', 'Vice Principal', 'Executive Office', '#2d7a6e', 'fa-user-tie'),
 ('T001', 'teacher123', 'Prasana Reddy', 'prasana@dpsnadergul.edu', '+91 87654 32109', 'teacher', 'Teacher', 'Mathematics', '#5ca870', 'fa-chalkboard-teacher'),
 ('P3180076A', 'parent123', 'Parent of KASULA ASHWATH', 'ashwath@gmail.com', '+91 76543 21098', 'parent', 'Parent', 'Parent of KASULA ASHWATH (Class 9-C)', '#f57c00', 'fa-user-friends'),
 ('C001', 'coord123', 'Anitha', 'anitha@dpsnadergul.edu', '+91 54321 09876', 'coordinator', 'Coordinator', 'Academic Coordination', '#1976d2', 'fa-sitemap'),
