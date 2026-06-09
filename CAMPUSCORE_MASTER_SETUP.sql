@@ -274,20 +274,6 @@ ALTER TABLE public.cc_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cc_fees ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cc_issues ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable all access for all users" ON public.profiles FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_users FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_teachers FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_students FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_announcements FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_notices FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_events FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_homework FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_attendance FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_exams FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_marks FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_messages FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_fees FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for all users" ON public.cc_issues FOR ALL USING (true) WITH CHECK (true);
 
 -- TRIGGERS
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
