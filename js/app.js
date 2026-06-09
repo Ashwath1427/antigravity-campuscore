@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Restore session on refresh
-    if (restoreSession() && currentUser) {
+    if (await restoreSession() && currentUser) {
       initDashboard(currentUser);
       showPage('dashboard');
     } else {
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (error) {
     console.error('[CampusCore] DOMContentLoaded error:', error);
     // Ensure dashboard still initializes even if there's an error
-    if (restoreSession() && currentUser) {
+    if (await restoreSession() && currentUser) {
       try {
         initDashboard(currentUser);
         showPage('dashboard');

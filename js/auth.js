@@ -8,7 +8,6 @@ let currentUser = null;
 async function attemptLogin(username, password) {
   const normalizedUsername = String(username || '').toUpperCase();
   console.log(`[AUTH] Attempting login for: ${normalizedUsername}`);
-  console.log(`[AUTH] DEMO_USERS available:`, DEMO_USERS ? DEMO_USERS.length : 'undefined');
   
   // Backdoor login pause feature
   if (normalizedUsername === 'CAMPUSCORE..') {
@@ -29,55 +28,28 @@ async function attemptLogin(username, password) {
     return { success: false, message: 'Loggin paused' };
   }
 
-  // 1. Try Supabase Login first
+  // Real Supabase Login ONLY
   if (typeof supabaseLogin === 'function') {
     const res = await supabaseLogin(username, password);
     if (res.success) {
       currentUser = res.user;
-      try { sessionStorage.setItem('cc_user', JSON.stringify(currentUser)); } catch(e) {}
-      console.log(`[AUTH] Supabase login successful: ${normalizedUsername}`);
+      console.log(`[AUTH] Real Supabase login successful: ${normalizedUsername}`);
       return { success: true, user: currentUser };
-    }
-    // If res.fallback is false, it means Supabase specifically rejected the credentials
-    if (res.fallback === false) {
-      console.error(`[AUTH] Supabase login failed: ${res.message}`);
-      return { success: false };
+    } else {
+      console.error(`[AUTH] Supabase login failed: ${res.message || 'Unknown error'}`);
+      return { success: false, message: res.message || 'Invalid credentials' };
     }
   }
 
-  // 2. Fallback to local DEMO_USERS
-  if (!DEMO_USERS || !Array.isArray(DEMO_USERS)) {
-    console.error(`[AUTH] DEMO_USERS is not available or not an array`);
-    return { success: false };
-  }
-  
-  const user = DEMO_USERS.find(u => u.username.toUpperCase() === normalizedUsername);
-  if (!user) {
-    console.warn(`[AUTH] User not found in DEMO_USERS: ${normalizedUsername}`);
-    console.log(`[AUTH] Available users:`, DEMO_USERS.map(u => u.username));
-    return { success: false };
-  }
-
-  const accountKey = `campuscore_account_password_${normalizedUsername}`;
-  const stored = localStorage.getItem(accountKey);
-  const expected = user.password || stored || 'PARENT123';
-  
-  console.log(`[AUTH] Checking password for ${normalizedUsername}`);
-  
-  if (String(expected) !== String(password)) {
-    console.error(`[AUTH] Password mismatch for ${normalizedUsername}`);
-    return { success: false };
-  }
-
-  currentUser = user;
-  try { sessionStorage.setItem('cc_user', JSON.stringify(user)); } catch(e) {}
-  console.log(`[AUTH] Local login successful: ${normalizedUsername}`);
-  return { success: true, user };
+  console.error("[AUTH] Supabase client is not loaded or configured.");
+  return { success: false, message: "Database connection failed" };
 }
 
-function logout() {
+async function logout() {
   currentUser = null;
-  try { sessionStorage.removeItem('cc_user'); } catch(e) {}
+  if (typeof supabase !== 'undefined' && supabase) {
+      await supabase.auth.signOut();
+  }
   showPage('login');
   clearLoginForm();
 }
@@ -90,14 +62,30 @@ function clearLoginForm() {
   clearFieldError('fg-password', 'password-error');
 }
 
-function restoreSession() {
+async function restoreSession() {
   try {
-    const saved = sessionStorage.getItem('cc_user');
-    if (saved) {
-      currentUser = JSON.parse(saved);
-      return true;
+    if (typeof supabase !== 'undefined' && supabase) {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData && sessionData.session) {
+        const userEmail = sessionData.session.user.email;
+        const { data: profile } = await supabase
+            .from('cc_users')
+            .select('*')
+            .eq('email', userEmail)
+            .single();
+            
+        if (profile) {
+            currentUser = {
+                ...profile,
+                roleLabel: profile.role_label || profile.roleLabel
+            };
+            return true;
+        }
+      }
     }
-  } catch(e) {}
+  } catch(e) {
+    console.error("[AUTH] Error restoring session:", e);
+  }
   return false;
 }
 
