@@ -130,6 +130,7 @@ CREATE TABLE public.cc_announcements (
     category TEXT,
     priority TEXT,
     content TEXT,
+    target_audience TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
