@@ -11,14 +11,21 @@ async function attemptLogin(username, password) {
 
   try {
     // Step 1: Look up the email for this username from cc_users
+    // ONLY select columns that actually exist in the cc_users table.
     const { data: userRow, error: lookupError } = await db
       .from('cc_users')
-      .select('email, role, full_name, school')
+      .select('email, role, role_label, name')
       .eq('username', username)
-      .single();
+      .maybeSingle();
 
-    if (lookupError || !userRow) {
-      showLoginError('Username not found.');
+    if (lookupError) {
+      console.error('[AUTH] cc_users lookup error:', JSON.stringify(lookupError, null, 2));
+      showLoginError('System error connecting to database.');
+      return { success: false };
+    }
+
+    if (!userRow) {
+      showLoginError('User not found.');
       return { success: false };
     }
 
@@ -39,8 +46,8 @@ async function attemptLogin(username, password) {
       username: username,
       email: userRow.email,
       role: userRow.role,
-      full_name: userRow.full_name,
-      school: userRow.school,
+      roleLabel: userRow.role_label,
+      name: userRow.name,
       session: authData.session
     };
 
@@ -53,7 +60,7 @@ async function attemptLogin(username, password) {
             btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
             btn.innerHTML = '<i class="fas fa-check"></i> <span class="btn-text">Redirecting...</span>';
         }
-        showLoginMessage(`Welcome, ${window.currentUser.username}!`, 'success');
+        showLoginMessage(`Welcome, ${window.currentUser.name}!`, 'success');
         setTimeout(() => {
             initDashboard(window.currentUser);
             showPage('dashboard');
@@ -83,12 +90,16 @@ async function restoreSession() {
 
   const user = sessionData.session.user;
 
-  // Reload role from database
-  const { data: userRow } = await db
+  // Reload role from database, matching actual schema
+  const { data: userRow, error: fetchError } = await db
     .from('cc_users')
-    .select('role, full_name, school, username')
+    .select('role, role_label, name, username')
     .eq('email', user.email)
-    .single();
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error('[AUTH] Session restore fetch error:', fetchError);
+  }
 
   if (!userRow) return null;
 
@@ -96,8 +107,8 @@ async function restoreSession() {
     id: user.id,
     email: user.email,
     role: userRow.role,
-    full_name: userRow.full_name,
-    school: userRow.school,
+    roleLabel: userRow.role_label,
+    name: userRow.name,
     username: userRow.username,
     session: sessionData.session
   };
