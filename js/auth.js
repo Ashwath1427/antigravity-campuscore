@@ -10,28 +10,24 @@ async function attemptLogin(username, password) {
   }
 
   try {
-    // Step 1: Look up the email for this username from cc_users
-    // ONLY select columns that actually exist in the cc_users table.
-    const { data: userRow, error: lookupError } = await db
-      .from('cc_users')
-      .select('email, role, role_label, name')
-      .eq('username', username)
-      .maybeSingle();
+    // Step 1: Look up the email securely via RPC (bypasses RLS safely)
+    const { data: userEmail, error: lookupError } = await db
+      .rpc('get_email_by_username', { p_username: username });
 
     if (lookupError) {
-      console.error('[AUTH] cc_users lookup error:', JSON.stringify(lookupError, null, 2));
+      console.error('[AUTH] RPC lookup error:', JSON.stringify(lookupError, null, 2));
       showLoginError('System error connecting to database.');
       return { success: false };
     }
 
-    if (!userRow) {
+    if (!userEmail) {
       showLoginError('User not found.');
       return { success: false };
     }
 
     // Step 2: Sign in with real Supabase Auth using the email
     const { data: authData, error: authError } = await db.auth.signInWithPassword({
-      email: userRow.email,
+      email: userEmail,
       password: password
     });
 
@@ -40,11 +36,24 @@ async function attemptLogin(username, password) {
       return { success: false };
     }
 
-    // Step 3: Set the current user from real DB data
+    // Step 3: Now authenticated! Fetch the full profile from cc_users
+    const { data: userRow, error: profileError } = await db
+      .from('cc_users')
+      .select('role, role_label, name')
+      .eq('username', username)
+      .single();
+
+    if (profileError || !userRow) {
+      console.error('[AUTH] Profile fetch error post-login:', profileError);
+      showLoginError('Error loading user profile.');
+      return { success: false };
+    }
+
+    // Step 4: Set the current user from real DB data
     window.currentUser = {
       id: authData.user.id,
       username: username,
-      email: userRow.email,
+      email: userEmail,
       role: userRow.role,
       roleLabel: userRow.role_label,
       name: userRow.name,

@@ -473,3 +473,30 @@ INSERT INTO cc_announcements (title, content, date, author, category, priority, 
 ('Annual Sports Day', 'Annual sports day is scheduled for next month. All students are requested to participate.', CURRENT_DATE, 'VP', 'Events', 'medium', 'All'),
 ('Parent-Teacher Meeting', 'PTM is scheduled for this Saturday. All parents are requested to attend.', CURRENT_DATE, 'Principal', 'Meeting', 'medium', 'Parents'),
 ('Fee Payment Reminder', 'Last date for fee payment is approaching. Please pay the fees on time.', CURRENT_DATE, 'Admin Office', 'Finance', 'high', 'Parents');
+
+-- ============================================================
+-- RPC: Safe Username Lookup (SECURITY DEFINER)
+-- Allows public login flow to resolve username to email safely
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.get_email_by_username(p_username TEXT)
+RETURNS TEXT
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_email TEXT;
+BEGIN
+    SELECT email INTO v_email
+    FROM public.cc_users
+    WHERE username = p_username
+    LIMIT 1;
+    
+    RETURN v_email;
+END;
+$$;
+
+-- Grant execute access to anon (public)
+GRANT EXECUTE ON FUNCTION public.get_email_by_username(TEXT) TO anon;
+
+COMMIT;
