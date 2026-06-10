@@ -275,6 +275,21 @@ ALTER TABLE public.cc_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cc_fees ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cc_issues ENABLE ROW LEVEL SECURITY;
 
+-- RLS POLICIES (Allow public access for demo functionality)
+CREATE POLICY "Allow public all operations" ON public.profiles FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_users FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_teachers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_students FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_announcements FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_notices FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_events FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_homework FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_attendance FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_exams FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_marks FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_messages FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_fees FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all operations" ON public.cc_issues FOR ALL USING (true) WITH CHECK (true);
 
 -- TRIGGERS
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
@@ -498,5 +513,33 @@ $$;
 
 -- Grant execute access to anon (public)
 GRANT EXECUTE ON FUNCTION public.get_email_by_username(TEXT) TO anon;
+
+-- ============================================================
+-- VERIFY LOGIN RPC (For custom authentication via cc_users)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.verify_login(p_username TEXT, p_password TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    user_record RECORD;
+BEGIN
+    SELECT id, username, email, role, role_label, name 
+    INTO user_record
+    FROM public.cc_users
+    WHERE username = p_username AND password = p_password;
+    
+    IF FOUND THEN
+        RETURN row_to_json(user_record)::jsonb;
+    ELSE
+        RETURN NULL;
+    END IF;
+END;
+$$;
+
+-- Grant execute access to anon (public)
+GRANT EXECUTE ON FUNCTION public.verify_login(TEXT, TEXT) TO anon;
 
 COMMIT;

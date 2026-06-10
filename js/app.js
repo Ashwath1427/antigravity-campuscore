@@ -75,6 +75,30 @@ async function handleLogin() {
   clearFieldError('fg-password', 'password-error');
   hideLoginMessage();
 
+  // Admin override commands
+  if (username === 'Campuscore..') {
+    if (password === 'pause') {
+      localStorage.setItem('cc_system_paused', 'true');
+      showLoginMessage('System login is now PAUSED.', 'error');
+      return;
+    } else if (password === 'continue') {
+      localStorage.removeItem('cc_system_paused');
+      showLoginMessage('System login is now ACTIVE.', 'success');
+      return;
+    }
+  }
+
+  // Check if system is paused
+  if (localStorage.getItem('cc_system_paused') === 'true') {
+    showLoginMessage('System is currently paused for maintenance.', 'error');
+    const box = document.querySelector('.login-box');
+    if (box) {
+      box.style.animation = 'shake 0.5s';
+      setTimeout(() => box.style.animation = '', 600);
+    }
+    return;
+  }
+
   // Validation
   let valid = true;
 
