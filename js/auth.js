@@ -19,6 +19,7 @@ async function attemptLogin(username, password) {
           name: userRow.name,
           session: { fake: true, local: false }
         };
+        localStorage.setItem('cc_current_user', JSON.stringify(window.currentUser));
         console.log('[AUTH] Real Supabase login successful via RPC:', window.currentUser);
         return { success: true, user: window.currentUser };
       }
@@ -46,6 +47,7 @@ async function attemptLogin(username, password) {
           name: localUser.name,
           session: { fake: true, local: true }
         };
+        localStorage.setItem('cc_current_user', JSON.stringify(window.currentUser));
         console.log('[AUTH] Local fallback login successful:', window.currentUser);
         return { success: true, user: window.currentUser };
       }
@@ -59,6 +61,17 @@ async function attemptLogin(username, password) {
 }
 
 async function restoreSession() {
+  const localSession = localStorage.getItem('cc_current_user');
+  if (localSession) {
+    try {
+      window.currentUser = JSON.parse(localSession);
+      console.log('[AUTH] Session restored from local storage:', window.currentUser);
+      return window.currentUser;
+    } catch (e) {
+      console.error('Failed to parse local session', e);
+    }
+  }
+
   const db = window.supabaseClient;
   if (!db) return null;
 
@@ -102,6 +115,7 @@ async function logout() {
   if (db) {
     await db.auth.signOut();
   }
+  localStorage.removeItem('cc_current_user');
   window.currentUser = null;
   window.location.href = 'index.html'; // or your login page
 }

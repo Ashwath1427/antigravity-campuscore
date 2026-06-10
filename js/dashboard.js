@@ -345,11 +345,11 @@ function buildHome(user) {
       { icon: 'fa-users', label: 'Class Students', color: '#8b5cf6', target: 'teacher_classes' },
     ],
     principal: [
-      { icon: 'fa-check-circle', label: 'Policy Approvals', color: '#d32f2f', target: 'vp_approvals' },
-      { icon: 'fa-chart-pie', label: 'Institutional Perf.', color: '#1976d2', target: 'vp_class_perf' },
-      { icon: 'fa-user-shield', label: 'System Logs', color: '#8b5cf6', target: 'all_issues' },
-      { icon: 'fa-clipboard-check', label: 'Global Attendance', color: '#5ca870', target: 'vp_attendance' },
-      { icon: 'fa-bullhorn', label: 'Global Notice', color: '#f57c00', target: 'announcements' }
+      { icon: 'fa-check-circle', label: 'Policy Approvals', color: '#d32f2f', target: 'approvals' },
+      { icon: 'fa-chart-pie', label: 'Institutional Perf.', color: '#1976d2', target: 'class_performance' },
+      { icon: 'fa-user-shield', label: 'Helpdesk Logs', color: '#8b5cf6', target: 'helpdesk_staff' },
+      { icon: 'fa-clipboard-check', label: 'Global Attendance', color: '#5ca870', target: 'attendance_reports' },
+      { icon: 'fa-bullhorn', label: 'Global Notice', color: '#f57c00', target: 'notices' }
     ],
     apaaas: [
       { icon: 'fa-sitemap', label: 'Master Dash', color: '#1976d2', target: 'master_dashboard' },
