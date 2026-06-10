@@ -145,3 +145,17 @@ function clearLoginForm() {
   if (pass) pass.value = '';
   hideLoginMessage();
 }
+
+function clearFieldError(groupId, errorId) {
+  const group = document.getElementById(groupId);
+  const errorSpan = document.getElementById(errorId);
+  if (group) group.classList.remove('error');
+  if (errorSpan) errorSpan.textContent = '';
+}
+
+function setFieldError(groupId, errorId, message) {
+  const group = document.getElementById(groupId);
+  const errorSpan = document.getElementById(errorId);
+  if (group) group.classList.add('error');
+  if (errorSpan) errorSpan.textContent = message;
+}
