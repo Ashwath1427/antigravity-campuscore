@@ -104,7 +104,7 @@ async function handleLogin() {
   btn.classList.remove('loading');
   btn.disabled = false;
 
-  if (result.success) {
+  if (result && result.success) {
     // Success flash
     btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
     btn.innerHTML = '<i class="fas fa-check"></i> <span class="btn-text">Redirecting...</span>';

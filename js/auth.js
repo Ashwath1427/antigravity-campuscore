@@ -1,17 +1,17 @@
 let currentUser = null;
 
 async function attemptLogin(username, password) {
-  const supabase = window.supabaseClient;
+  const db = window.supabaseClient;
 
-  if (!supabase) {
+  if (!db) {
     console.error('[AUTH] Supabase client not initialized');
     showLoginError('System error. Please refresh the page.');
-    return;
+    return { success: false };
   }
 
   try {
     // Step 1: Look up the email for this username from cc_users
-    const { data: userRow, error: lookupError } = await supabase
+    const { data: userRow, error: lookupError } = await db
       .from('cc_users')
       .select('email, role, full_name, school')
       .eq('username', username)
@@ -19,18 +19,18 @@ async function attemptLogin(username, password) {
 
     if (lookupError || !userRow) {
       showLoginError('Username not found.');
-      return;
+      return { success: false };
     }
 
     // Step 2: Sign in with real Supabase Auth using the email
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    const { data: authData, error: authError } = await db.auth.signInWithPassword({
       email: userRow.email,
       password: password
     });
 
     if (authError || !authData.session) {
       showLoginError('Incorrect password.');
-      return;
+      return { success: false };
     }
 
     // Step 3: Set the current user from real DB data
@@ -58,21 +58,24 @@ async function attemptLogin(username, password) {
             initDashboard(window.currentUser);
             showPage('dashboard');
         }, 1000);
+        return { success: true, user: window.currentUser };
     } else {
         routeToDashboard(userRow.role);
+        return { success: true, user: window.currentUser };
     }
 
   } catch (err) {
     console.error('[AUTH] Login error:', err);
     showLoginError('Login failed. Please try again.');
+    return { success: false };
   }
 }
 
 async function restoreSession() {
-  const supabase = window.supabaseClient;
-  if (!supabase) return null;
+  const db = window.supabaseClient;
+  if (!db) return null;
 
-  const { data: sessionData, error } = await supabase.auth.getSession();
+  const { data: sessionData, error } = await db.auth.getSession();
   if (error || !sessionData.session) {
     console.log('[AUTH] No active session found.');
     return null;
@@ -81,7 +84,7 @@ async function restoreSession() {
   const user = sessionData.session.user;
 
   // Reload role from database
-  const { data: userRow } = await supabase
+  const { data: userRow } = await db
     .from('cc_users')
     .select('role, full_name, school, username')
     .eq('email', user.email)
@@ -104,9 +107,9 @@ async function restoreSession() {
 }
 
 async function logout() {
-  const supabase = window.supabaseClient;
-  if (supabase) {
-    await supabase.auth.signOut();
+  const db = window.supabaseClient;
+  if (db) {
+    await db.auth.signOut();
   }
   window.currentUser = null;
   window.location.href = 'index.html'; // or your login page
