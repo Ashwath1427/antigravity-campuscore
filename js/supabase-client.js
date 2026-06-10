@@ -1,10 +1,12 @@
 // js/supabase-client.js
 
-const SUPABASE_URL = 'https://bzqqgurlqunpzgdavedz.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_c4FB7TUyjfrO-_g4WwV0wQ_7ALx5e27';
+var SUPABASE_URL = 'https://bzqqgurlqunpzgdavedz.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_c4FB7TUyjfrO-_g4WwV0wQ_7ALx5e27';
 
-const { createClient } = supabase; // from CDN script tag
-window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+var { createClient } = supabase; // from CDN script tag
+if (!window.supabaseClient) {
+  window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 console.log('[Supabase] Client initialized:', !!window.supabaseClient);
 
