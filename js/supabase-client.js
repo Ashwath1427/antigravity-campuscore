@@ -1,7 +1,7 @@
 // js/supabase-client.js
 
-const SUPABASE_URL = 'https://bzqqgurlqunpzgdavedz.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_c4FB7TUyjfrO-_g4WwV0wQ_7ALx5e27';
+const SUPABASE_URL = 'https://jpjkxwgnwgpnphxzhprg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impwamt4d2dud2dwbnBoeHpocHJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwODA5NjIsImV4cCI6MjA5NjY1Njk2Mn0.YVT6wSkWWqGXvQgK5HEe9jNj6_1Hxhu2OYVQhs_20ws';
 
 const { createClient } = supabase; // from CDN script tag
 window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
