@@ -981,6 +981,7 @@ function buildVPAttendance(user) {
 
   let rawList = window.CAMPUSCORE_REGISTRY ? window.CAMPUSCORE_REGISTRY.getAllStudents() : (STUDENTS || []);
   let filtered = rawList.map(s => {
+    if (!s) return null;
     // Prioritize s.class (e.g. '9-C') directly — avoid composing duplicates
     let fullClass = '';
     if (s.class && String(s.class).includes('-')) {
@@ -996,7 +997,7 @@ function buildVPAttendance(user) {
       section: parts[1] || '',
       attendance: Number(s.attendance || s.attendancePct || s.att || 0)
     };
-  });
+  }).filter(Boolean);
 
   if (filterClass !== 'All') {
     filtered = filtered.filter(s => String(s.grade) === String(filterClass));
@@ -1406,8 +1407,9 @@ function buildVPStudents(user) {
   const students = STUDENTS || [];
 
   let data = students.map((s, idx) => {
-    const sid = String(s.id);
-    const shared = getVPStudentSharedData(sid);
+    if (!s) return null;
+    const sid = String(s.id || '');
+    const shared = getVPStudentSharedData(sid) || {};
 
     // Normalize grade and section
     let grade = String(shared.currentClass || s.currentClass || s.class || '');
@@ -1423,7 +1425,7 @@ function buildVPStudents(user) {
     const sectionVal = String(s.class || '').split('-')[1] || s.section || 'C';
 
     return { s, sid, shared, grade: gradeVal, section: sectionVal, att: Number(s.attendancePct || s.attendance || 0), gpa: s.gpa || 0, status: s.status || 'Active' };
-  });
+  }).filter(Boolean);
 
   // Filter the cache
   if (selectedClass !== 'All Classes') {
@@ -1570,8 +1572,8 @@ function buildVPStudentIssues(user) {
   const tab = localStorage.getItem('vp_issue_tab') || 'main';
   const filterGrade = localStorage.getItem('vp_issue_filter_grade') || 'All Grades';
 
-  const escStore = getEscalationStore();
-  let issues = (GLOBAL_ISSUES || []).slice().sort((a, b) => new Date(b.updated || b.created) - new Date(a.updated || a.created));
+  const escStore = getEscalationStore() || {};
+  let issues = (GLOBAL_ISSUES || []).filter(Boolean).slice().sort((a, b) => new Date(b.updated || b.created || 0) - new Date(a.updated || a.created || 0));
 
   // Apply Grade Filter if set
   if (filterGrade !== 'All Grades') {
