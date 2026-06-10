@@ -976,74 +976,84 @@ function sBtn(l, ic, oc = '') {
 /* ━━━━ VICE PRINCIPAL EXCLUSIVE MODULES ━━━━━━━━━━━━━━━━━━━ */
 
 function buildVPAttendance(user) {
-  const filterClass = localStorage.getItem('att_filter_class') || 'All';
-  const filterSection = localStorage.getItem('att_filter_section') || 'All';
+  try {
+    const filterClass = localStorage.getItem('att_filter_class') || 'All';
+    const filterSection = localStorage.getItem('att_filter_section') || 'All';
 
-  let rawList = window.CAMPUSCORE_REGISTRY ? window.CAMPUSCORE_REGISTRY.getAllStudents() : (STUDENTS || []);
-  let filtered = rawList.map(s => {
-    if (!s) return null;
-    // Prioritize s.class (e.g. '9-C') directly — avoid composing duplicates
-    let fullClass = '';
-    if (s.class && String(s.class).includes('-')) {
-      fullClass = String(s.class);
-    } else {
-      fullClass = `${s.currentClass || s.class || '9'}-${s.currentSection || s.section || 'A'}`;
+    let rawList = window.CAMPUSCORE_REGISTRY ? window.CAMPUSCORE_REGISTRY.getAllStudents() : (STUDENTS || []);
+    let filtered = rawList.map(s => {
+      if (!s) return null;
+      let fullClass = '';
+      if (s.class && String(s.class).includes('-')) {
+        fullClass = String(s.class);
+      } else {
+        fullClass = `${s.currentClass || s.class || '9'}-${s.currentSection || s.section || 'A'}`;
+      }
+      const parts = String(fullClass).split('-');
+      return {
+        name: s.name || 'Unknown',
+        fullClass: fullClass,
+        grade: parts[0] || '',
+        section: parts[1] || '',
+        attendance: Number(s.attendance || s.attendancePct || s.att || 0)
+      };
+    }).filter(Boolean);
+
+    if (filterClass !== 'All') {
+      filtered = filtered.filter(s => String(s.grade) === String(filterClass));
     }
-    const parts = String(fullClass).split('-');
-    return {
-      name: s.name || 'Unknown',
-      fullClass: fullClass,
-      grade: parts[0] || '',
-      section: parts[1] || '',
-      attendance: Number(s.attendance || s.attendancePct || s.att || 0)
-    };
-  }).filter(Boolean);
+    if (filterSection !== 'All') {
+      filtered = filtered.filter(s => String(s.section) === String(filterSection));
+    }
 
-  if (filterClass !== 'All') {
-    filtered = filtered.filter(s => String(s.grade) === String(filterClass));
-  }
-  if (filterSection !== 'All') {
-    filtered = filtered.filter(s => String(s.section) === String(filterSection));
-  }
+    const rows = filtered.map((s, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>${s.fullClass}</span></div></div></td><td><div class="progress-bar"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div></td><td><strong style="color:${attColor(s.attendance)}">${s.attendance}%</strong></td><td>${s.attendance >= 90 ? 'Excellent' : s.attendance >= 80 ? 'Good' : 'Low'}</td></tr>`).join('');
 
-  const rows = filtered.map((s, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>${s.fullClass}</span></div></div></td><td><div class="progress-bar"><div class="progress-fill" style="width:${s.attendance}%;background:${attColor(s.attendance)}"></div></div></td><td><strong style="color:${attColor(s.attendance)}">${s.attendance}%</strong></td><td>${s.attendance >= 90 ? 'Excellent' : s.attendance >= 80 ? 'Good' : 'Low'}</td></tr>`).join('');
-
-  return `<div class="dash-section" id="section-vp_attendance">
-    <div class="content-grid-equal" style="margin-bottom:20px">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,rgba(92,168,112,0.1),transparent)">
-        <h3 style="margin-bottom:10px">Overall Attendance</h3>
-        <div style="font-size:48px;font-weight:900;color:var(--color-primary)">${filtered.length ? (filtered.reduce((a, b) => a + b.attendance, 0) / filtered.length).toFixed(1) : 0}%</div>
-        <p style="color:var(--color-text-muted)">Tracking ${filtered.length} students in view</p>
-      </div>
-      <div class="card">
-        <h3>🚨 Low Attendance Alerts</h3>
-        <ul class="activity-list" style="margin-top:10px">
-          ${filtered.filter(s => s.attendance < 85).slice(0, 3).map(s => `<li class="activity-item"><div class="activity-dot" style="background:var(--color-danger)"></div><div class="activity-text"><strong style="color:var(--color-text)">${s.name} (${s.class})</strong> - ${s.attendance}%</div></li>`).join('') || '<li class="activity-item"><div class="activity-text">No alerts for selected group</div></li>'}
-        </ul>
-      </div>
-    </div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
-        <h3>📈 Detailed Student Tracking</h3>
-        <div style="display:flex;gap:10px">
-          <select id="att-class-filter" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
-            <option value="All" ${filterClass === 'All' ? 'selected' : ''}>All Classes</option>
-            <option value="10" ${filterClass === '10' ? 'selected' : ''}>Class 10</option>
-            <option value="9" ${filterClass === '9' ? 'selected' : ''}>Class 9</option>
-            <option value="8" ${filterClass === '8' ? 'selected' : ''}>Class 8</option>
-            <option value="7" ${filterClass === '7' ? 'selected' : ''}>Class 7</option>
-            <option value="6" ${filterClass === '6' ? 'selected' : ''}>Class 6</option>
-          </select>
-          <select id="att-section-filter" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
-            <option value="All" ${filterSection === 'All' ? 'selected' : ''}>All Sections</option>
-            ${['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'].map(s => `<option value="${s}" ${filterSection === s ? 'selected' : ''}>Section ${s}</option>`).join('')}
-          </select>
-          <button class="btn-primary" style="padding:8px 16px" onclick="applyAttendanceFilter()"><i class="fas fa-filter"></i> Apply</button>
+    return `<div class="dash-section" id="section-vp_attendance">
+      <div class="content-grid-equal" style="margin-bottom:20px">
+        <div class="card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,rgba(92,168,112,0.1),transparent)">
+          <h3 style="margin-bottom:10px">Overall Attendance</h3>
+          <div style="font-size:48px;font-weight:900;color:var(--color-primary)">${filtered.length ? (filtered.reduce((a, b) => a + b.attendance, 0) / filtered.length).toFixed(1) : 0}%</div>
+          <p style="color:var(--color-text-muted)">Tracking ${filtered.length} students in view</p>
+        </div>
+        <div class="card">
+          <h3>🚨 Low Attendance Alerts</h3>
+          <ul class="activity-list" style="margin-top:10px">
+            ${filtered.filter(s => s.attendance < 85).slice(0, 3).map(s => `<li class="activity-item"><div class="activity-dot" style="background:var(--color-danger)"></div><div class="activity-text"><strong style="color:var(--color-text)">${s.name} (${s.fullClass})</strong> - ${s.attendance}%</div></li>`).join('') || '<li class="activity-item"><div class="activity-text">No alerts for selected group</div></li>'}
+          </ul>
         </div>
       </div>
-      <div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Student</th><th>Progress</th><th>%</th><th>Status</th></tr></thead><tbody>${rows || '<tr><td colspan="4" style="text-align:center">No students found matching filters.</td></tr>'}</tbody></table></div>
-    </div>
-  </div>`;
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+          <h3>📈 Detailed Student Tracking</h3>
+          <div style="display:flex;gap:10px">
+            <select id="att-class-filter" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
+              <option value="All" ${filterClass === 'All' ? 'selected' : ''}>All Classes</option>
+              <option value="10" ${filterClass === '10' ? 'selected' : ''}>Class 10</option>
+              <option value="9" ${filterClass === '9' ? 'selected' : ''}>Class 9</option>
+              <option value="8" ${filterClass === '8' ? 'selected' : ''}>Class 8</option>
+              <option value="7" ${filterClass === '7' ? 'selected' : ''}>Class 7</option>
+              <option value="6" ${filterClass === '6' ? 'selected' : ''}>Class 6</option>
+            </select>
+            <select id="att-section-filter" style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);outline:none">
+              <option value="All" ${filterSection === 'All' ? 'selected' : ''}>All Sections</option>
+              ${['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'].map(s => `<option value="${s}" ${filterSection === s ? 'selected' : ''}>Section ${s}</option>`).join('')}
+            </select>
+            <button class="btn-primary" style="padding:8px 16px" onclick="applyAttendanceFilter()"><i class="fas fa-filter"></i> Apply</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Student</th><th>Progress</th><th>%</th><th>Status</th></tr></thead><tbody>${rows || '<tr><td colspan="4" style="text-align:center">No students found matching filters.</td></tr>'}</tbody></table></div>
+      </div>
+    </div>`;
+  } catch (e) {
+    console.error("Error in buildVPAttendance:", e);
+    return `<div class="dash-section" id="section-vp_attendance">
+      <div class="card" style="border-left:4px solid var(--color-danger)">
+        <h3 style="color:var(--color-danger)">Error Loading Attendance</h3>
+        <p style="color:var(--color-text-muted)">There was a problem loading the attendance data.</p>
+        <pre style="margin-top:10px;font-size:11px;color:#888">${e.message}</pre>
+      </div>
+    </div>`;
+  }
 }
 
 function applyAttendanceFilter() {
@@ -1055,57 +1065,69 @@ function applyAttendanceFilter() {
 }
 
 function buildVPClassPerf(user) {
-  // Helper to get unique grades and sections for dropdowns
-  const grades = [...new Set(CLASS_PERFORMANCE.map(c => c.class.split('-')[0]))].sort((a, b) => b - a);
-  const sections = [...new Set(CLASS_PERFORMANCE.map(c => c.class.split('-')[1]))].sort();
+  try {
+    // Helper to get unique grades and sections for dropdowns
+    const safePerf = Array.isArray(CLASS_PERFORMANCE) ? CLASS_PERFORMANCE.filter(c => c && c.class) : [];
+    const grades = [...new Set(safePerf.map(c => c.class.split('-')[0]))].sort((a, b) => b - a);
+    const sections = [...new Set(safePerf.map(c => c.class.split('-')[1]))].sort();
 
-  const gradeOptions = grades.map(g => `<option value="${g}">Grade ${g}</option>`).join('');
-  const sectionOptions = sections.map(s => `<option value="${s}">Section ${s}</option>`).join('');
+    const gradeOptions = grades.map(g => `<option value="${g}">Grade ${g}</option>`).join('');
+    const sectionOptions = sections.map(s => `<option value="${s}">Section ${s}</option>`).join('');
 
-  return `<div class="dash-section" id="section-vp_class_perf">
-    <div class="card" style="margin-bottom:20px;background:var(--color-surface-2)">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
-        <div>
-          <h3>📊 Class Performance Matrix</h3>
-          <p style="color:var(--color-text-muted);font-size:13px">Comparing academic and discipline health across many classes. Use filters to narrow down.</p>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <div style="display:flex;gap:5px;background:var(--color-surface);padding:5px;border-radius:12px;border:1px solid var(--color-border)">
-            <select id="vp-filter-grade" class="form-control" style="width:120px;border:none;background:transparent" onchange="updateVPPerfFilter()">
-              <option value="all">All Grades</option>
-              ${gradeOptions}
-            </select>
-            <select id="vp-filter-section" class="form-control" style="width:120px;border:none;background:transparent" onchange="updateVPPerfFilter()">
-              <option value="all">All Sections</option>
-              ${sectionOptions}
-            </select>
+    return `<div class="dash-section" id="section-vp_class_perf">
+      <div class="card" style="margin-bottom:20px;background:var(--color-surface-2)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
+          <div>
+            <h3>📊 Class Performance Matrix</h3>
+            <p style="color:var(--color-text-muted);font-size:13px">Comparing academic and discipline health across many classes. Use filters to narrow down.</p>
           </div>
-          <button style="padding:10px 16px;border-radius:10px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-weight:600" onclick="compareVPSections()"><i class="fas fa-balance-scale"></i> Compare</button>
-          <button class="btn-primary" onclick="exportVPReport()"><i class="fas fa-file-pdf"></i> Export</button>
+          <div style="display:flex;gap:10px;align-items:center">
+            <div style="display:flex;gap:5px;background:var(--color-surface);padding:5px;border-radius:12px;border:1px solid var(--color-border)">
+              <select id="vp-filter-grade" class="form-control" style="width:120px;border:none;background:transparent" onchange="updateVPPerfFilter()">
+                <option value="all">All Grades</option>
+                ${gradeOptions}
+              </select>
+              <select id="vp-filter-section" class="form-control" style="width:120px;border:none;background:transparent" onchange="updateVPPerfFilter()">
+                <option value="all">All Sections</option>
+                ${sectionOptions}
+              </select>
+            </div>
+            <button style="padding:10px 16px;border-radius:10px;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);cursor:pointer;font-weight:600" onclick="compareVPSections()"><i class="fas fa-balance-scale"></i> Compare</button>
+            <button class="btn-primary" onclick="exportVPReport()"><i class="fas fa-file-pdf"></i> Export</button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="card">
-      <div style="overflow-x:auto;border-radius:14px">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Class</th>
-              <th>Class Teacher</th>
-              <th>Avg. Att.</th>
-              <th>Avg. GPA</th>
-              <th>Weak Students</th>
-              <th>Discipline Issues</th>
-              <th>Topper</th>
-            </tr>
-          </thead>
-          <tbody id="vp-perf-table-body">
-            ${renderVPPerfTableRows('all', 'all')}
-          </tbody>
-        </table>
+      <div class="card">
+        <div style="overflow-x:auto;border-radius:14px">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th>Class Teacher</th>
+                <th>Avg. Att.</th>
+                <th>Avg. GPA</th>
+                <th>Weak Students</th>
+                <th>Discipline Issues</th>
+                <th>Topper</th>
+              </tr>
+            </thead>
+            <tbody id="vp-perf-table-body">
+              ${renderVPPerfTableRows('all', 'all')}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  </div>`;
+    </div>`;
+  } catch (e) {
+    console.error("Error in buildVPClassPerf:", e);
+    return `<div class="dash-section" id="section-vp_class_perf">
+      <div class="card" style="border-left:4px solid var(--color-danger)">
+        <h3 style="color:var(--color-danger)">Error Loading Class Performance</h3>
+        <p style="color:var(--color-text-muted)">There was a problem loading the class performance data.</p>
+        <pre style="margin-top:10px;font-size:11px;color:#888">${e.message}</pre>
+      </div>
+    </div>`;
+  }
 }
 
 window.updateVPPerfFilter = function () {
@@ -1338,8 +1360,16 @@ function computeDemotedClass(currentClassCode) {
 
 function getVPStudentSharedData(studentId) {
   const sid = String(studentId);
-  if (typeof getStudentSharedData === 'function') return getStudentSharedData(sid);
-  return JSON.parse(localStorage.getItem('campuscore_student_data_' + sid) || '{}');
+  if (typeof getStudentSharedData === 'function') {
+    try {
+      return getStudentSharedData(sid);
+    } catch(e) {}
+  }
+  try {
+    return JSON.parse(localStorage.getItem('campuscore_student_data_' + sid) || '{}');
+  } catch (e) {
+    return {};
+  }
 }
 
 function saveVPStudentSharedData(studentId, data) {
@@ -1359,7 +1389,12 @@ function pushStudentActivity(shared, note) {
 
 function getEscalationStore() {
   const base = { teacherInbox: [], coordinatorInbox: [], vpEscalated: [], resolvedIssues: [] };
-  const parsed = JSON.parse(localStorage.getItem('campuscore_escalations') || '{}');
+  let parsed;
+  try {
+    parsed = JSON.parse(localStorage.getItem('campuscore_escalations') || '{}');
+  } catch(e) {
+    parsed = {};
+  }
   return {
     teacherInbox: Array.isArray(parsed.teacherInbox) ? parsed.teacherInbox : [],
     coordinatorInbox: Array.isArray(parsed.coordinatorInbox) ? parsed.coordinatorInbox : [],
@@ -1397,35 +1432,33 @@ function openEscalationTimelineModal(issueId) {
 }
 
 function buildVPStudents(user) {
-  const filter = JSON.parse(localStorage.getItem('vp_student_analysis_filter') || '{"class":"All Classes","section":"All Sections","q":""}');
-  const allSections = 'ABCDEFGHIJK'.split('');
-  const selectedClass = filter.class || 'All Classes';
-  const selectedSection = filter.section || 'All Sections';
-  const q = String(filter.q || '').trim().toLowerCase();
+  try {
+    const filter = JSON.parse(localStorage.getItem('vp_student_analysis_filter') || '{"class":"All Classes","section":"All Sections","q":""}');
+    const allSections = 'ABCDEFGHIJK'.split('');
+    const selectedClass = filter.class || 'All Classes';
+    const selectedSection = filter.section || 'All Sections';
+    const q = String(filter.q || '').trim().toLowerCase();
 
-  // Use the cached registry (populated by sbFetchStudents on load)
-  const students = STUDENTS || [];
+    const students = Array.isArray(STUDENTS) ? STUDENTS : [];
 
-  let data = students.map((s, idx) => {
-    if (!s) return null;
-    const sid = String(s.id || '');
-    const shared = getVPStudentSharedData(sid) || {};
+    let data = students.map((s, idx) => {
+      if (!s) return null;
+      const sid = String(s.id || '');
+      const shared = getVPStudentSharedData(sid) || {};
 
-    // Normalize grade and section
-    let grade = String(shared.currentClass || s.currentClass || s.class || '');
-    let section = String(shared.currentSection || s.currentSection || s.section || '');
+      let grade = String(shared.currentClass || s.currentClass || s.class || '');
+      let section = String(shared.currentSection || s.currentSection || s.section || '');
 
-    if (grade.includes('-')) {
-      const parts = grade.split('-');
-      grade = parts[0];
-      if (!section) section = parts[1];
-    }
-    // Corrected normalization: 
-    const gradeVal = String(s.class || '').split('-')[0] || '9';
-    const sectionVal = String(s.class || '').split('-')[1] || s.section || 'C';
+      if (grade.includes('-')) {
+        const parts = grade.split('-');
+        grade = parts[0];
+        if (!section) section = parts[1];
+      }
+      const gradeVal = String(s.class || '').split('-')[0] || '9';
+      const sectionVal = String(s.class || '').split('-')[1] || s.section || 'C';
 
-    return { s, sid, shared, grade: gradeVal, section: sectionVal, att: Number(s.attendancePct || s.attendance || 0), gpa: s.gpa || 0, status: s.status || 'Active' };
-  }).filter(Boolean);
+      return { s, sid, shared, grade: gradeVal, section: sectionVal, att: Number(s.attendancePct || s.attendance || 0), gpa: s.gpa || 0, status: s.status || 'Active' };
+    }).filter(Boolean);
 
   // Filter the cache
   if (selectedClass !== 'All Classes') {
@@ -1500,6 +1533,16 @@ function buildVPStudents(user) {
       ${noRecordsMsg}
     </div>
   </div>`;
+  } catch (e) {
+    console.error("Error in buildVPStudents:", e);
+    return `<div class="dash-section" id="section-vp_students">
+      <div class="card" style="border-left:4px solid var(--color-danger)">
+        <h3 style="color:var(--color-danger)">Error Loading Students</h3>
+        <p style="color:var(--color-text-muted)">There was a problem loading the student database.</p>
+        <pre style="margin-top:10px;font-size:11px;color:#888">${e.message}</pre>
+      </div>
+    </div>`;
+  }
 }
 
 function onVPAnalysisClassChange(val) {
@@ -1569,68 +1612,81 @@ function openVPStudentProfileModal(studentId) {
 }
 
 function buildVPStudentIssues(user) {
-  const tab = localStorage.getItem('vp_issue_tab') || 'main';
-  const filterGrade = localStorage.getItem('vp_issue_filter_grade') || 'All Grades';
+  try {
+    const tab = localStorage.getItem('vp_issue_tab') || 'main';
+    const filterGrade = localStorage.getItem('vp_issue_filter_grade') || 'All Grades';
 
-  const escStore = getEscalationStore() || {};
-  let issues = (GLOBAL_ISSUES || []).filter(Boolean).slice().sort((a, b) => new Date(b.updated || b.created || 0) - new Date(a.updated || a.created || 0));
+    const escStore = getEscalationStore() || {};
+    const safeGlobalIssues = Array.isArray(GLOBAL_ISSUES) ? GLOBAL_ISSUES : [];
+    let issues = safeGlobalIssues.filter(Boolean).slice().sort((a, b) => new Date((b && b.updated) || (b && b.created) || 0) - new Date((a && a.updated) || (a && a.created) || 0));
 
-  // Apply Grade Filter if set
-  if (filterGrade !== 'All Grades') {
-    issues = issues.filter(i => String(i.class || '').startsWith(filterGrade));
-  }
+    // Apply Grade Filter if set
+    if (filterGrade !== 'All Grades') {
+      issues = issues.filter(i => String(i.class || '').startsWith(filterGrade));
+    }
 
-  const mainIssues = issues.filter(i => i.stage === 'VP' && i.status !== 'Resolved' && i.status !== 'Closed' && i.status !== 'Escalated');
-  const globalEsc = issues.filter(i => i.status === 'Escalated').map(i => ({ ...i, _source: 'main' }));
-  const localVpEsc = (escStore.vpEscalated || []).map(i => ({ ...i, _source: 'coordinator' }));
+    const mainIssues = issues.filter(i => i.stage === 'VP' && i.status !== 'Resolved' && i.status !== 'Closed' && i.status !== 'Escalated');
+    const globalEsc = issues.filter(i => i.status === 'Escalated').map(i => ({ ...i, _source: 'main' }));
+    const vpEscArray = Array.isArray(escStore.vpEscalated) ? escStore.vpEscalated : [];
+    const localVpEsc = vpEscArray.filter(Boolean).map(i => ({ ...i, _source: 'coordinator' }));
 
-  const escalatedIssues = [...localVpEsc, ...globalEsc];
-  const resolvedIssues = issues.filter(i => i.status === 'Resolved' || i.status === 'Closed');
-  const activeList = tab === 'escalated' ? escalatedIssues : tab === 'resolved' ? resolvedIssues : mainIssues;
+    const escalatedIssues = [...localVpEsc, ...globalEsc];
+    const resolvedIssues = issues.filter(i => i.status === 'Resolved' || i.status === 'Closed');
+    const activeList = tab === 'escalated' ? escalatedIssues : tab === 'resolved' ? resolvedIssues : mainIssues;
 
-  const cards = activeList.map(i => {
-    const priority = i.priority || i.urgency || 'Normal';
-    const isHigh = priority === 'High';
-    const isMed = priority === 'Medium';
-    const color = isHigh ? 'var(--color-danger)' : isMed ? '#f57c00' : 'var(--color-success)';
-    return `<div class="card" style="border-left:4px solid ${color}">
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${i.class || '-'}</span><span style="font-size:12px;font-weight:700;color:${color}">${priority}</span></div>
-      <h4 style="margin-bottom:6px;font-size:16px;color:var(--color-text)">${i.studentName || i.student || 'Student'}</h4>
-      <p style="color:var(--color-text-muted);font-size:13px;margin-bottom:12px">${i.title || i.issue || '-'}</p>
-      <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:6px"><i class="fas fa-user-shield"></i> Reported by: ${i.reporterName || i.reporter || i.escalatedByCoordinator || '-'}</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        ${tab !== 'resolved' ? `<button class="btn-primary" style="flex:1;min-width:100px;font-size:12px;padding:8px" onclick="${i._source === 'coordinator' ? 'vpResolveEscalationIssue' : 'resolveVPIssue'}('${i.id}')">Resolve</button>` : ''}
-        <button style="flex:1;min-width:100px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-text);cursor:pointer" onclick="${i._source === 'coordinator' ? 'openEscalationTimelineModal' : 'viewIssue'}('${i.id}')"><i class="fas fa-folder-open"></i> Open Case</button>
-      </div>
-    </div>`;
-  }).join('');
+    const cards = activeList.map(i => {
+      const priority = i.priority || i.urgency || 'Normal';
+      const isHigh = priority === 'High';
+      const isMed = priority === 'Medium';
+      const color = isHigh ? 'var(--color-danger)' : isMed ? '#f57c00' : 'var(--color-success)';
+      return `<div class="card" style="border-left:4px solid ${color}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span class="badge" style="background:var(--color-surface-2);color:var(--color-text)">${i.class || '-'}</span><span style="font-size:12px;font-weight:700;color:${color}">${priority}</span></div>
+        <h4 style="margin-bottom:6px;font-size:16px;color:var(--color-text)">${i.studentName || i.student || 'Student'}</h4>
+        <p style="color:var(--color-text-muted);font-size:13px;margin-bottom:12px">${i.title || i.issue || '-'}</p>
+        <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:6px"><i class="fas fa-user-shield"></i> Reported by: ${i.reporterName || i.reporter || i.escalatedByCoordinator || '-'}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          ${tab !== 'resolved' ? `<button class="btn-primary" style="flex:1;min-width:100px;font-size:12px;padding:8px" onclick="${i._source === 'coordinator' ? 'vpResolveEscalationIssue' : 'resolveVPIssue'}('${i.id}')">Resolve</button>` : ''}
+          <button style="flex:1;min-width:100px;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:8px;font-weight:600;font-size:12px;color:var(--color-text);cursor:pointer" onclick="${i._source === 'coordinator' ? 'openEscalationTimelineModal' : 'viewIssue'}('${i.id}')"><i class="fas fa-folder-open"></i> Open Case</button>
+        </div>
+      </div>`;
+    }).join('');
 
-  return `<div class="dash-section" id="section-vp_student_issues">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
-      <div>
-        <h3 style="font-size:18px">Escalated Discipline & Attendance Cases</h3>
-        <p style="font-size:12px;color:var(--color-text-muted)">Manage critical student incidents escalated for VP review.</p>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <select id="vp-issue-grade-filter" class="form-control" style="width:130px" onchange="updateVPIssueGradeFilter(this.value)">
-           <option value="All Grades">All Grades</option>
-           <option value="6" ${filterGrade === '6' ? 'selected' : ''}>Grade 6</option>
-           <option value="7" ${filterGrade === '7' ? 'selected' : ''}>Grade 7</option>
-           <option value="8" ${filterGrade === '8' ? 'selected' : ''}>Grade 8</option>
-           <option value="9" ${filterGrade === '9' ? 'selected' : ''}>Grade 9</option>
-           <option value="10" ${filterGrade === '10' ? 'selected' : ''}>Grade 10</option>
-        </select>
-        <div style="display:flex;gap:6px;background:var(--color-surface-2);padding:4px;border-radius:10px">
-          <button class="btn-primary" onclick="setVPIssueTab('main')" style="${tab === 'main' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Main (${mainIssues.length})</button>
-          <button class="btn-primary" onclick="setVPIssueTab('escalated')" style="${tab === 'escalated' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Escalated (${escalatedIssues.length})</button>
-          <button class="btn-primary" onclick="setVPIssueTab('resolved')" style="${tab === 'resolved' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Resolved</button>
+    return `<div class="dash-section" id="section-vp_student_issues">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap">
+        <div>
+          <h3 style="font-size:18px">Escalated Discipline & Attendance Cases</h3>
+          <p style="font-size:12px;color:var(--color-text-muted)">Manage critical student incidents escalated for VP review.</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <select id="vp-issue-grade-filter" class="form-control" style="width:130px" onchange="updateVPIssueGradeFilter(this.value)">
+             <option value="All Grades">All Grades</option>
+             <option value="6" ${filterGrade === '6' ? 'selected' : ''}>Grade 6</option>
+             <option value="7" ${filterGrade === '7' ? 'selected' : ''}>Grade 7</option>
+             <option value="8" ${filterGrade === '8' ? 'selected' : ''}>Grade 8</option>
+             <option value="9" ${filterGrade === '9' ? 'selected' : ''}>Grade 9</option>
+             <option value="10" ${filterGrade === '10' ? 'selected' : ''}>Grade 10</option>
+          </select>
+          <div style="display:flex;gap:6px;background:var(--color-surface-2);padding:4px;border-radius:10px">
+            <button class="btn-primary" onclick="setVPIssueTab('main')" style="${tab === 'main' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Main (${mainIssues.length})</button>
+            <button class="btn-primary" onclick="setVPIssueTab('escalated')" style="${tab === 'escalated' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Escalated (${escalatedIssues.length})</button>
+            <button class="btn-primary" onclick="setVPIssueTab('resolved')" style="${tab === 'resolved' ? '' : 'background:transparent;color:var(--color-text);border:none'}">Resolved</button>
+          </div>
         </div>
       </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">
-      ${cards || `<div class="card"><p style="color:var(--color-text-muted)">No issues found for this filter.</p></div>`}
-    </div>
-  </div>`;
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">
+        ${cards || `<div class="card"><p style="color:var(--color-text-muted)">No issues found for this filter.</p></div>`}
+      </div>
+    </div>`;
+  } catch (e) {
+    console.error("Error in buildVPStudentIssues:", e);
+    return `<div class="dash-section" id="section-vp_student_issues">
+      <div class="card" style="border-left:4px solid var(--color-danger)">
+        <h3 style="color:var(--color-danger)">Error Loading Issues</h3>
+        <p style="color:var(--color-text-muted)">There was a problem loading the student issues data.</p>
+        <pre style="margin-top:10px;font-size:11px;color:#888">${e.message}</pre>
+      </div>
+    </div>`;
+  }
 }
 
 window.updateVPIssueGradeFilter = function (val) {
