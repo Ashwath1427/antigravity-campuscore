@@ -40,9 +40,8 @@ window.checkSupabaseAuthStatus = async function() {
   console.log('=================================');
 };
 
-const supabase = window.supabaseClient;
-
 async function initSupabaseData() {
+    const supabase = window.supabaseClient;
     if (!supabase) return;
     try {
         const { data: sessionData } = await supabase.auth.getSession();
