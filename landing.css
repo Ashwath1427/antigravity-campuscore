@@ -1,0 +1,453 @@
+/* ============================================================
+   CAMPUS CORE – LANDING PAGE STYLES
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  overflow-x: hidden;
+}
+
+#landing-page.page.active {
+  display: block;
+  width: 100%;
+}
+
+/* ─── Navbar ─────────────────────────────────────────────── */
+.land-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(92,168,112,0.15);
+  transition: all 0.3s ease;
+}
+[data-theme="dark"] .land-nav { background: rgba(21,26,30,0.95); border-bottom-color: rgba(255,255,255,0.05); }
+.land-nav.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.land-nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+}
+.land-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--color-text); font-size: 20px; font-weight: 600;
+}
+.land-logo strong { color: var(--color-primary); font-weight: 900; }
+.land-logo-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.land-logo-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+.land-nav-links { display: flex; align-items: center; gap: 6px; }
+.land-nav-links a {
+  padding: 8px 16px; font-size: 14px; font-weight: 600;
+  color: var(--color-text-light); text-decoration: none; border-radius: 8px;
+  transition: all 0.2s;
+}
+.land-nav-links a:hover { color: var(--color-primary); background: rgba(92,168,112,0.08); }
+.land-login-btn {
+  padding: 10px 24px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, #5ca870, #4d9160);
+  color: white; font-weight: 700; font-size: 14px; cursor: pointer;
+  font-family: 'Inter', sans-serif; transition: all 0.3s;
+  box-shadow: 0 4px 14px rgba(92,168,112,0.3); margin-left: 8px;
+}
+.land-login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(92,168,112,0.4); }
+.land-hamburger {
+  display: none; background: none; border: none; font-size: 24px;
+  color: var(--color-text); cursor: pointer; padding: 4px;
+}
+
+/* ─── Hero ────────────────────────────────────────────────── */
+.land-hero {
+  min-height: 100vh; 
+  padding: 120px 80px 60px;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 60px;
+  width: 100%;
+  max-width: 1440px; 
+  margin: 0 auto; 
+  position: relative;
+  overflow: hidden;
+}
+
+.land-hero-bg {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+  background-size: cover;
+}
+
+.land-hero-content { flex: 1.2; max-width: 700px; z-index: 2; }
+
+.land-hero-badge {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 999px;
+  background: rgba(34,197,94,0.15); color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.3);
+  font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.land-hero h1 {
+  font-size: clamp(48px, 6vw, 72px); font-weight: 900; letter-spacing: -1px; line-height: 1.1;
+  color: #fff; margin-bottom: 16px;
+}
+.land-hero h1 span { color: #22c55e; }
+
+.land-hero-tagline {
+  font-size: 24px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 20px;
+}
+
+.land-hero-desc {
+  font-size: 18px; line-height: 1.6; color: rgba(255,255,255,0.7); margin-bottom: 40px;
+  max-width: 600px;
+}
+
+.land-hero-btns { display: flex; gap: 20px; flex-wrap: wrap; }
+
+.land-btn-primary {
+  padding: 16px 36px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white; font-weight: 700; font-size: 16px; cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px rgba(34,197,94,0.3);
+  display: flex; align-items: center; gap: 12px; text-decoration: none;
+}
+.land-btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(34,197,94,0.4); }
+
+.land-btn-outline {
+  padding: 16px 36px; border: 1px solid rgba(255,255,255,0.3); border-radius: 12px;
+  background: rgba(255,255,255,0.05); color: white; font-weight: 700;
+  font-size: 16px; cursor: pointer; backdrop-filter: blur(10px);
+  transition: all 0.3s; text-decoration: none;
+  display: flex; align-items: center; gap: 12px;
+}
+.land-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: white; transform: translateY(-3px); }
+
+/* Premium School Image Frame */
+.land-hero-visual { flex: 1; display: flex; justify-content: flex-end; z-index: 2; }
+
+.land-hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 16 / 10;
+}
+
+.land-hero-image-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%; height: 120%;
+  background: radial-gradient(circle, rgba(34,197,94,0.2) 0%, transparent 70%);
+  filter: blur(50px);
+  z-index: -1;
+}
+
+.land-hero-image-frame {
+  width: 100%; height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.land-hero-school-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.land-hero-img-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4));
+}
+
+.land-hero-floating-badge {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(15, 23, 41, 0.7);
+  backdrop-filter: blur(12px);
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.land-hero-floating-badge i {
+  color: #22c55e;
+  font-size: 18px;
+}
+
+
+/* Stats Section horizontal */
+.land-stats { 
+  padding: 60px 80px; 
+  background: #0d0d0d; 
+  border-top: 1px solid rgba(255,255,255,0.05);
+  width: 100%;
+  clear: both;
+}
+.stats-grid-simple { 
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center; 
+  max-width: 1200px; 
+  margin: 0 auto;
+  gap: 20px;
+  width: 100%;
+}
+.stat-item { flex: 1; text-align: center; }
+.stat-num { font-size: 48px; font-weight: 900; color: #22c55e; margin-bottom: 8px; }
+.stat-label { font-size: 13px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+
+/* Dark Theme Overrides for Sections */
+[data-theme="dark"] .land-feature-card, 
+[data-theme="dark"] .land-role-card,
+[data-theme="dark"] .la-card {
+  background: #1e2428;
+  border-color: #2d3a40;
+}
+[data-theme="dark"] .land-section-alt {
+  background: #0f1411;
+}
+
+/* ─── Generic Sections ───────────────────────────────────── */
+.land-section { padding: 80px 80px; width: 100%; clear: both; }
+.land-section-alt { background: linear-gradient(135deg, #f7fdf9, #eff9f3); }
+[data-theme="dark"] .land-section-alt { background: #0f1411; }
+.land-container { max-width: 1200px; margin: 0 auto; width: 100%; }
+.land-section-header { text-align: center; margin-bottom: 56px; max-width: 800px; margin-left: auto; margin-right: auto; }
+.land-section-badge {
+  display: inline-block; padding: 4px 16px; border-radius: 999px;
+  background: rgba(34,197,94,0.15); color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.3);
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1.5px; margin-bottom: 16px;
+}
+.land-section-header h2 { font-size: 38px; font-weight: 900; color: var(--color-text); margin-bottom: 12px; letter-spacing: -0.5px; }
+.land-section-header p { font-size: 18px; color: var(--color-text-light); }
+
+/* ─── About ──────────────────────────────────────────────── */
+.land-about-grid { display: flex; flex-direction: column; gap: 24px; text-align: center; max-width: 800px; margin: 0 auto; }
+.land-about-grid p { font-size: 18px; line-height: 1.8; color: var(--color-text-light); }
+
+/* ─── Features Grid ──────────────────────────────────────── */
+.land-features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; }
+.land-feature-card {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: 20px; padding: 32px; text-align: left;
+  box-shadow: var(--shadow-sm); transition: all 0.3s; position: relative; overflow: hidden;
+}
+.land-feature-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  background: var(--card-accent, var(--color-primary)); opacity: 0; transition: opacity 0.3s;
+}
+.land-feature-card:hover::before { opacity: 1; }
+.land-feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.lfc-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 20px;
+}
+.land-feature-card h4 { font-size: 18px; font-weight: 800; color: var(--color-text); margin-bottom: 12px; }
+.land-feature-card p { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; }
+
+/* ─── Role-Based Access ──────────────────────────────────── */
+.land-roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.land-role-card {
+  background: var(--color-surface); border: 2px solid var(--color-border);
+  border-radius: 20px; padding: 36px 28px; text-align: center;
+  box-shadow: var(--shadow-sm); transition: all 0.3s;
+}
+.land-role-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--color-primary); }
+.lrc-icon {
+  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: white;
+}
+.land-role-card h4 { font-size: 20px; font-weight: 800; color: var(--color-text); margin-bottom: 8px; }
+.land-role-card p.role-desc { font-size: 14px; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 16px; }
+.role-feature-list { list-style: none; padding: 0; text-align: left; }
+.role-feature-list li { font-size: 13px; color: var(--color-text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.role-feature-list li i { color: var(--color-primary); font-size: 12px; }
+
+/* ─── Feature Mapping Table ──────────────────────────────── */
+.feature-map-wrapper { overflow-x: auto; background: var(--color-surface); border-radius: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); }
+.feature-map-table { width: 100%; border-collapse: collapse; text-align: center; }
+.feature-map-table th, .feature-map-table td { padding: 16px; border-bottom: 1px solid var(--color-border); }
+.feature-map-table th { background: rgba(92,168,112,0.05); font-weight: 700; color: var(--color-text); white-space: nowrap; }
+.feature-map-table th:first-child { text-align: left; position: sticky; left: 0; background: var(--color-surface); z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
+.feature-map-table td:first-child { text-align: left; font-weight: 600; color: var(--color-text); position: sticky; left: 0; background: var(--color-surface); z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
+.feature-map-table .has-feature { color: #5ca870; font-size: 18px; }
+.feature-map-table .no-feature { color: var(--color-border); font-size: 14px; }
+[data-theme="dark"] .feature-map-table th:first-child, [data-theme="dark"] .feature-map-table td:first-child { background: var(--color-surface); }
+
+/* ─── How it Works ───────────────────────────────────────── */
+.how-it-works-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.how-card { display: flex; gap: 16px; align-items: flex-start; background: transparent; }
+.how-icon { width: 44px; height: 44px; background: rgba(92,168,112,0.1); color: var(--color-primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.how-content h4 { font-size: 16px; font-weight: 800; color: var(--color-text); margin-bottom: 4px; }
+.how-content p { font-size: 14px; color: var(--color-text-muted); line-height: 1.5; }
+
+/* ─── Founders Section Premium ───────────────────────────── */
+.leadership-author-container { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 32px; 
+  max-width: 900px; 
+  margin: 40px auto 0;
+}
+
+.founder-card {
+  background: #0f1f14;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.founder-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 700; color: white;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.founder-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ashwath-avatar { background: linear-gradient(135deg, #16a34a, #22c55e); box-shadow: 0 10px 20px rgba(34,197,94,0.3); }
+.saicharan-avatar { background: linear-gradient(135deg, #4f46e5, #818cf8); box-shadow: 0 10px 20px rgba(129,140,248,0.3); }
+
+.founder-card .main-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 13px; font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.ashwath-badge { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.4); }
+.saicharan-badge { background: rgba(129,140,248,0.15); color: #818cf8; border: 1px solid rgba(129,140,248,0.4); }
+
+.founder-card .sub-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: rgba(255,255,255,0.05);
+  margin-top: 8px;
+}
+
+.founder-card h3 { font-size: 24px; color: white; margin: 0 0 4px; }
+.founder-card p { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.6; margin-top: 20px; }
+
+.ashwath-card:hover { 
+  border-color: #22c55e; 
+  box-shadow: 0 0 30px rgba(34,197,94,0.2); 
+  transform: translateY(-8px);
+}
+.saicharan-card:hover { 
+  border-color: #818cf8; 
+  box-shadow: 0 0 30px rgba(129,140,248,0.2); 
+  transform: translateY(-8px);
+}
+
+/* ─── CTA ─────────────────────────────────────────────────── */
+.land-cta {
+  padding: 100px 24px; text-align: center;
+  background: linear-gradient(135deg, #2d7a6e, #1e5245);
+  color: white; border-radius: 32px; margin: 40px auto; max-width: 1100px;
+}
+.land-cta h2 { font-size: 40px; font-weight: 900; margin-bottom: 16px; color: white; }
+.land-cta p { font-size: 18px; opacity: 0.85; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+.land-cta .land-btn-primary { background: white; color: #2d7a6e; margin: 0 auto; padding: 18px 48px; font-size: 18px; box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
+.land-cta .land-btn-primary:hover { transform: translateY(-4px); }
+
+/* ─── Contact ────────────────────────────────────────────── */
+.land-contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.land-contact-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 20px; padding: 40px 24px; text-align: center; box-shadow: var(--shadow-sm); }
+.land-contact-card i { font-size: 32px; color: var(--color-primary); margin-bottom: 20px; }
+.land-contact-card h4 { font-size: 18px; font-weight: 800; color: var(--color-text); margin-bottom: 12px; }
+.land-contact-card p { font-size: 15px; color: var(--color-text-muted); line-height: 1.6; }
+
+/* ─── Footer ────────────────────────────────────────────── */
+.land-footer { background: #1a2520; color: rgba(255,255,255,0.7); padding: 80px 24px 24px; }
+.land-footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+.land-footer-col p { font-size: 14px; line-height: 1.7; margin-top: 16px; }
+.land-footer-col h4 { font-size: 16px; font-weight: 800; color: white; margin-bottom: 20px; }
+.land-footer-col a { display: block; font-size: 14px; color: rgba(255,255,255,0.6); text-decoration: none; padding: 6px 0; transition: color 0.2s; }
+.land-footer-col a:hover { color: #9dd4aa; }
+.land-footer .land-logo span { color: white; }
+.land-footer-social { display: flex; gap: 12px; }
+.land-footer-social a { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6); transition: all 0.3s; font-size: 16px; }
+.land-footer-social a:hover { background: var(--color-primary); color: white; transform: translateY(-4px); }
+.land-footer-bar { text-align: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 14px; opacity: 0.5; max-width: 1100px; margin: 0 auto; }
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .land-hero { padding: 120px 40px 60px; }
+  .land-section { padding: 80px 40px; }
+  .land-stats { padding: 60px 40px; }
+}
+
+@media (max-width: 768px) {
+  .land-nav-links { display: none; }
+  .land-hamburger { display: block; }
+  
+  .land-hero { 
+    flex-direction: column; 
+    text-align: center; 
+    padding-top: 140px; 
+    gap: 40px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .land-hero-content { max-width: 100%; }
+  .land-hero h1 { font-size: 40px; }
+  .land-hero-btns { justify-content: center; }
+  .land-hero-visual { width: 100%; justify-content: center; order: 2; }
+  .land-hero-image-wrapper { max-width: 100%; }
+  
+  .land-stats { padding: 40px 24px; }
+  .stats-grid-simple { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 30px; 
+  }
+  
+  .land-section { padding: 60px 24px; }
+  
+  .land-features-grid { grid-template-columns: 1fr; }
+  .land-roles-grid { grid-template-columns: 1fr; }
+  .leadership-author-container { grid-template-columns: 1fr; }
+  .how-it-works-grid { grid-template-columns: 1fr; }
+  .land-contact-grid { grid-template-columns: 1fr; }
+  .land-footer-grid { grid-template-columns: 1fr; }
+  
+  .land-cta { border-radius: 0; margin: 0; }
+}
