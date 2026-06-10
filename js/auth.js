@@ -1,46 +1,62 @@
 let currentUser = null;
 
 async function attemptLogin(username, password) {
-  const supabase = window.supabaseClient;
+  const db = window.supabaseClient;
 
-  if (!supabase) {
+  if (!db) {
     console.error('[AUTH] Supabase client not initialized');
     showLoginError('System error. Please refresh the page.');
-    return;
+    return { success: false };
   }
 
   try {
-    // Step 1: Look up the email for this username from cc_users
-    const { data: userRow, error: lookupError } = await supabase
-      .from('cc_users')
-      .select('email, role, full_name, school')
-      .eq('username', username)
-      .single();
+    // Step 1: Look up the email securely via RPC (bypasses RLS safely)
+    const { data: userEmail, error: lookupError } = await db
+      .rpc('get_email_by_username', { p_username: username });
 
-    if (lookupError || !userRow) {
-      showLoginError('Username not found.');
-      return;
+    if (lookupError) {
+      console.error('[AUTH] RPC lookup error:', JSON.stringify(lookupError, null, 2));
+      showLoginError('System error connecting to database.');
+      return { success: false };
+    }
+
+    if (!userEmail) {
+      showLoginError('User not found.');
+      return { success: false };
     }
 
     // Step 2: Sign in with real Supabase Auth using the email
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email: userRow.email,
+    const { data: authData, error: authError } = await db.auth.signInWithPassword({
+      email: userEmail,
       password: password
     });
 
     if (authError || !authData.session) {
       showLoginError('Incorrect password.');
-      return;
+      return { success: false };
     }
 
-    // Step 3: Set the current user from real DB data
+    // Step 3: Now authenticated! Fetch the full profile from cc_users
+    const { data: userRow, error: profileError } = await db
+      .from('cc_users')
+      .select('role, role_label, name')
+      .eq('username', username)
+      .single();
+
+    if (profileError || !userRow) {
+      console.error('[AUTH] Profile fetch error post-login:', profileError);
+      showLoginError('Error loading user profile.');
+      return { success: false };
+    }
+
+    // Step 4: Set the current user from real DB data
     window.currentUser = {
       id: authData.user.id,
       username: username,
-      email: userRow.email,
+      email: userEmail,
       role: userRow.role,
-      full_name: userRow.full_name,
-      school: userRow.school,
+      roleLabel: userRow.role_label,
+      name: userRow.name,
       session: authData.session
     };
 
@@ -53,26 +69,29 @@ async function attemptLogin(username, password) {
             btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
             btn.innerHTML = '<i class="fas fa-check"></i> <span class="btn-text">Redirecting...</span>';
         }
-        showLoginMessage(`Welcome, ${window.currentUser.username}!`, 'success');
+        showLoginMessage(`Welcome, ${window.currentUser.name}!`, 'success');
         setTimeout(() => {
             initDashboard(window.currentUser);
             showPage('dashboard');
         }, 1000);
+        return { success: true, user: window.currentUser };
     } else {
         routeToDashboard(userRow.role);
+        return { success: true, user: window.currentUser };
     }
 
   } catch (err) {
     console.error('[AUTH] Login error:', err);
     showLoginError('Login failed. Please try again.');
+    return { success: false };
   }
 }
 
 async function restoreSession() {
-  const supabase = window.supabaseClient;
-  if (!supabase) return null;
+  const db = window.supabaseClient;
+  if (!db) return null;
 
-  const { data: sessionData, error } = await supabase.auth.getSession();
+  const { data: sessionData, error } = await db.auth.getSession();
   if (error || !sessionData.session) {
     console.log('[AUTH] No active session found.');
     return null;
@@ -80,12 +99,16 @@ async function restoreSession() {
 
   const user = sessionData.session.user;
 
-  // Reload role from database
-  const { data: userRow } = await supabase
+  // Reload role from database, matching actual schema
+  const { data: userRow, error: fetchError } = await db
     .from('cc_users')
-    .select('role, full_name, school, username')
+    .select('role, role_label, name, username')
     .eq('email', user.email)
-    .single();
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error('[AUTH] Session restore fetch error:', fetchError);
+  }
 
   if (!userRow) return null;
 
@@ -93,8 +116,8 @@ async function restoreSession() {
     id: user.id,
     email: user.email,
     role: userRow.role,
-    full_name: userRow.full_name,
-    school: userRow.school,
+    roleLabel: userRow.role_label,
+    name: userRow.name,
     username: userRow.username,
     session: sessionData.session
   };
@@ -104,9 +127,9 @@ async function restoreSession() {
 }
 
 async function logout() {
-  const supabase = window.supabaseClient;
-  if (supabase) {
-    await supabase.auth.signOut();
+  const db = window.supabaseClient;
+  if (db) {
+    await db.auth.signOut();
   }
   window.currentUser = null;
   window.location.href = 'index.html'; // or your login page
@@ -144,4 +167,18 @@ function clearLoginForm() {
   if (uname) uname.value = '';
   if (pass) pass.value = '';
   hideLoginMessage();
+}
+
+function clearFieldError(groupId, errorId) {
+  const group = document.getElementById(groupId);
+  const errorSpan = document.getElementById(errorId);
+  if (group) group.classList.remove('error');
+  if (errorSpan) errorSpan.textContent = '';
+}
+
+function setFieldError(groupId, errorId, message) {
+  const group = document.getElementById(groupId);
+  const errorSpan = document.getElementById(errorId);
+  if (group) group.classList.add('error');
+  if (errorSpan) errorSpan.textContent = message;
 }

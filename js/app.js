@@ -104,7 +104,7 @@ async function handleLogin() {
   btn.classList.remove('loading');
   btn.disabled = false;
 
-  if (result.success) {
+  if (result && result.success) {
     // Success flash
     btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
     btn.innerHTML = '<i class="fas fa-check"></i> <span class="btn-text">Redirecting...</span>';
@@ -141,7 +141,7 @@ async function handleLogin() {
     btn.style.background = '';
     btn.innerHTML = '<span class="btn-text">Sign In</span><i class="fas fa-arrow-right btn-arrow"></i>';
   } else {
-    showLoginMessage('Invalid User ID or password. Please try again or use a demo credential.', 'error');
+    showLoginMessage('Invalid User ID or password. Please try again.', 'error');
     // Shake the login box
     const box = document.querySelector('.login-box');
     box.style.animation = 'shake 0.5s';
