@@ -19,9 +19,12 @@ function safeRender(name, builderFunc, user) {
     return html;
   } catch (e) {
     console.error(`[CampusCore] Render error in ${name}:`, e);
-    // Use "active" class and id="section-home" so the error card is visible
-    // and navigateTo('home') can find it (prevents infinite re-render loop)
-    return `<div class="dash-section active" id="section-home">
+    // Extract the intended section ID from the function body if possible
+    let sectionIdMatch = builderFunc ? builderFunc.toString().match(/id=["']section-([^"']+)["']/) : null;
+    let fallbackId = sectionIdMatch ? sectionIdMatch[1] : ('error-' + name.replace(/\s+/g, '').toLowerCase());
+    
+    // Prevent multiple home sections. Use the intended section ID.
+    return `<div class="dash-section" id="section-${fallbackId}">
       <div class="card" style="border-left:4px solid var(--color-danger);padding:30px;text-align:center">
         <div style="font-size:40px;margin-bottom:15px;color:var(--color-danger)"><i class="fas fa-exclamation-triangle"></i></div>
         <h3 style="color:var(--color-danger);margin-bottom:10px">${name} Rendering Failed</h3>

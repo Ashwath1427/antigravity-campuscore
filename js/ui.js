@@ -311,11 +311,24 @@ function navigateTo(sectionId) {
 
   // Defensive: If the target section doesn't exist in DOM, we might need a re-render
   const targetSec = document.getElementById('section-' + sectionId);
-  if (!targetSec && window.triggerLiveReRender) {
-    console.warn(`[CampusCore] Section ${sectionId} not found, forcing re-render`);
-    window.triggerLiveReRender(sectionId); 
-    return; // Stop here, re-render will re-invoke navigateTo or set active
+  if (!targetSec) {
+    if (window._navigatingTo === sectionId) {
+      console.error(`[CampusCore] Infinite loop prevented: Section ${sectionId} failed to render.`);
+      delete window._navigatingTo;
+      // Show error in content area instead of blanking out
+      const contentArea = document.getElementById('content-area');
+      if (contentArea) contentArea.innerHTML = `<div class="dash-section active"><div class="card" style="border-left:4px solid var(--color-danger);padding:30px;text-align:center"><h3>Section Not Found or Crashed</h3><p>Could not render ${sectionId}</p></div></div>`;
+      return;
+    }
+    if (window.triggerLiveReRender) {
+      console.warn(`[CampusCore] Section ${sectionId} not found, forcing re-render`);
+      window._navigatingTo = sectionId;
+      window.triggerLiveReRender(sectionId);
+      return; // Stop here, re-render will re-invoke navigateTo or set active
+    }
   }
+
+  delete window._navigatingTo;
 
   document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
   const activeNav = document.getElementById('nav-' + (sectionId === 'home' ? 'dashboard' : sectionId));
