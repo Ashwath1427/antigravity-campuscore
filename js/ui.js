@@ -229,9 +229,10 @@ function buildSidebar(user) {
   document.getElementById('banner-avatar').textContent = initials;
   document.getElementById('banner-user-name').textContent = displayName;
   document.getElementById('banner-role-badge').textContent = user.roleLabel;
-  // Nav
   const nav = document.getElementById('sidebar-nav');
-  const roleKey = (user.role || '').toLowerCase().replace(' ', '_');
+  let rawRole = (user.role || '').toLowerCase().replace(/\s+/g, '_').replace('-', '_');
+  if (rawRole === 'vp') rawRole = 'vice_principal';
+  const roleKey = rawRole;
   let sections = (window.ROLE_NAV && (window.ROLE_NAV[roleKey] || window.ROLE_NAV[user.role])) || [];
 
   // SECRECY: Hide Admin (APAAAS) role from anyone not specifically logged in as admin
