@@ -66,10 +66,10 @@ window.changeLanguage = function (lang) {
 };
 
 window.triggerLiveReRender = function (targetSection = null) {
-  if (window.currentUser) {
-    buildDashboard(window.currentUser);
-    // Explicitly re-apply sidebar as well to update menu tokens
-    buildSidebar(window.currentUser);
+  const activeUser = window.currentUser || (typeof currentUser !== 'undefined' ? currentUser : null);
+  if (activeUser) {
+    buildDashboard(activeUser);
+    buildSidebar(activeUser);
 
     // Recovery: navigate back to where we wanted to go
     if (targetSection) {
@@ -113,8 +113,25 @@ function buildBentoCalendar() {
 
 function buildDashboard(user) {
   const c = document.getElementById('content-area');
+  if (!c) {
+    console.error('[CampusCore] content-area element not found');
+    return;
+  }
+  if (!user) {
+    console.error('[CampusCore] buildDashboard called without a user');
+    return;
+  }
 
-  if (user.role === 'vice_principal') {
+  user = (typeof normalizeUserForDashboard === 'function')
+    ? normalizeUserForDashboard(user)
+    : user;
+  window.currentUser = user;
+  if (typeof currentUser !== 'undefined') currentUser = user;
+
+  const role = user.role;
+  console.log('[CampusCore] buildDashboard role:', role, 'user:', user.username);
+
+  if (role === 'vice_principal') {
     c.innerHTML = [
       safeRender('Home', buildHome, user),
       safeRender('Profile', buildProfile, user),
