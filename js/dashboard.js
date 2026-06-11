@@ -980,7 +980,7 @@ function buildVPAttendance(user) {
     const filterClass = localStorage.getItem('att_filter_class') || 'All';
     const filterSection = localStorage.getItem('att_filter_section') || 'All';
 
-    let rawList = window.CAMPUSCORE_REGISTRY ? window.CAMPUSCORE_REGISTRY.getAllStudents() : (STUDENTS || []);
+    let rawList = window.CAMPUSCORE_REGISTRY ? window.CAMPUSCORE_REGISTRY.getAllStudents() : ((typeof STUDENTS !== 'undefined' ? STUDENTS : []) || []);
     let filtered = rawList.map(s => {
       if (!s) return null;
       let fullClass = '';
@@ -1067,7 +1067,7 @@ function applyAttendanceFilter() {
 function buildVPClassPerf(user) {
   try {
     // Helper to get unique grades and sections for dropdowns
-    const safePerf = Array.isArray(CLASS_PERFORMANCE) ? CLASS_PERFORMANCE.filter(c => c && c.class) : [];
+    const safePerf = (typeof CLASS_PERFORMANCE !== 'undefined' && Array.isArray(CLASS_PERFORMANCE)) ? CLASS_PERFORMANCE.filter(c => c && c.class) : [];
     const grades = [...new Set(safePerf.map(c => c.class.split('-')[0]))].sort((a, b) => b - a);
     const sections = [...new Set(safePerf.map(c => c.class.split('-')[1]))].sort();
 
@@ -1433,13 +1433,17 @@ function openEscalationTimelineModal(issueId) {
 
 function buildVPStudents(user) {
   try {
-    const filter = JSON.parse(localStorage.getItem('vp_student_analysis_filter') || '{"class":"All Classes","section":"All Sections","q":""}');
+    let filter = {"class":"All Classes","section":"All Sections","q":""};
+    try {
+      const stored = localStorage.getItem('vp_student_analysis_filter');
+      if (stored && stored !== 'undefined') filter = JSON.parse(stored);
+    } catch(e) {}
     const allSections = 'ABCDEFGHIJK'.split('');
     const selectedClass = filter.class || 'All Classes';
     const selectedSection = filter.section || 'All Sections';
     const q = String(filter.q || '').trim().toLowerCase();
 
-    const students = Array.isArray(STUDENTS) ? STUDENTS : [];
+    const students = (typeof STUDENTS !== 'undefined' && Array.isArray(STUDENTS)) ? STUDENTS : [];
 
     let data = students.map((s, idx) => {
       if (!s) return null;
@@ -1617,7 +1621,7 @@ function buildVPStudentIssues(user) {
     const filterGrade = localStorage.getItem('vp_issue_filter_grade') || 'All Grades';
 
     const escStore = getEscalationStore() || {};
-    const safeGlobalIssues = Array.isArray(GLOBAL_ISSUES) ? GLOBAL_ISSUES : [];
+    const safeGlobalIssues = (typeof GLOBAL_ISSUES !== 'undefined' && Array.isArray(GLOBAL_ISSUES)) ? GLOBAL_ISSUES : [];
     let issues = safeGlobalIssues.filter(Boolean).slice().sort((a, b) => new Date((b && b.updated) || (b && b.created) || 0) - new Date((a && a.updated) || (a && a.created) || 0));
 
     // Apply Grade Filter if set
