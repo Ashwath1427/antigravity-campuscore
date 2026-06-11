@@ -35,7 +35,7 @@ window.buildVPApprovals = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td><strong>${row.id}</strong></td><td>${row.type}</td><td><span style="padding:4px 8px;border-radius:12px;background:var(--color-warning-light, #fff3cd);color:var(--color-warning-dark, #856404);font-size:12px">${row.status}</span></td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Request ID</th><th>Type / Description</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Request ID</th><th>Type / Description</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -60,7 +60,7 @@ window.buildVPStudentIssues = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td><strong>${row.student_name}</strong><br><small style="color:var(--color-text-muted)">Class ${row.class}</small></td><td>${row.issue}</td><td><span style="font-size:13px;font-weight:600">${row.status}</span></td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Student</th><th>Reported Issue</th><th>Current Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Student</th><th>Reported Issue</th><th>Current Status</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -81,7 +81,7 @@ window.buildVPStudents = function(user) {
     () => window.supabaseClient ? window.supabaseClient.from('cc_students').select('*').limit(50) : { data: [] },
     (data) => {
       let rows = data.map(row => `<tr><td>${row.name}</td><td>${row.class || ''}-${row.section || ''}</td><td>${row.roll || row.adm_no || ''}</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Name</th><th>Class</th><th>Roll No</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Name</th><th>Class</th><th>Roll No</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -107,7 +107,7 @@ window.buildVPAttendance = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td><strong>${row.class}</strong></td><td>${row.present} / ${row.total}</td><td>${row.percentage}</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Class</th><th>Present / Total</th><th>Percentage</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Class</th><th>Present / Total</th><th>Percentage</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -132,7 +132,7 @@ window.buildVPClassPerf = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td><strong>${row.class}</strong></td><td>${row.subject}</td><td><span style="color:var(--color-primary);font-weight:bold">${row.avg_score}</span></td><td>${row.top_scorer}</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Class</th><th>Subject</th><th>Class Average</th><th>Top Scorer</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Class</th><th>Subject</th><th>Class Average</th><th>Top Scorer</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -157,7 +157,7 @@ window.buildVPAnalysis = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td style="font-size:16px">${row.metric}</td><td style="text-align:right"><h2 style="margin:0">${row.value}</h2><small style="color:${row.color}">${row.trend}</small></td></tr>`).join('');
-      return `<table class="cc-table"><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -178,7 +178,7 @@ window.buildVPTeacherMonitoring = function(user) {
     () => window.supabaseClient ? window.supabaseClient.from('cc_users').select('*').eq('role', 'teacher').limit(50) : { data: [] },
     (data) => {
       let rows = data.map(row => `<tr><td>${row.name}</td><td>${row.email}</td><td>Active</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Teacher</th><th>Email</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Teacher</th><th>Email</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -203,7 +203,7 @@ window.buildVPTimetable = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td><strong>${row.day}</strong><br><small style="color:var(--color-text-muted)">${row.time}</small></td><td>${row.class}</td><td>${row.subject}</td><td>${row.teacher}</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Time Slot</th><th>Class</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Time Slot</th><th>Class</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -228,7 +228,7 @@ window.buildVPExams = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td><strong>${row.exam_name}</strong></td><td>${row.date}</td><td><span class="cc-badge" style="background:var(--color-surface-2);padding:4px 8px;border-radius:6px;border:1px solid var(--color-border)">${row.status}</span></td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Exam Name</th><th>Date</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Exam Name</th><th>Date</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -252,8 +252,8 @@ window.buildVPReports = function(user) {
       { report: 'Fee Collection Defaulters', date: 'As of Today', type: 'CSV' }
     ]}),
     (data) => {
-      let rows = data.map(row => `<tr><td><i class="fas fa-file-alt" style="color:var(--color-primary);margin-right:8px"></i> <strong>${row.report}</strong></td><td>${row.date}</td><td style="text-align:right"><button class="cc-btn cc-btn-primary" style="padding:4px 10px;font-size:12px"><i class="fas fa-download"></i> Download ${row.type}</button></td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Report Name</th><th>Period</th><th style="text-align:right">Action</th></tr></thead><tbody>${rows}</tbody></table>`;
+      let rows = data.map(row => `<tr><td><i class="fas fa-file-alt" style="color:var(--color-primary);margin-right:8px"></i> <strong>${row.report}</strong></td><td>${row.date}</td><td style="text-align:right"><button class="btn-primary" style="padding:4px 10px;font-size:12px"><i class="fas fa-download"></i> Download ${row.type}</button></td></tr>`).join('');
+      return `<table class="data-table"><thead><tr><th>Report Name</th><th>Period</th><th style="text-align:right">Action</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -271,16 +271,20 @@ window.buildVPReports = function(user) {
 // 11. vp_notices
 window.buildVPNotices = function(user) {
   renderVPSectionAsync('vp_notices_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_announcements').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [
+      { title: 'School Closed on Friday due to heavy rain forecast', date: 'Oct 12, 2026', type: 'Urgent' },
+      { title: 'New guidelines for Teacher attendance logging', date: 'Oct 10, 2026', type: 'Admin' },
+      { title: 'Annual Sports Day schedule released', date: 'Oct 05, 2026', type: 'General' }
+    ]}),
     (data) => {
-      let rows = data.map(row => `<tr><td>${row.title}</td><td>${row.date || 'N/A'}</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Title</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table>`;
+      let rows = data.map(row => `<tr><td><span style="background:${row.type==='Urgent'?'#ffebee':'var(--color-surface-2)'};color:${row.type==='Urgent'?'#c62828':'var(--color-text)'};padding:3px 8px;border-radius:12px;font-size:11px;margin-right:8px">${row.type}</span> <strong>${row.title}</strong></td><td style="text-align:right;color:var(--color-text-muted)"><small>${row.date}</small></td></tr>`).join('');
+      return `<table class="data-table"><tbody>${rows}</tbody></table>`;
     }
   );
   return `
-    <div id="section-vp_notices" class="dash-section">
+    <div id="section-announcements" class="dash-section">
       <div class="card">
-        <h2>Notices</h2>
+        <h2>School Notices</h2>
         <div id="vp_notices_content">
            <div class="cc-skeleton" style="height: 200px; border-radius: 8px;"></div>
         </div>
@@ -292,16 +296,20 @@ window.buildVPNotices = function(user) {
 // 12. vp_events
 window.buildVPEvents = function(user) {
   renderVPSectionAsync('vp_events_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_events').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [
+      { title: 'Inter-School Debate Competition', date: 'Oct 20, 2026', location: 'Main Auditorium' },
+      { title: 'Science Exhibition 2026', date: 'Nov 05, 2026', location: 'School Grounds' },
+      { title: 'Parent-Teacher Meeting (PTM)', date: 'Nov 12, 2026', location: 'Classrooms' }
+    ]}),
     (data) => {
-      let rows = data.map(row => `<tr><td>${row.title}</td><td>${row.date || 'N/A'}</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Event</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table>`;
+      let rows = data.map(row => `<tr><td><div style="width:40px;height:40px;background:var(--color-primary-light,#e3f2fd);color:var(--color-primary,#1976d2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold">${row.date.split(' ')[1].replace(',','')}</div></td><td><strong>${row.title}</strong><br><small style="color:var(--color-text-muted)"><i class="fas fa-map-marker-alt"></i> ${row.location}</small></td><td style="text-align:right">${row.date}</td></tr>`).join('');
+      return `<table class="data-table" style="border:none"><tbody>${rows}</tbody></table>`;
     }
   );
   return `
-    <div id="section-vp_events" class="dash-section">
+    <div id="section-events" class="dash-section">
       <div class="card">
-        <h2>Events</h2>
+        <h2>Upcoming Events</h2>
         <div id="vp_events_content">
            <div class="cc-skeleton" style="height: 200px; border-radius: 8px;"></div>
         </div>
@@ -320,7 +328,7 @@ window.buildVPMessages = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td>${row.isNew ? '<span style="color:var(--color-primary);font-size:10px;vertical-align:middle;margin-right:6px"><i class="fas fa-circle"></i></span>' : ''}<strong>${row.sender}</strong></td><td>${row.subject}</td><td style="color:var(--color-text-muted);text-align:right"><small>${row.time}</small></td></tr>`).join('');
-      return `<table class="cc-table" style="table-layout:fixed"><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table" style="table-layout:fixed"><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -338,13 +346,39 @@ window.buildVPMessages = function(user) {
 // 14. vp_upload
 window.buildVPUpload = function(user) {
   return `
-    <div id="section-vp_upload" class="dash-section">
+    <div id="section-document_upload" class="dash-section">
       <div class="card">
-        <h2>Document Upload</h2>
-        <p>Use this form to upload documents.</p>
-        <div style="margin-top: 1rem;">
-          <input type="file" class="cc-input" />
-          <button class="cc-btn cc-btn-primary" style="margin-top: 1rem;">Upload</button>
+        <h2>Document Management</h2>
+        <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:20px;">
+            <div style="flex: 1; min-width: 300px; border: 2px dashed var(--color-border); padding: 40px 20px; text-align: center; border-radius: 12px; background: var(--color-surface-2);">
+                <i class="fas fa-cloud-upload-alt" style="font-size:48px; color:var(--color-primary); margin-bottom:15px;"></i>
+                <h3 style="margin-bottom:10px;">Drag & Drop files here</h3>
+                <p style="color:var(--color-text-muted); font-size:13px; margin-bottom:20px;">Supported formats: PDF, DOCX, XLSX (Max 10MB)</p>
+                <button class="btn-primary"><i class="fas fa-folder-open"></i> Browse Files</button>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="margin-bottom: 15px;">Recent Uploads</h3>
+                <div style="background:var(--color-surface-2); border-radius:8px; padding:15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class="fas fa-file-pdf" style="font-size:24px; color:#e74c3c;"></i>
+                        <div>
+                            <div style="font-weight:600;font-size:14px;">Holiday_List_2026.pdf</div>
+                            <div style="font-size:11px;color:var(--color-text-muted);">Uploaded by Admin • 2 hours ago</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-ellipsis-v" style="color:var(--color-text-muted);cursor:pointer;"></i>
+                </div>
+                <div style="background:var(--color-surface-2); border-radius:8px; padding:15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <i class="fas fa-file-excel" style="font-size:24px; color:#27ae60;"></i>
+                        <div>
+                            <div style="font-weight:600;font-size:14px;">Budget_Q4_Draft.xlsx</div>
+                            <div style="font-size:11px;color:var(--color-text-muted);">Uploaded by You • Yesterday</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-ellipsis-v" style="color:var(--color-text-muted);cursor:pointer;"></i>
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -361,7 +395,7 @@ window.buildVPHelpdesk = function(user) {
     ]}),
     (data) => {
       let rows = data.map(row => `<tr><td><strong>${row.issue}</strong></td><td><span style="background:${row.color}15;color:${row.color};padding:4px 8px;border-radius:12px;font-size:11px;font-weight:bold">${row.priority}</span></td><td>${row.status}</td></tr>`).join('');
-      return `<table class="cc-table"><thead><tr><th>Issue Description</th><th>Priority</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="data-table"><thead><tr><th>Issue Description</th><th>Priority</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
   return `
@@ -393,10 +427,55 @@ window.buildVPProfile = function(user) {
 // 17. vp_settings
 window.buildVPSettings = function(user) {
   return `
-    <div id="section-vp_settings" class="dash-section">
+    <div id="section-settings" class="dash-section">
       <div class="card">
-        <h2>Settings</h2>
-        <p>System settings configuration.</p>
+        <h2>System Settings & Configuration</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+            
+            <div style="padding: 20px; border: 1px solid var(--color-border); border-radius: 12px;">
+                <h3 style="margin-bottom: 15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-bell text-primary"></i> Notifications</h3>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-weight:600;">Email Alerts</div>
+                        <div style="font-size:12px;color:var(--color-text-muted);">Receive daily summary emails</div>
+                    </div>
+                    <div style="width:40px;height:20px;background:var(--color-primary);border-radius:10px;position:relative;"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;"></div></div>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-weight:600;">Push Notifications</div>
+                        <div style="font-size:12px;color:var(--color-text-muted);">Browser push notifications</div>
+                    </div>
+                    <div style="width:40px;height:20px;background:var(--color-primary);border-radius:10px;position:relative;"><div style="width:16px;height:16px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;"></div></div>
+                </div>
+            </div>
+
+            <div style="padding: 20px; border: 1px solid var(--color-border); border-radius: 12px;">
+                <h3 style="margin-bottom: 15px; display:flex; align-items:center; gap:8px;"><i class="fas fa-lock text-primary"></i> Security & Access</h3>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-weight:600;">Two-Factor Authentication</div>
+                        <div style="font-size:12px;color:var(--color-text-muted);">Add an extra layer of security</div>
+                    </div>
+                    <button class="btn-primary" style="padding:4px 12px;font-size:12px;">Enable</button>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-weight:600;">Active Sessions</div>
+                        <div style="font-size:12px;color:var(--color-text-muted);">Manage logged in devices</div>
+                    </div>
+                    <button class="btn-outline" style="padding:4px 12px;font-size:12px;background:var(--color-surface-2);border:1px solid var(--color-border);">View</button>
+                </div>
+            </div>
+
+        </div>
+        <div style="margin-top: 25px; text-align: right;">
+            <button class="btn-primary">Save Settings</button>
+        </div>
       </div>
     </div>
   `;
