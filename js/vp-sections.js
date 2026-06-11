@@ -182,7 +182,7 @@ window.buildVPTeacherMonitoring = function(user) {
     }
   );
   return `
-    <div id="section-vp_teacher_monitoring" class="dash-section">
+    <div id="section-vp_teachers" class="dash-section">
       <div class="card">
         <h2>Teacher Activity</h2>
         <div id="vp_teacher_monitoring_content">
@@ -207,7 +207,7 @@ window.buildVPTimetable = function(user) {
     }
   );
   return `
-    <div id="section-vp_timetable" class="dash-section">
+    <div id="section-vp_schedule" class="dash-section">
       <div class="card">
         <h2>Timetable Review</h2>
         <div id="vp_timetable_content">
@@ -365,7 +365,7 @@ window.buildVPHelpdesk = function(user) {
     }
   );
   return `
-    <div id="section-vp_helpdesk" class="dash-section">
+    <div id="section-helpdesk_staff" class="dash-section">
       <div class="card">
         <h2>Helpdesk Tickets (IT & Maintenance)</h2>
         <div id="vp_helpdesk_content">
@@ -410,15 +410,14 @@ window.VP_SECTION_REGISTRY = {
   'vp_attendance': { builder: window.buildVPAttendance, roles: ['vp'], label: 'Attendance' },
   'vp_class_perf': { builder: window.buildVPClassPerf, roles: ['vp'], label: 'Performance' },
   'vp_analysis': { builder: window.buildVPAnalysis, roles: ['vp'], label: 'Analysis' },
-  'vp_teacher_monitoring': { builder: window.buildVPTeacherMonitoring, roles: ['vp'], label: 'Teacher Activity' },
-  'vp_timetable': { builder: window.buildVPTimetable, roles: ['vp'], label: 'Timetable' },
+  'vp_teachers': { builder: window.buildVPTeacherMonitoring, roles: ['vp'], label: 'Teacher Activity' },
+  'vp_schedule': { builder: window.buildVPTimetable, roles: ['vp'], label: 'Timetable' },
   'vp_exams': { builder: window.buildVPExams, roles: ['vp'], label: 'Exams' },
   'vp_reports': { builder: window.buildVPReports, roles: ['vp'], label: 'Reports' },
-  'vp_notices': { builder: window.buildVPNotices, roles: ['vp'], label: 'Notices' },
-  'vp_events': { builder: window.buildVPEvents, roles: ['vp'], label: 'Events' },
+  'announcements': { builder: window.buildVPNotices, roles: ['vp'], label: 'Notices' },
+  'events': { builder: window.buildVPEvents, roles: ['vp'], label: 'Events' },
   'vp_messages': { builder: window.buildVPMessages, roles: ['vp'], label: 'Messages' },
-  'vp_upload': { builder: window.buildVPUpload, roles: ['vp'], label: 'Upload' },
-  'vp_helpdesk': { builder: window.buildVPHelpdesk, roles: ['vp'], label: 'Helpdesk' },
-  'vp_profile': { builder: window.buildVPProfile, roles: ['vp'], label: 'Profile' },
-  'vp_settings': { builder: window.buildVPSettings, roles: ['vp'], label: 'Settings' }
+  'document_upload': { builder: window.buildVPUpload, roles: ['vp'], label: 'Upload' },
+  'helpdesk_staff': { builder: window.buildVPHelpdesk, roles: ['vp'], label: 'Helpdesk' },
+  'settings': { builder: window.buildVPSettings, roles: ['vp'], label: 'Settings' }
 };
