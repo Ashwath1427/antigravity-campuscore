@@ -12,7 +12,7 @@ function renderVPSectionAsync(containerId, fetchFn, renderFn) {
       if (error) throw error;
       
       if (!data || data.length === 0) {
-        el.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--color-text-muted);">No data available</div>';
+        el.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--color-text-muted);">No data available yet.</div>';
       } else {
         el.innerHTML = renderFn(data);
       }
@@ -28,7 +28,7 @@ function renderVPSectionAsync(containerId, fetchFn, renderFn) {
 // 1. vp_approvals
 window.buildVPApprovals = function(user) {
   renderVPSectionAsync('vp_approvals_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_approvals').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_approvals does not exist
     (data) => {
       let rows = data.map(row => `<tr><td>${row.id}</td><td>${row.type}</td><td>${row.status}</td></tr>`).join('');
       return `<table class="cc-table"><thead><tr><th>ID</th><th>Type</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -49,7 +49,7 @@ window.buildVPApprovals = function(user) {
 // 2. vp_student_issues
 window.buildVPStudentIssues = function(user) {
   renderVPSectionAsync('vp_student_issues_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_issues').select('*').eq('type', 'student').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_issues does not exist
     (data) => {
       let rows = data.map(row => `<tr><td>${row.student_name || 'Unknown'}</td><td>${row.issue}</td><td>${row.status}</td></tr>`).join('');
       return `<table class="cc-table"><thead><tr><th>Student</th><th>Issue</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -72,7 +72,7 @@ window.buildVPStudents = function(user) {
   renderVPSectionAsync('vp_students_content', 
     () => window.supabaseClient ? window.supabaseClient.from('cc_students').select('*').limit(50) : { data: [] },
     (data) => {
-      let rows = data.map(row => `<tr><td>${row.name}</td><td>${row.grade}-${row.section}</td><td>${row.roll_no}</td></tr>`).join('');
+      let rows = data.map(row => `<tr><td>${row.name}</td><td>${row.class || ''}-${row.section || ''}</td><td>${row.roll || row.adm_no || ''}</td></tr>`).join('');
       return `<table class="cc-table"><thead><tr><th>Name</th><th>Class</th><th>Roll No</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
@@ -91,7 +91,7 @@ window.buildVPStudents = function(user) {
 // 4. vp_attendance
 window.buildVPAttendance = function(user) {
   renderVPSectionAsync('vp_attendance_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_attendance').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_attendance does not exist
     (data) => {
       return `<p>Recent attendance records found: ${data.length}</p>`;
     }
@@ -111,7 +111,7 @@ window.buildVPAttendance = function(user) {
 // 5. vp_class_perf
 window.buildVPClassPerf = function(user) {
   renderVPSectionAsync('vp_class_perf_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_results').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_results does not exist
     (data) => {
       return `<p>Class performance data loaded.</p>`;
     }
@@ -131,7 +131,7 @@ window.buildVPClassPerf = function(user) {
 // 6. vp_analysis
 window.buildVPAnalysis = function(user) {
   renderVPSectionAsync('vp_analysis_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_students').select('id').limit(1) : { data: [] },
+    () => window.supabaseClient ? window.supabaseClient.from('cc_students').select('id, class, section, roll, name').limit(1) : { data: [] },
     (data) => {
       return `<p>Analysis charts ready.</p>`;
     }
@@ -172,7 +172,7 @@ window.buildVPTeacherMonitoring = function(user) {
 // 8. vp_timetable
 window.buildVPTimetable = function(user) {
   renderVPSectionAsync('vp_timetable_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_schedule').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_schedule does not exist
     (data) => {
       return `<p>Timetable loaded.</p>`;
     }
@@ -192,7 +192,7 @@ window.buildVPTimetable = function(user) {
 // 9. vp_exams
 window.buildVPExams = function(user) {
   renderVPSectionAsync('vp_exams_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_exams').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_exams does not exist
     (data) => {
       let rows = data.map(row => `<tr><td>${row.exam_name}</td><td>${row.date}</td></tr>`).join('');
       return `<table class="cc-table"><thead><tr><th>Exam</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -213,7 +213,7 @@ window.buildVPExams = function(user) {
 // 10. vp_reports
 window.buildVPReports = function(user) {
   renderVPSectionAsync('vp_reports_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_reports').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_reports does not exist
     (data) => {
       return `<p>Reports loaded successfully.</p>`;
     }
@@ -235,7 +235,7 @@ window.buildVPNotices = function(user) {
   renderVPSectionAsync('vp_notices_content', 
     () => window.supabaseClient ? window.supabaseClient.from('cc_announcements').select('*').limit(50) : { data: [] },
     (data) => {
-      let rows = data.map(row => `<tr><td>${row.title}</td><td>${row.date}</td></tr>`).join('');
+      let rows = data.map(row => `<tr><td>${row.title}</td><td>${row.date || 'N/A'}</td></tr>`).join('');
       return `<table class="cc-table"><thead><tr><th>Title</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
@@ -256,7 +256,7 @@ window.buildVPEvents = function(user) {
   renderVPSectionAsync('vp_events_content', 
     () => window.supabaseClient ? window.supabaseClient.from('cc_events').select('*').limit(50) : { data: [] },
     (data) => {
-      let rows = data.map(row => `<tr><td>${row.title}</td><td>${row.date}</td></tr>`).join('');
+      let rows = data.map(row => `<tr><td>${row.title}</td><td>${row.date || 'N/A'}</td></tr>`).join('');
       return `<table class="cc-table"><thead><tr><th>Event</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
   );
@@ -275,7 +275,7 @@ window.buildVPEvents = function(user) {
 // 13. vp_messages
 window.buildVPMessages = function(user) {
   renderVPSectionAsync('vp_messages_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_messages').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_messages does not exist
     (data) => {
       return `<p>Inbox loaded (${data.length} messages).</p>`;
     }
@@ -311,7 +311,7 @@ window.buildVPUpload = function(user) {
 // 15. vp_helpdesk
 window.buildVPHelpdesk = function(user) {
   renderVPSectionAsync('vp_helpdesk_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_helpdesk').select('*').limit(50) : { data: [] },
+    () => Promise.resolve({ data: [] }), // cc_helpdesk does not exist
     (data) => {
       let rows = data.map(row => `<tr><td>${row.issue}</td><td>${row.status}</td></tr>`).join('');
       return `<table class="cc-table"><thead><tr><th>Issue</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
