@@ -75,26 +75,7 @@ window.buildVPStudentIssues = function(user) {
   `;
 };
 
-// 3. vp_students
-window.buildVPStudents = function(user) {
-  renderVPSectionAsync('vp_students_content', 
-    () => window.supabaseClient ? window.supabaseClient.from('cc_students').select('*').limit(50) : { data: [] },
-    (data) => {
-      let rows = data.map(row => `<tr><td>${row.name}</td><td>${row.class || ''}-${row.section || ''}</td><td>${row.roll || row.adm_no || ''}</td></tr>`).join('');
-      return `<table class="data-table"><thead><tr><th>Name</th><th>Class</th><th>Roll No</th></tr></thead><tbody>${rows}</tbody></table>`;
-    }
-  );
-  return `
-    <div id="section-vp_students" class="dash-section">
-      <div class="card">
-        <h2>Students Overview</h2>
-        <div id="vp_students_content">
-           <div class="cc-skeleton" style="height: 200px; border-radius: 8px;"></div>
-        </div>
-      </div>
-    </div>
-  `;
-};
+
 
 // 4. vp_attendance
 window.buildVPAttendance = function(user) {

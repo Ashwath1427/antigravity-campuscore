@@ -175,6 +175,12 @@ async function handleLogin() {
 
 // ─── Init Dashboard ──────────────────────────────────────────
 function initDashboard(user) {
+  user = (typeof normalizeUserForDashboard === 'function')
+    ? normalizeUserForDashboard(user)
+    : user;
+  currentUser = user;
+  window.currentUser = user;
+
   if (typeof loadTheme === 'function') loadTheme(user.id);
   buildSidebar(user);
   renderNotifications(user);

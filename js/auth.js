@@ -1,5 +1,13 @@
 let currentUser = null;
 
+function applyNormalizedRole(user) {
+  if (!user) return user;
+  const role = typeof window.normalizeUserRole === 'function'
+    ? window.normalizeUserRole(user)
+    : String(user.role || '').trim().toLowerCase().replace(/\s+/g, '_').replace(/-/g, '_');
+  return { ...user, role };
+}
+
 async function attemptLogin(username, password) {
   const db = window.supabaseClient;
 
@@ -10,7 +18,7 @@ async function attemptLogin(username, password) {
         .rpc('verify_login', { p_username: username, p_password: password });
 
       if (!rpcError && userRow) {
-        window.currentUser = {
+        window.currentUser = applyNormalizedRole({
           id: userRow.id,
           username: userRow.username,
           email: userRow.email || '',
@@ -18,7 +26,8 @@ async function attemptLogin(username, password) {
           roleLabel: userRow.role_label || userRow.roleLabel || userRow.role,
           name: userRow.name,
           session: { fake: true, local: false }
-        };
+        });
+        currentUser = window.currentUser;
         localStorage.setItem('cc_current_user', JSON.stringify(window.currentUser));
         console.log('[AUTH] Real Supabase login successful via RPC:', window.currentUser);
         return { success: true, user: window.currentUser };
@@ -38,7 +47,7 @@ async function attemptLogin(username, password) {
       );
       
       if (localUser) {
-        window.currentUser = {
+        window.currentUser = applyNormalizedRole({
           id: localUser.id || 'local-' + Date.now(),
           username: localUser.username,
           email: localUser.email || '',
@@ -46,7 +55,8 @@ async function attemptLogin(username, password) {
           roleLabel: localUser.role_label || localUser.roleLabel || localUser.role,
           name: localUser.name,
           session: { fake: true, local: true }
-        };
+        });
+        currentUser = window.currentUser;
         localStorage.setItem('cc_current_user', JSON.stringify(window.currentUser));
         console.log('[AUTH] Local fallback login successful:', window.currentUser);
         return { success: true, user: window.currentUser };
@@ -64,7 +74,8 @@ async function restoreSession() {
   const localSession = localStorage.getItem('cc_current_user');
   if (localSession) {
     try {
-      window.currentUser = JSON.parse(localSession);
+      window.currentUser = applyNormalizedRole(JSON.parse(localSession));
+      currentUser = window.currentUser;
       console.log('[AUTH] Session restored from local storage:', window.currentUser);
       return window.currentUser;
     } catch (e) {
@@ -96,7 +107,7 @@ async function restoreSession() {
 
   if (!userRow) return null;
 
-  window.currentUser = {
+  window.currentUser = applyNormalizedRole({
     id: user.id,
     email: user.email,
     role: userRow.role,
@@ -104,7 +115,8 @@ async function restoreSession() {
     name: userRow.name,
     username: userRow.username,
     session: sessionData.session
-  };
+  });
+  currentUser = window.currentUser;
 
   console.log('[AUTH] Session restored:', window.currentUser);
   return window.currentUser;
