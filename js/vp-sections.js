@@ -498,5 +498,5 @@ window.VP_SECTION_REGISTRY = {
   'vp_messages': { builder: window.buildVPMessages, roles: ['vp'], label: 'Messages' },
   'document_upload': { builder: window.buildVPUpload, roles: ['vp'], label: 'Upload' },
   'helpdesk_staff': { builder: window.buildVPHelpdesk, roles: ['vp'], label: 'Helpdesk' },
-  'settings': { builder: window.buildVPSettings, roles: ['vp'], label: 'Settings' }
+  'settings': { builder: window.buildSettings, roles: ['vp'], label: 'Settings' }
 };

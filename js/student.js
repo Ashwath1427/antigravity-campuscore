@@ -467,8 +467,7 @@
           { id: "student_messages", icon: "fa-envelope", label: "Messages" }
       ]},
       { label: "SYSTEM", items: [
-          { id: "student_settings", icon: "fa-cog", label: "Settings" }, 
-          { id: "logout", icon: "fa-sign-out-alt", label: "Logout" }
+          { id: "student_settings", icon: "fa-cog", label: "Settings" }
       ]},
     ];
   }
