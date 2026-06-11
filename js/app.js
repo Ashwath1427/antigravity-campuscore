@@ -11,6 +11,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateDateTime();
     setInterval(updateDateTime, 60000);
 
+    // Listen for global pause changes to auto-logout active devices
+    if (window.supabaseClient) {
+      window.supabaseClient.channel('global-pause-check')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'cc_settings' }, (payload) => {
+           if (payload.new && payload.new.key === 'system_paused') {
+              if (payload.new.value === 'true') {
+                 localStorage.setItem('cc_system_paused', 'true');
+                 if (typeof logout === 'function') logout();
+                 showLoginMessage('System is currently paused for maintenance.', 'error');
+                 const box = document.querySelector('.login-box');
+                 if (box) {
+                   box.style.animation = 'shake 0.5s';
+                   setTimeout(() => box.style.animation = '', 600);
+                 }
+              } else {
+                 localStorage.removeItem('cc_system_paused');
+              }
+           }
+        })
+        .subscribe();
+    }
+
     const user = await restoreSession();
     if (!user) {
       // If no session, show login page
