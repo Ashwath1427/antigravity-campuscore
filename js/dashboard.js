@@ -622,22 +622,24 @@ function filterStudents(q) { const t = document.getElementById('students-tbody')
 
 /* ━━━━ TEACHERS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildTeachers(user) {
-  const rows = TEACHERS.map((t, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i + 3)}">${getInitials(t.name)}</div><div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div></div></td><td>${t.subject}</td><td>${t.classes}</td><td>${t.exp}</td><td>${t.phone}</td><td><span class="badge ${t.status === 'Active' ? 'badge-active' : 'badge-warning'}">${t.status}</span></td></tr>`).join('');
-  return `<div class="dash-section" id="section-teachers"><div class="card"><h3>👨‍🏫 Teaching Staff</h3><p style="color:var(--color-text-muted);margin-bottom:16px">${TEACHERS.length} teachers · ${TEACHERS.filter(t => t.status === 'Active').length} active</p><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Teacher</th><th>Subject</th><th>Classes</th><th>Experience</th><th>Phone</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div></div>`;
+  const safeTeachers = (typeof TEACHERS !== 'undefined') ? TEACHERS : [];
+  const rows = safeTeachers.map((t, i) => `<tr><td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i + 3)}">${getInitials(t.name)}</div><div class="user-row-info"><strong>${t.name}</strong><span>${t.id}</span></div></div></td><td>${t.subject}</td><td>${t.classes}</td><td>${t.exp}</td><td>${t.phone}</td><td><span class="badge ${t.status === 'Active' ? 'badge-active' : 'badge-warning'}">${t.status}</span></td></tr>`).join('');
+  return `<div class="dash-section" id="section-teachers"><div class="card"><h3>👨‍🏫 Teaching Staff</h3><p style="color:var(--color-text-muted);margin-bottom:16px">${safeTeachers.length} teachers · ${safeTeachers.filter(t => t.status === 'Active').length} active</p><div style="overflow-x:auto;border-radius:14px"><table class="data-table"><thead><tr><th>Teacher</th><th>Subject</th><th>Classes</th><th>Experience</th><th>Phone</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div></div></div>`;
 }
 
 /* ━━━━ SCHEDULE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildSchedule(user) {
-  const rows = SCHEDULE.map(s => `<div class="schedule-item"><div class="schedule-time">${s.time}</div><div class="schedule-bar" style="background:${s.color}"></div><div class="schedule-info"><div class="schedule-subject">${s.subject}</div><div class="schedule-meta">${s.class} · ${s.teacher}</div></div><div class="schedule-room">${s.room}</div></div>`).join('');
+  const safeSchedule = (typeof SCHEDULE !== 'undefined') ? SCHEDULE : [];
+  const rows = safeSchedule.map(s => `<div class="schedule-item"><div class="schedule-time">${s.time}</div><div class="schedule-bar" style="background:${s.color}"></div><div class="schedule-info"><div class="schedule-subject">${s.subject}</div><div class="schedule-meta">${s.class} · ${s.teacher}</div></div><div class="schedule-room">${s.room}</div></div>`).join('');
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const btns = days.map((d, i) => `<button onclick="setActiveDay(this)" style="padding:8px 16px;border:2px solid ${i === 0 ? 'var(--color-primary)' : 'var(--color-border)'};border-radius:10px;background:${i === 0 ? 'var(--color-primary)' : 'var(--color-surface)'};color:${i === 0 ? 'white' : 'var(--color-text-light)'};font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.2s">${d}</button>`).join('');
-  return `<div class="dash-section" id="section-schedule"><div class="card"><h3>📅 Class Timetable</h3><div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">${btns}</div><p style="color:var(--color-text-muted);font-size:13px;margin-bottom:16px">${getFormattedDate()} · ${SCHEDULE.length} periods</p>${rows}</div></div>`;
+  return `<div class="dash-section" id="section-schedule"><div class="card"><h3>📅 Class Timetable</h3><div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">${btns}</div><p style="color:var(--color-text-muted);font-size:13px;margin-bottom:16px">${getFormattedDate()} · ${safeSchedule.length} periods</p>${rows}</div></div>`;
 }
 function setActiveDay(b) { b.parentElement.querySelectorAll('button').forEach(x => { x.style.background = 'var(--color-surface)'; x.style.color = 'var(--color-text-light)'; x.style.borderColor = 'var(--color-border)'; }); b.style.background = 'var(--color-primary)'; b.style.color = 'white'; b.style.borderColor = 'var(--color-primary)'; }
 
 /* ━━━━ ATTENDANCE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function buildAttendance(user) {
-  const a = ATTENDANCE_SUMMARY;
+  const a = (typeof ATTENDANCE_SUMMARY !== 'undefined') ? ATTENDANCE_SUMMARY : { present: 0, absent: 0, late: 0, total: 0 };
   const f_class = localStorage.getItem('admin_att_f_class') || 'All';
   const f_sect = localStorage.getItem('admin_att_f_sect') || 'All';
 
@@ -1175,13 +1177,13 @@ window.compareVPSections = function () {
         <div>
           <label style="font-size:12px;color:var(--color-text-muted)">Baseline Section</label>
           <select id="comp-1" class="form-control" onchange="updateCompMatrix()">
-            ${CLASS_PERFORMANCE.map(c => `<option value="${c.class}">${c.class}</option>`).join('')}
+            ${(typeof CLASS_PERFORMANCE !== 'undefined' ? CLASS_PERFORMANCE : []).map(c => `<option value="${c.class}">${c.class}</option>`).join('')}
           </select>
         </div>
         <div>
           <label style="font-size:12px;color:var(--color-text-muted)">Target Section</label>
           <select id="comp-2" class="form-control" onchange="updateCompMatrix()">
-            ${CLASS_PERFORMANCE.map((c, i) => `<option value="${c.class}" ${i === 1 ? 'selected' : ''}>${c.class}</option>`).join('')}
+            ${(typeof CLASS_PERFORMANCE !== 'undefined' ? CLASS_PERFORMANCE : []).map((c, i) => `<option value="${c.class}" ${i === 1 ? 'selected' : ''}>${c.class}</option>`).join('')}
           </select>
         </div>
       </div>
@@ -1203,8 +1205,9 @@ window.compareVPSections = function () {
 window.updateCompMatrix = function () {
   const c1 = document.getElementById('comp-1').value;
   const c2 = document.getElementById('comp-2').value;
-  const d1 = CLASS_PERFORMANCE.find(x => x.class === c1);
-  const d2 = CLASS_PERFORMANCE.find(x => x.class === c2);
+  const safeCP = (typeof CLASS_PERFORMANCE !== 'undefined' ? CLASS_PERFORMANCE : []);
+  const d1 = safeCP.find(x => x.class === c1);
+  const d2 = safeCP.find(x => x.class === c2);
 
   document.getElementById('lbl-1').innerText = c1;
   document.getElementById('lbl-2').innerText = c2;
@@ -1479,7 +1482,7 @@ function buildVPStudents(user) {
   const avgGpa = data.length ? (data.reduce((a, d) => a + Number(d.gpa || 0), 0) / data.length).toFixed(2) : '0.00';
 
   const cards = [
-    ['Institutional Strength', (STUDENTS || []).length], // WARN-004 FIX: dynamic count instead of hardcoded 297
+    ['Institutional Strength', (typeof STUDENTS !== 'undefined' ? STUDENTS : []).length], // WARN-004 FIX: dynamic count instead of hardcoded 297
     ['Students in View', data.length],
     ['Avg Attendance %', avgAtt],
     ['Average GPA', avgGpa],
@@ -2400,7 +2403,8 @@ function saveGenericLanguage() {
 function downloadMarksTemplate() {
   simulateAction('Generating Excel Template...');
   const headers = "Roll No,Student Name,Subject,Max Marks,Marks Obtained,Grade,Comments\n";
-  const demoRows = STUDENTS.slice(0, 10).map(s => `${s.roll},${s.name},Mathematics,100,,,`).join("\n");
+  const safeStudents = typeof STUDENTS !== 'undefined' ? STUDENTS : [];
+  const demoRows = safeStudents.slice(0, 10).map(s => `${s.roll},${s.name},Mathematics,100,,,`).join("\n");
   const csvContent = "data:text/csv;charset=utf-8," + headers + demoRows;
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
@@ -2483,7 +2487,8 @@ function buildCoordHome(user) {
 }
 
 function buildCoordClasses() {
-  const rows = STUDENTS.filter(s => String(s.class).startsWith('9-')).map((s, i) => `<tr>
+  const safeStudents = typeof STUDENTS !== 'undefined' ? STUDENTS : [];
+  const rows = safeStudents.filter(s => String(s.class).startsWith('9-')).map((s, i) => `<tr>
     <td><div class="user-row"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(s.name)}</div><div class="user-row-info"><strong>${s.name}</strong><span>${s.admNo}</span></div></div></td>
     <td>${s.class}</td><td>${s.roll}</td><td>${s.attendance}%</td><td>${s.gpa}</td>
   </tr>`).join('');
