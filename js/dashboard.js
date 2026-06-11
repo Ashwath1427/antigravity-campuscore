@@ -132,27 +132,33 @@ function buildDashboard(user) {
   console.log('[CampusCore] buildDashboard role:', role, 'user:', user.username);
 
   if (role === 'vice_principal') {
-    c.innerHTML = [
-      safeRender('Home', buildHome, user),
-      safeRender('Profile', buildProfile, user),
-      safeRender('Attendance', buildVPAttendance, user),
-      safeRender('Performance', buildVPClassPerf, user),
-      safeRender('Students', buildVPStudents, user),
-      safeRender('Issues', buildVPStudentIssues, user),
-      safeRender('Teachers', buildVPTeachers, user),
-      safeRender('Schedule', buildVPSchedule, user),
-      safeRender('Exams', buildVPExams, user),
-      safeRender('Reports', buildVPReports, user),
-      safeRender('Approvals', buildVPApprovals, user),
-      safeRender('Upload Document', buildDocumentUploadSection, user),
-      safeRender('Notices', buildAnnouncements, user),
-      safeRender('Events', buildEvents, user),
-      safeRender('Messages', buildVPMessages, user),
-      safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
-      safeRender('Teacher Monitoring', buildVPTeachers, user),
-      safeRender('User Registration', buildRegistration, user),
-      safeRender('Settings', buildSettings, user)
-    ].join('');
+    let html = '';
+    html += safeRender('Home', buildHome, user);
+    html += safeRender('Profile', buildProfile, user);
+    html += safeRender('User Registration', buildRegistration, user);
+
+    if (typeof window.VP_SECTION_REGISTRY !== 'undefined') {
+      for (const [key, config] of Object.entries(window.VP_SECTION_REGISTRY)) {
+        if (config.roles && config.roles.includes('vp')) {
+          try {
+            html += config.builder(user);
+          } catch (err) {
+            console.error(`Section ${key} builder threw:`, err);
+            html += `<div id="section-${key}" class="dash-section">
+              <div class="card" style="border-left:4px solid var(--color-danger);padding:30px;">
+                <h3>Error loading ${config.label || key}</h3>
+                <p>${err.message}</p>
+              </div>
+            </div>`;
+          }
+        }
+      }
+    } else {
+      console.error('[CampusCore] VP_SECTION_REGISTRY is not defined. Did vp-sections.js load?');
+      html += `<div style="padding: 2rem; color: #e74c3c;">vp-sections.js failed to load.</div>`;
+    }
+
+    c.innerHTML = html;
   } else if (user.role === 'parent') {
     // WARN-005 FIX: log clearly if parent.js failed to load
     if (!window.buildParentDashboard) console.error('[CampusCore] parent.js not loaded! Falling back to buildHome.');

@@ -211,8 +211,27 @@ function handleSearch(query) {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { const o = document.getElementById('search-overlay'); if (o && !o.classList.contains('hidden')) toggleSearch(); } });
 
+// ─── Role normalization (shared by sidebar + dashboard) ───
+window.normalizeUserRole = function (roleOrUser) {
+  const role = typeof roleOrUser === 'object' ? roleOrUser.role : roleOrUser;
+  const username = typeof roleOrUser === 'object' ? roleOrUser.username : '';
+  let raw = String(role || '').trim().toLowerCase().replace(/\s+/g, '_').replace(/-/g, '_');
+  if (raw === 'vp' || raw === 'viceprincipal') raw = 'vice_principal';
+  if (raw === 'superadmin') raw = 'super_admin';
+  if (!raw && String(username || '').toUpperCase() === 'VP001') raw = 'vice_principal';
+  return raw;
+};
+
+function normalizeUserForDashboard(user) {
+  if (!user) return user;
+  const role = window.normalizeUserRole(user);
+  if (user.role === role) return user;
+  return { ...user, role };
+}
+
 // ─── Build Sidebar ──────────────────────────────────────────
 function buildSidebar(user) {
+  user = normalizeUserForDashboard(user);
   let displayName = user.name;
   if (user.role === 'parent' && typeof getParentChildContext === 'function') {
     const child = getParentChildContext(user);
@@ -230,9 +249,7 @@ function buildSidebar(user) {
   document.getElementById('banner-user-name').textContent = displayName;
   document.getElementById('banner-role-badge').textContent = user.roleLabel;
   const nav = document.getElementById('sidebar-nav');
-  let rawRole = (user.role || '').toLowerCase().replace(/\s+/g, '_').replace('-', '_');
-  if (rawRole === 'vp') rawRole = 'vice_principal';
-  const roleKey = rawRole;
+  const roleKey = window.normalizeUserRole(user);
   let sections = (window.ROLE_NAV && (window.ROLE_NAV[roleKey] || window.ROLE_NAV[user.role])) || [];
 
   // SECRECY: Hide Admin (APAAAS) role from anyone not specifically logged in as admin
@@ -309,26 +326,13 @@ function navigateTo(sectionId) {
 
   console.log(`[CampusCore] Navigating to: ${sectionId}`);
 
-  // Defensive: If the target section doesn't exist in DOM, we might need a re-render
   const targetSec = document.getElementById('section-' + sectionId);
   if (!targetSec) {
-    if (window._navigatingTo === sectionId) {
-      console.error(`[CampusCore] Infinite loop prevented: Section ${sectionId} failed to render.`);
-      delete window._navigatingTo;
-      // Show error in content area instead of blanking out
-      const contentArea = document.getElementById('content-area');
-      if (contentArea) contentArea.innerHTML = `<div class="dash-section active"><div class="card" style="border-left:4px solid var(--color-danger);padding:30px;text-align:center"><h3>Section Not Found or Crashed</h3><p>Could not render ${sectionId}</p></div></div>`;
-      return;
-    }
-    if (window.triggerLiveReRender) {
-      console.warn(`[CampusCore] Section ${sectionId} not found, forcing re-render`);
-      window._navigatingTo = sectionId;
-      window.triggerLiveReRender(sectionId);
-      return; // Stop here, re-render will re-invoke navigateTo or set active
-    }
+    console.error(`[CampusCore] Section DOM not found: section-${sectionId}`);
+    const contentArea = document.getElementById('content-area');
+    if (contentArea) contentArea.innerHTML = `<div class="dash-section active"><div class="card" style="border-left:4px solid var(--color-danger);padding:30px;text-align:center"><h3>Section unavailable</h3><p>Could not find section: ${sectionId}</p></div></div>`;
+    return;
   }
-
-  delete window._navigatingTo;
 
   document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
   const activeNav = document.getElementById('nav-' + (sectionId === 'home' ? 'dashboard' : sectionId));
