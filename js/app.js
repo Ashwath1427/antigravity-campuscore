@@ -79,12 +79,32 @@ async function handleLogin() {
   if (username === 'Campuscore..') {
     if (password === 'pause') {
       localStorage.setItem('cc_system_paused', 'true');
+      if (window.supabaseClient) {
+        await window.supabaseClient.from('cc_settings').update({ value: 'true' }).eq('key', 'system_paused');
+      }
       showLoginMessage('System login is now PAUSED.', 'error');
       return;
     } else if (password === 'continue') {
       localStorage.removeItem('cc_system_paused');
+      if (window.supabaseClient) {
+        await window.supabaseClient.from('cc_settings').update({ value: 'false' }).eq('key', 'system_paused');
+      }
       showLoginMessage('System login is now ACTIVE.', 'success');
       return;
+    }
+  }
+
+  // Check if system is paused globally
+  if (window.supabaseClient) {
+    try {
+      const { data } = await window.supabaseClient.from('cc_settings').select('value').eq('key', 'system_paused').single();
+      if (data && data.value === 'true') {
+        localStorage.setItem('cc_system_paused', 'true');
+      } else if (data && data.value === 'false') {
+        localStorage.removeItem('cc_system_paused');
+      }
+    } catch(err) {
+      console.warn('Could not fetch global pause state:', err);
     }
   }
 
