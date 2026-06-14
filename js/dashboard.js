@@ -1501,6 +1501,15 @@ function buildVPStudents(user) {
     data = data.filter(d => String(d.s.name).toLowerCase().includes(q) || String(d.sid).includes(q));
   }
 
+  // Sort by class (numeric), then section, then name
+  data.sort((a, b) => {
+    const gA = parseInt(a.grade) || 0;
+    const gB = parseInt(b.grade) || 0;
+    if (gA !== gB) return gA - gB;
+    if (a.section !== b.section) return String(a.section).localeCompare(String(b.section));
+    return String(a.s.name).localeCompare(String(b.s.name));
+  });
+
   const avgAtt = data.length ? (data.reduce((a, d) => a + d.att, 0) / data.length).toFixed(1) : '0.0';
   const avgGpa = data.length ? (data.reduce((a, d) => a + Number(d.gpa || 0), 0) / data.length).toFixed(2) : '0.00';
 
