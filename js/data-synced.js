@@ -260,6 +260,16 @@ let STUDENTS = [
   { id: "3200020", admNo: "3200020", name: "REKHA RANI", class: "10-D", roll: "05", gender: "Female", dob: "15 Jan 2008", attendance: 86, behavior: "Good", fee_status: "Paid", gpa: 7.3, parent: "Parent of REKHA RANI" }
 ];
 
+STUDENTS.sort((a, b) => {
+  const gA = parseInt(a.class ? a.class.split('-')[0] : 0) || 0;
+  const gB = parseInt(b.class ? b.class.split('-')[0] : 0) || 0;
+  if (gA !== gB) return gA - gB;
+  const sA = a.class ? a.class.split('-')[1] || '' : '';
+  const sB = b.class ? b.class.split('-')[1] || '' : '';
+  if (sA !== sB) return String(sA).localeCompare(String(sB));
+  return String(a.name || '').localeCompare(String(b.name || ''));
+});
+
 // ─── Teachers (7 teachers synchronized with database) ────────────────────────────────────────────────
 const TEACHERS = [
   { id: "T001", name: "Prasana Reddy",   subject: "Mathematics",       classes: "10-A, 9-B, 8-C",  exp: "8 years",  phone: "+91 87654 11111", status: "Active" },

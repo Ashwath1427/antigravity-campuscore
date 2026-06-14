@@ -1593,6 +1593,15 @@ const CLASS_PERFORMANCE = [
   { class: "6-D",  teacher: "Suresh Naidu",    avgAtt: 91, avgGPA: 8.2, topper: "Esha P.",               weak: 2, issues: 0 },
 ];
 
+CLASS_PERFORMANCE.sort((a, b) => {
+  const gA = parseInt(a.class ? a.class.split('-')[0] : 0) || 0;
+  const gB = parseInt(b.class ? b.class.split('-')[0] : 0) || 0;
+  if (gA !== gB) return gA - gB;
+  const sA = a.class ? a.class.split('-')[1] || '' : '';
+  const sB = b.class ? b.class.split('-')[1] || '' : '';
+  return String(sA).localeCompare(String(sB));
+});
+
 
 // ─── Parent Specific Mock Data ───────────────────────────────
 const PARENT_CHILD = {
