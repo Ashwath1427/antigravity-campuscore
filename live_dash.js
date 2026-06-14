@@ -66,10 +66,10 @@ window.changeLanguage = function (lang) {
 };
 
 window.triggerLiveReRender = function (targetSection = null) {
-  const activeUser = window.currentUser || (typeof currentUser !== 'undefined' ? currentUser : null);
-  if (activeUser) {
-    buildDashboard(activeUser);
-    buildSidebar(activeUser);
+  if (window.currentUser) {
+    buildDashboard(window.currentUser);
+    // Explicitly re-apply sidebar as well to update menu tokens
+    buildSidebar(window.currentUser);
 
     // Recovery: navigate back to where we wanted to go
     if (targetSection) {
@@ -113,52 +113,29 @@ function buildBentoCalendar() {
 
 function buildDashboard(user) {
   const c = document.getElementById('content-area');
-  if (!c) {
-    console.error('[CampusCore] content-area element not found');
-    return;
-  }
-  if (!user) {
-    console.error('[CampusCore] buildDashboard called without a user');
-    return;
-  }
 
-  user = (typeof normalizeUserForDashboard === 'function')
-    ? normalizeUserForDashboard(user)
-    : user;
-  window.currentUser = user;
-  if (typeof currentUser !== 'undefined') currentUser = user;
-
-  const role = user.role;
-  console.log('[CampusCore] buildDashboard role:', role, 'user:', user.username);
-
-  if (role === 'vice_principal') {
-    let html = '';
-    html += safeRender('Home', buildHome, user);
-    html += safeRender('Profile', buildProfile, user);
-    html += safeRender('User Registration', buildRegistration, user);
-
-    if (typeof window.VP_SECTION_REGISTRY !== 'undefined') {
-      for (const [key, config] of Object.entries(window.VP_SECTION_REGISTRY)) {
-        if (config.roles && config.roles.includes('vp')) {
-          try {
-            html += config.builder(user);
-          } catch (err) {
-            console.error(`Section ${key} builder threw:`, err);
-            html += `<div id="section-${key}" class="dash-section">
-              <div class="card" style="border-left:4px solid var(--color-danger);padding:30px;">
-                <h3>Error loading ${config.label || key}</h3>
-                <p>${err.message}</p>
-              </div>
-            </div>`;
-          }
-        }
-      }
-    } else {
-      console.error('[CampusCore] VP_SECTION_REGISTRY is not defined. Did vp-sections.js load?');
-      html += `<div style="padding: 2rem; color: #e74c3c;">vp-sections.js failed to load.</div>`;
-    }
-
-    c.innerHTML = html;
+  if (user.role === 'vice_principal') {
+    c.innerHTML = [
+      safeRender('Home', buildHome, user),
+      safeRender('Profile', buildProfile, user),
+      safeRender('Attendance', buildVPAttendance, user),
+      safeRender('Performance', buildVPClassPerf, user),
+      safeRender('Students', buildVPStudents, user),
+      safeRender('Issues', buildVPStudentIssues, user),
+      safeRender('Teachers', buildVPTeachers, user),
+      safeRender('Schedule', buildVPSchedule, user),
+      safeRender('Exams', buildVPExams, user),
+      safeRender('Reports', buildVPReports, user),
+      safeRender('Approvals', buildVPApprovals, user),
+      safeRender('Upload Document', buildDocumentUploadSection, user),
+      safeRender('Notices', buildAnnouncements, user),
+      safeRender('Events', buildEvents, user),
+      safeRender('Messages', buildVPMessages, user),
+      safeRender('Helpdesk Tickets', buildStaffHelpdesk, user),
+      safeRender('Teacher Monitoring', buildVPTeachers, user),
+      safeRender('User Registration', buildRegistration, user),
+      safeRender('Settings', buildSettings, user)
+    ].join('');
   } else if (user.role === 'parent') {
     // WARN-005 FIX: log clearly if parent.js failed to load
     if (!window.buildParentDashboard) console.error('[CampusCore] parent.js not loaded! Falling back to buildHome.');
@@ -1476,18 +1453,18 @@ function buildVPStudents(user) {
       const sid = String(s.id || '');
       const shared = getVPStudentSharedData(sid) || {};
 
-      let rawClass = String(shared.currentClass || s.currentClass || s.class || '9-C');
-      let grade = rawClass;
+      let grade = String(shared.currentClass || s.currentClass || s.class || '');
       let section = String(shared.currentSection || s.currentSection || s.section || '');
 
-      if (rawClass.includes('-')) {
-        const parts = rawClass.split('-');
+      if (grade.includes('-')) {
+        const parts = grade.split('-');
         grade = parts[0];
         if (!section) section = parts[1];
       }
-      if (!section) section = 'C';
+      const gradeVal = String(s.class || '').split('-')[0] || '9';
+      const sectionVal = String(s.class || '').split('-')[1] || s.section || 'C';
 
-      return { s, sid, shared, grade: grade, section: section, att: Number(s.attendancePct || s.attendance || 0), gpa: s.gpa || 0, status: shared.status || s.status || 'Active' };
+      return { s, sid, shared, grade: gradeVal, section: sectionVal, att: Number(s.attendancePct || s.attendance || 0), gpa: s.gpa || 0, status: s.status || 'Active' };
     }).filter(Boolean);
 
   // Filter the cache
@@ -1529,9 +1506,7 @@ function buildVPStudents(user) {
       <td>${d.gpa}</td>
       <td>${statusChip}</td>
       <td><div style="display:flex;gap:6px">
-        <button class="btn-primary" style="padding:6px 8px;font-size:11px;background:var(--color-success);border-color:var(--color-success)" onclick="openVPStudentActionFlow('${d.sid}','promote')">Promote</button>
-        <button class="btn-primary" style="padding:6px 8px;font-size:11px;background:var(--color-danger);border-color:var(--color-danger)" onclick="openVPStudentActionFlow('${d.sid}','demote')">Demote</button>
-        <button class="btn-primary" style="padding:6px 8px;font-size:11px;background:var(--color-surface-3);border-color:var(--color-border);color:var(--color-text)" onclick="openVPStudentProfileModal('${d.sid}')">View Profile</button>
+        <button class="btn-primary" style="padding:6px 8px;font-size:11px" onclick="openVPStudentProfileModal('${d.sid}')">View Profile</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1540,13 +1515,7 @@ function buildVPStudents(user) {
 
   return `<div class="dash-section" id="section-vp_students">
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <h3>🎓 Student Analysis</h3>
-        <div style="display:flex;gap:10px;">
-          <button class="btn-primary" style="background:var(--color-success);border-color:var(--color-success)" onclick="openVPStudentActionFlow('ALL','promote')"><i class="fas fa-level-up-alt"></i> Promote All in View</button>
-          <button class="btn-primary" style="background:var(--color-danger);border-color:var(--color-danger)" onclick="openVPStudentActionFlow('ALL','demote')"><i class="fas fa-level-down-alt"></i> Demote All in View</button>
-        </div>
-      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3>🎓 Student Analysis</h3></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
         <select id="vp-filter-class" class="form-control" style="max-width:160px" onchange="onVPAnalysisClassChange(this.value)">
           <option ${selectedClass === 'All Classes' ? 'selected' : ''}>All Classes</option>
@@ -3113,27 +3082,6 @@ function closeVPActionModal() {
 }
 
 function openVPStudentActionFlow(studentId, action, issueId) {
-  if (studentId === 'ALL') {
-    closeVPActionModal();
-    const titleMap = { promote: 'Verify PIN to Bulk Promote', demote: 'Verify PIN to Bulk Demote' };
-    const html = `<div class="modal-overlay" id="vp-action-modal-overlay" style="display:flex" onclick="if(event.target===this) closeVPActionModal()">
-      <div class="modal" style="max-width:460px;width:100%">
-        <h3 style="margin-top:0">${titleMap[action] || 'Verify PIN'}</h3>
-        <div style="font-size:13px;color:var(--color-text-muted);margin-bottom:10px"><strong>ALL Filtered Students</strong></div>
-        <label>Enter action PIN</label>
-        <input type="password" id="vp-action-pin-input" class="form-control" placeholder="Enter action PIN" />
-        <div id="vp-action-pin-error" style="color:var(--color-danger);font-size:12px;min-height:18px;margin-top:8px"></div>
-        <div style="display:flex;gap:10px;margin-top:10px">
-          <button class="btn-primary" id="vp-action-pin-verify-btn" style="flex:1;background:var(--color-success);border-color:var(--color-success)" onclick="verifyVPActionPin('ALL','${action}','${issueId || ''}')">Verify</button>
-          <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px;cursor:pointer" onclick="closeVPActionModal()">Cancel</button>
-        </div>
-      </div>
-    </div>`;
-    document.body.insertAdjacentHTML('beforeend', html);
-    refreshVPPinLockState();
-    return;
-  }
-
   const student = getVPStudentById(studentId);
   if (!student) {
     simulateAction('Student not found');
@@ -3213,23 +3161,6 @@ function verifyVPActionPin(studentId, action, issueId) {
 }
 
 function openVPStudentActionConfirm(studentId, action, issueId) {
-  if (studentId === 'ALL') {
-    closeVPActionModal();
-    const title = action === 'promote' ? 'Bulk Promote All' : 'Bulk Demote All';
-    const color = action === 'promote' ? 'var(--color-success)' : 'var(--color-danger)';
-    const body = `
-      <div style="font-size:13px;color:var(--color-text-muted);margin-bottom:10px"><strong>WARNING:</strong> This will apply the action to ALL students currently visible in the filtered list.</div>
-      <label style="margin-top:10px">Type "CONFIRM" to proceed</label>
-      <input type="text" id="vp-student-bulk-confirm" class="form-control" placeholder="CONFIRM">
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <button class="btn-primary" style="flex:1;background:${color};border-color:${color}" onclick="confirmVPBulkAction('${action}')">${title}</button>
-        <button style="flex:1;background:var(--color-surface-2);border:1px solid var(--color-border);color:var(--color-text);border-radius:8px;cursor:pointer" onclick="closeVPActionModal()">Cancel</button>
-      </div>`;
-    const html = `<div class="modal-overlay" id="vp-action-modal-overlay" style="display:flex" onclick="if(event.target===this) closeVPActionModal()"><div class="modal" style="max-width:520px;width:100%"><h3 style="margin-top:0">${title}</h3>${body}</div></div>`;
-    document.body.insertAdjacentHTML('beforeend', html);
-    return;
-  }
-
   const student = getVPStudentById(studentId);
   if (!student) return;
   const sid = String(student.admNo || student.id);
@@ -5718,70 +5649,3 @@ function updateStat(id, value) {
    }
 */
 
-
-window.confirmVPBulkAction = function(action) {
-  const check = (document.getElementById('vp-student-bulk-confirm') || {}).value || '';
-  if (check !== 'CONFIRM') {
-    simulateAction('You must type CONFIRM exactly.');
-    return;
-  }
-  
-  // Apply action to the currently filtered students
-  // We re-fetch the filter from localStorage
-  let filter = {"class":"All Classes","section":"All Sections","q":""};
-  try {
-    const stored = localStorage.getItem('vp_student_analysis_filter');
-    if (stored && stored !== 'undefined') filter = JSON.parse(stored);
-  } catch(e) {}
-  
-  let students = window.STUDENTS || [];
-  if (filter.class !== 'All Classes') students = students.filter(s => String((s.class || '').split('-')[0]) === String(filter.class));
-  if (filter.section !== 'All Sections') students = students.filter(s => String((s.class || '').split('-')[1] || s.section) === String(filter.section));
-  if (filter.q) students = students.filter(s => String(s.name).toLowerCase().includes(filter.q.toLowerCase()) || String(s.id).includes(filter.q));
-  
-  if (students.length === 0) {
-    simulateAction('No students found to apply action.');
-    closeVPActionModal();
-    return;
-  }
-  
-  let count = 0;
-  students.forEach(student => {
-    const sid = String(student.admNo || student.id);
-    const shared = getVPStudentSharedData(sid);
-    const currentClass = normalizeClassCode(shared.currentClass || student.class);
-    
-    if (action === 'promote') {
-      const promoted = computePromotedClass(currentClass);
-      if (!promoted.error) {
-        shared.currentClass = promoted.value.slice(0, -1);
-        shared.currentSection = promoted.value.slice(-1);
-        shared.previousClass = currentClass;
-        shared.promotedBy = 'SUMAN (VP)';
-        shared.promotedDate = new Date().toISOString().slice(0, 10);
-        shared.academicYear = '2026-27';
-        shared.status = 'Active';
-        pushStudentActivity(shared, `Bulk Promoted from ${currentClass} to ${promoted.value}`);
-        saveVPStudentSharedData(sid, shared);
-        count++;
-      }
-    } else if (action === 'demote') {
-      const demoted = computeDemotedClass(currentClass);
-      if (!demoted.error) {
-        shared.currentClass = demoted.value.slice(0, -1);
-        shared.currentSection = demoted.value.slice(-1);
-        shared.previousClass = currentClass;
-        shared.demotedBy = 'SUMAN (VP)';
-        shared.demotedDate = new Date().toISOString().slice(0, 10);
-        shared.status = 'Demoted';
-        pushStudentActivity(shared, `Bulk Demoted from ${currentClass} to ${demoted.value}`);
-        saveVPStudentSharedData(sid, shared);
-        count++;
-      }
-    }
-  });
-  
-  closeVPActionModal();
-  simulateAction(`Successfully ${action}d ${count} students!`);
-  triggerLiveReRender();
-};
