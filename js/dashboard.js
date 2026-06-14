@@ -1503,10 +1503,23 @@ function buildVPStudents(user) {
 
   // Sort by class (numeric), then section, then name
   data.sort((a, b) => {
-    const gA = parseInt(a.grade) || 0;
-    const gB = parseInt(b.grade) || 0;
+    const getNum = (str) => {
+      const match = String(str).match(/\d+/);
+      return match ? parseInt(match[0], 10) : 0;
+    };
+    const getSec = (str) => {
+      const match = String(str).match(/[A-Za-z]/);
+      return match ? match[0].toUpperCase() : 'Z';
+    };
+
+    const gA = getNum(a.grade);
+    const gB = getNum(b.grade);
     if (gA !== gB) return gA - gB;
-    if (a.section !== b.section) return String(a.section).localeCompare(String(b.section));
+
+    const sA = getSec(a.section || a.grade);
+    const sB = getSec(b.section || b.grade);
+    if (sA !== sB) return sA.localeCompare(sB);
+
     return String(a.s.name).localeCompare(String(b.s.name));
   });
 

@@ -261,12 +261,20 @@ let STUDENTS = [
 ];
 
 STUDENTS.sort((a, b) => {
-  const gA = parseInt(a.class ? a.class.split('-')[0] : 0) || 0;
-  const gB = parseInt(b.class ? b.class.split('-')[0] : 0) || 0;
+  const getNum = (str) => {
+    const match = String(str).match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  };
+  const getSec = (str) => {
+    const match = String(str).match(/[A-Za-z]/);
+    return match ? match[0].toUpperCase() : 'Z';
+  };
+  const gA = getNum(a.class);
+  const gB = getNum(b.class);
   if (gA !== gB) return gA - gB;
-  const sA = a.class ? a.class.split('-')[1] || '' : '';
-  const sB = b.class ? b.class.split('-')[1] || '' : '';
-  if (sA !== sB) return String(sA).localeCompare(String(sB));
+  const sA = getSec(a.class);
+  const sB = getSec(b.class);
+  if (sA !== sB) return sA.localeCompare(sB);
   return String(a.name || '').localeCompare(String(b.name || ''));
 });
 
